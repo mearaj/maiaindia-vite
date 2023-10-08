@@ -1,0 +1,71 @@
+.header {
+    display: flex;
+    height: var(--headerPrimaryHeight);
+    width: 100%;
+    align-items: center;
+    background-color: rgba(var(--bgPrimaryR), var(--bgPrimaryG), var(--bgPrimaryB), 1);
+    padding: 8px;
+    justify-content: space-between;
+}
+
+.sectionLeft, .sectionRight {
+    height: 100%;
+    width: auto;
+    display: flex;
+    align-items: center;
+    transition: flex-grow 250ms, flex-shrink 250ms;
+    overflow: hidden;
+    flex-shrink: 0;
+    flex-grow: 1;
+}
+
+.sectionRight {
+    flex-grow: 1;
+    justify-content: flex-end;
+}
+
+.drawerInteractionItems {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-shrink: 0;
+    flex-grow: 0;
+    width: auto;
+    height: 100%;
+}
+
+.button:global(.MuiButtonBase-root) {
+    padding: 4px;
+    position: relative;
+    min-width: 0;
+    height: 100%;
+}
+
+.button.logoIconButton {
+    height: 100%;
+}
+
+.userSubContainer {
+    height: 100%;
+    width: 100%;
+    pointer-events: none;
+}
+
+.icon:global(.MuiSvgIcon-root),
+.logoIcon {
+    height: 100%;
+    width: auto;
+    max-height: none;
+    max-width: none;
+    fill: rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 0.75);
+}
+
+.button:hover > .icon {
+    fill: rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 1);
+}
+
+@media (min-width: 400px) {
+    .button:global(.MuiButtonBase-root) {
+        height: 48px;
+    }
+}

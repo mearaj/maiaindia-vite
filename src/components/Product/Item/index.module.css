@@ -1,0 +1,42 @@
+.cardBody {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sectionBottom {
+    padding: 4px 16px 16px;
+}
+
+.img {
+    height: auto;
+    width: 100%;
+    object-fit: fill;
+    object-position: center;
+    margin-bottom: 8px;
+}
+
+.card {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 2px 1px -1px rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 0.2),
+    0 1px 1px 0 rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 0.14),
+    0 1px 3px 0 rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 0.12);
+    position: relative;
+}
+
+.card:hover, .card:active {
+    box-shadow: 0 2px 4px -1px rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 0.2),
+    0 4px 5px 0 rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 0.14),
+    0 1px 10px 0 rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 0.12);
+}
+
+.productName {
+    font-size: 12px;
+    line-height: 1.2;
+    font-weight: 500;
+    margin-bottom: 8px;
+}

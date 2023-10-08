@@ -1,0 +1,42 @@
+.pricing {
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 12px;
+    align-items: center;
+}
+
+.sellingAmountContainer {
+    display: flex;
+}
+
+.sellingAmount {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.sellingAmountCurrency {
+    font-size: 12px;
+}
+
+.mrpContainer {
+    display: flex;
+    align-items: flex-end;
+}
+
+.mrp {
+    font-size: 12px;
+    font-weight: 300;
+}
+
+.mrpAmount {
+    font-size: 12px;
+    font-weight: 300;
+}
+
+.mrpAmountContainer {
+    display: flex;
+}
+
+.mrpAmountCurrency {
+    font-size: 10px;
+}

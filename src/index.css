@@ -1,0 +1,38 @@
+@import "swiper/swiper-bundle.css";
+
+:root {
+    --bgPrimaryR: 255;
+    --bgPrimaryG: 255;
+    --bgPrimaryB: 255;
+    --fgPrimaryR: 0;
+    --fgPrimaryG: 25;
+    --fgPrimaryB: 0;
+
+    --headerPrimaryHeight: 72px;
+    --footerPrimaryHeight: 64px;
+    --footerPrimaryBorderHeight: 4px;
+    --tabsCommonHeight: 44px;
+    --cartColor: 255, 200, 0;
+}
+
+*, ::after, ::before {
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    color: rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 1);
+}
+
+@media (min-width: 700px) {
+    --headerPrimaryHeight: 70px;
+}
+
+
+a, a:hover, a:active {
+    text-decoration: none;
+}
+

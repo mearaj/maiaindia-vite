@@ -1,0 +1,76 @@
+.signOutContainer, .loaderContainer {
+    flex-shrink: 1;
+    flex-grow: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.body {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 1;
+    flex-grow: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+.button:global(.MuiButtonBase-root) {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: rgba(var(--bgPrimaryR), var(--bgPrimaryG), var(--bgPrimaryB), 1);
+    color: rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 1);
+    padding: 8px 16px;
+    width: calc(320px - 48px);
+    margin: 8px 0;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.button:hover:global(.MuiButtonBase-root), .button:active:global(.MuiButtonBase-root) {
+    background-color: rgba(var(--bgPrimaryR), var(--bgPrimaryG), var(--bgPrimaryB), 1);
+}
+
+.buttonFacebook:global(.MuiButtonBase-root) {
+    background-color: #4267B2;
+    color: white;
+}
+
+.buttonSignOut:global(.MuiButtonBase-root) {
+    background-color: rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 1);
+    justify-content: center;
+    color: rgba(var(--bgPrimaryR), var(--bgPrimaryG), var(--bgPrimaryB), 1);
+    font-weight: bold;
+}
+
+.buttonSignOut:hover:global(.MuiButtonBase-root), .buttonSignOut:active:global(.MuiButtonBase-root) {
+    background-color: rgba(var(--bgPrimaryR), var(--bgPrimaryG), var(--bgPrimaryB), 1);
+}
+
+.iconContainer {
+    width: 32px;
+    height: 32px;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+}
+
+.linkTitle {
+    font-weight: bold;
+    text-align: left;
+}
+
+.icon {
+    font-size: 24px;
+}
+
+.facebookIcon {
+    fill: #4267B2;
+    font-size: 32px;
+    /*border-radius: 50%;*/
+}

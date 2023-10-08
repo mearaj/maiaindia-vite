@@ -1,0 +1,48 @@
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    padding: 0 12px;
+}
+
+.button:global(.MuiButtonBase-root) {
+    background-color: rgba(var(--bgPrimaryR), var(--bgPrimaryG), var(--bgPrimaryB), 1);
+    color: rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 1);
+    font-weight: bold;
+    padding: 4px;
+    min-height: 40px;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+}
+
+.button:hover:global(.MuiButtonBase-root) {
+    color: inherit;
+    background-color: inherit;
+    box-shadow: 0 2px 4px -1px rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 0.2),
+    0 4px 5px 0 rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 0.14),
+    0 1px 10px 0 rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 0.12);
+}
+
+.button:hover:global(.MuiButtonBase-root) > .icon {
+    fill: rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 1);
+}
+
+.button:active:global(.MuiButtonBase-root) > .icon {
+    fill: rgba(var(--bgPrimaryR), var(--bgPrimaryG), var(--bgPrimaryB), 1);
+}
+
+.button:active:global(.MuiButtonBase-root) {
+    color: rgba(var(--bgPrimaryR), var(--bgPrimaryG), var(--bgPrimaryB), 1);
+    background-color: rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 1);
+}
+
+.icon {
+    height: 32px;
+    width: auto;
+    margin-right: 4px;
+    fill: rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 1);
+}
+
+.text {
+    font-size: 16px;
+}

@@ -1,0 +1,143 @@
+import * as React from 'react';
+import { PropsWithChildren, useEffect, useRef, useState } from 'react';
+import { Box } from '@mui/material';
+import { setHomeActiveProduct } from '@/store/features/ui';
+import {
+  selectHomeActiveProduct,
+  useAppDispatch,
+  useAppSelector,
+} from '@/store';
+import { Product } from '@/store/data/data';
+import useDimensions from '@/hooks/dimensions';
+import styles from './index.module.css';
+
+export interface ContentDrawerProps extends PropsWithChildren {
+  product: Product;
+}
+
+export default function ContentDrawer({
+  children,
+  product,
+}: ContentDrawerProps) {
+  const sidebarContainerRef = useRef<HTMLElement>(null);
+  const activeProductID = useAppSelector(selectHomeActiveProduct);
+  const dispatch = useAppDispatch();
+  const dimensions = useDimensions();
+  const minimumTransitionDuration = 250; // milliseconds
+  const [touchStart, setTouchStart] = useState({
+    clientX: 0,
+    time: 0,
+  });
+  const [mousePressOrTouchStart, setMousePressOrTouchStart] = useState(false);
+
+  const onTouchStartOrOnMouseDown = (
+    e: React.TouchEvent<HTMLElement> | React.MouseEvent<HTMLElement>
+  ) => {
+    setMousePressOrTouchStart(true);
+    if (sidebarContainerRef && sidebarContainerRef.current) {
+      sidebarContainerRef.current.style.transition = '';
+      if (e.nativeEvent instanceof TouchEvent) {
+        setTouchStart({
+          clientX:
+            sidebarContainerRef.current.offsetLeft -
+            e.nativeEvent.touches[0].clientX,
+          time: Date.now(),
+        });
+      } else if (e.nativeEvent instanceof MouseEvent) {
+        setTouchStart({
+          clientX:
+            sidebarContainerRef.current.offsetLeft - e.nativeEvent.clientX,
+          time: Date.now(),
+        });
+      }
+    }
+  };
+
+  const onTouchMoveOrOnMouseMouse = (
+    e: React.TouchEvent<HTMLElement> | React.MouseEvent<HTMLElement>
+  ) => {
+    if (
+      sidebarContainerRef &&
+      sidebarContainerRef.current &&
+      mousePressOrTouchStart
+    ) {
+      let endX = 0;
+      if (e.nativeEvent instanceof TouchEvent) {
+        endX = e.nativeEvent.touches[0].clientX;
+      } else if (e.nativeEvent instanceof MouseEvent) {
+        endX = e.nativeEvent.clientX;
+      }
+      let totalDistance = touchStart.clientX + endX;
+      if (totalDistance > 0) {
+        totalDistance = 0;
+      }
+      sidebarContainerRef.current.style.left = `${totalDistance}px`;
+    }
+  };
+
+  const onTouchEndOrOnMouseUp = (
+    _: React.TouchEvent<HTMLElement> | React.MouseEvent<HTMLElement>
+  ) => {
+    if (
+      sidebarContainerRef &&
+      sidebarContainerRef.current &&
+      mousePressOrTouchStart
+    ) {
+      const timeDiff = Date.now() - touchStart.time;
+      const distance = Math.abs(sidebarContainerRef.current.offsetLeft);
+      const width = sidebarContainerRef.current.offsetWidth;
+      if (timeDiff > 0 && distance > 0) {
+        if (timeDiff < minimumTransitionDuration) {
+          sidebarContainerRef.current.style.transition = `left ${timeDiff}ms`;
+          dispatch(setHomeActiveProduct(''));
+        } else {
+          sidebarContainerRef.current.style.transition = `left ${minimumTransitionDuration}ms`;
+          if (distance >= width / 2) {
+            dispatch(setHomeActiveProduct(''));
+          }
+        }
+      }
+    }
+    setTouchStart({ clientX: 0, time: 0 });
+    setMousePressOrTouchStart(false);
+  };
+
+  useEffect(() => {
+    if (
+      touchStart.clientX === 0 &&
+      sidebarContainerRef &&
+      sidebarContainerRef.current &&
+      !mousePressOrTouchStart
+    ) {
+      if (!sidebarContainerRef.current.style.transition) {
+        sidebarContainerRef.current.style.transition = `left ${minimumTransitionDuration}ms`;
+      }
+      if (activeProductID === product.id) {
+        sidebarContainerRef.current.style.left = '0px';
+      } else {
+        sidebarContainerRef.current.style.left = `-${sidebarContainerRef.current.offsetWidth}px`;
+      }
+    }
+  }, [
+    mousePressOrTouchStart,
+    activeProductID,
+    touchStart.clientX,
+    dimensions,
+    product.id,
+  ]);
+
+  return (
+    <Box
+      ref={sidebarContainerRef}
+      className={styles.sidebarContainer}
+      onTouchStart={onTouchStartOrOnMouseDown}
+      onTouchMove={onTouchMoveOrOnMouseMouse}
+      onTouchEnd={onTouchEndOrOnMouseUp}
+      onMouseDown={onTouchStartOrOnMouseDown}
+      onMouseMove={onTouchMoveOrOnMouseMouse}
+      onMouseUp={onTouchEndOrOnMouseUp}
+    >
+      {children}
+    </Box>
+  );
+}
