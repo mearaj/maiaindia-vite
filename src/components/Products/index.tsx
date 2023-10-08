@@ -2,7 +2,6 @@ import { useGetProductsQuery } from '@/store/api/api';
 import { Loader } from '@/components';
 import { Box } from '@mui/material';
 import { defaultCategory } from '@/store/data/data';
-import ProductItem from '@/components/Product/Item/item';
 import { selectCategory, useAppSelector } from '@/store';
 import {
   collection,
@@ -11,6 +10,7 @@ import {
   Query,
   where,
 } from '@firebase/firestore';
+import ProductItem from '@/components/Product/Item/item';
 import styles from './index.module.css';
 import { firestore } from '@/config/firebase';
 

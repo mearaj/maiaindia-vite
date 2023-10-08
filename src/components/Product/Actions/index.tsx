@@ -2,17 +2,15 @@ import { Box, Button } from '@mui/material';
 import { Product } from '@/store/data/data';
 import AddToCartIcon from '@mui/icons-material/AddShoppingCart';
 import { useAppDispatch } from '@/store';
-import {
-  setHomeActiveProduct,
-  setShowGlobalLoader,
-} from '@/store/features/ui.ts';
-import { useParams } from 'react-router-dom';
+import { setHomeActiveProduct } from '@/store/features/ui';
+import { useNavigate, useParams } from 'react-router-dom';
 import styles from './index.module.css';
 import Element = React.JSX.Element;
 
 export default function ProductActions({ product }: { product: Product }) {
   const dispatch = useAppDispatch();
   const params = useParams();
+  const navigate = useNavigate();
   let button: Element | null = null;
   if (params.id !== product.id) {
     button = (
@@ -20,10 +18,10 @@ export default function ProductActions({ product }: { product: Product }) {
         className={`${styles.button}`}
         variant="contained"
         fullWidth
-        href={`/products/${product.id}`}
+        // href={`/products/${product.id}`}
         onClick={(_) => {
+          navigate(`/products/${product.id}`);
           dispatch(setHomeActiveProduct(''));
-          dispatch(setShowGlobalLoader(true));
         }}
       >
         Details
