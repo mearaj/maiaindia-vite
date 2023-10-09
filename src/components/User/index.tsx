@@ -35,7 +35,7 @@ export default function UserComponent() {
     <div className={styles.body}>
       <Button
         className={styles.button}
-        onClick={() => signIn(ProviderId.GOOGLE)}
+        onClick={async () => signIn(ProviderId.GOOGLE)}
       >
         <div className={styles.iconContainer}>
           <GoogleIcon className={styles.icon} />

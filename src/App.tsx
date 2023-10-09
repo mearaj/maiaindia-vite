@@ -3,20 +3,19 @@ import ProductPage from '@/pages/Product';
 import CategoriesPage from '@/pages/Home';
 import Providers from '@/providers';
 import RightDrawer from '@/components/RightDrawer';
-import GlobalModal from '@/components/GlobalModal';
 
 function App() {
   return (
     <Providers>
-      <RightDrawer />
       <BrowserRouter>
+        <RightDrawer />
         <Routes>
           <Route path="/home" element={<CategoriesPage />} />
           <Route path="/" element={<Navigate to="/home" />} />
           <Route path="/products/:id" element={<ProductPage />} />
+          <Route path="*" element={<Navigate to="/home" />} />
         </Routes>
       </BrowserRouter>
-      <GlobalModal />
     </Providers>
   );
 }

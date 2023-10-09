@@ -12,7 +12,7 @@ import { useState } from 'react';
 import { selectCategory, useAppDispatch, useAppSelector } from '@/store';
 import { setCategory } from '@/store/features/category';
 import { categories } from '@/store/data/data';
-import { setShowMenu } from '@/store/features/ui.ts';
+import { setShowMenu } from '@/store/features/ui';
 import styles from './index.module.css';
 
 export default function Categories({ className }: { className?: string }) {

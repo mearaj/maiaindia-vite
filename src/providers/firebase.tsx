@@ -1,4 +1,10 @@
-import { createContext, PropsWithChildren, useEffect, useState } from 'react';
+import {
+  createContext,
+  PropsWithChildren,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {
   FacebookAuthProvider,
   getRedirectResult,
@@ -156,21 +162,28 @@ export default function FirebaseProvider({ children }: PropsWithChildren) {
     setError(null);
   };
 
+  const authState = useMemo(
+    () => ({
+      isLoading:
+        isLoadingAuth || isLoadingRedirectResult || isSigningIn || isSigningOut,
+      signIn,
+      signOut,
+      user,
+      error,
+      clearError,
+    }),
+    [
+      error,
+      isLoadingAuth,
+      isLoadingRedirectResult,
+      isSigningIn,
+      isSigningOut,
+      user,
+    ]
+  );
+
   return (
-    <FirebaseContext.Provider
-      value={{
-        isLoading:
-          isLoadingAuth ||
-          isLoadingRedirectResult ||
-          isSigningIn ||
-          isSigningOut,
-        signIn,
-        signOut,
-        user,
-        error,
-        clearError,
-      }}
-    >
+    <FirebaseContext.Provider value={authState}>
       {children}
     </FirebaseContext.Provider>
   );
