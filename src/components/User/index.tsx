@@ -1,5 +1,4 @@
 import { Button } from '@mui/material';
-import { FacebookOutlined as Facebook } from '@mui/icons-material';
 import { useContext } from 'react';
 import { ProviderId } from '@firebase/auth';
 import Loader from '@/components/Loader';
@@ -41,17 +40,6 @@ export default function UserComponent() {
           <GoogleIcon className={styles.icon} />
         </div>
         <div className={styles.linkTitle}>Google Sign In</div>
-      </Button>
-      <Button
-        className={`${styles.button} ${styles.buttonFacebook}`}
-        onClick={() => signIn(ProviderId.FACEBOOK)}
-      >
-        <div
-          className={`${styles.iconContainer} ${styles.facebookIconContainer}`}
-        >
-          <Facebook className={`${styles.icon} ${styles.facebookIcon}`} />
-        </div>
-        <div className={styles.linkTitle}>Facebook Sign In</div>
       </Button>
     </div>
   );

@@ -6,10 +6,8 @@ import {
   useState,
 } from 'react';
 import {
-  FacebookAuthProvider,
   getRedirectResult,
   GoogleAuthProvider,
-  linkWithRedirect,
   onAuthStateChanged,
   ProviderId,
   signInWithRedirect,
@@ -38,7 +36,6 @@ const initialState: AuthState = {
 };
 
 export const FirebaseContext = createContext<AuthState>(initialState);
-const errAccExistsKey = 'auth/account-exists-with-different-credential';
 const redirectKey = '@firebase/auth.getRedirectResult';
 
 export default function FirebaseProvider({ children }: PropsWithChildren) {
@@ -70,9 +67,6 @@ export default function FirebaseProvider({ children }: PropsWithChildren) {
       case ProviderId.GOOGLE:
         provider = new GoogleAuthProvider();
         break;
-      case ProviderId.FACEBOOK:
-        provider = new FacebookAuthProvider();
-        break;
       default:
         break;
     }
@@ -102,43 +96,10 @@ export default function FirebaseProvider({ children }: PropsWithChildren) {
         if (providerIDAlt) {
           setIsLoadingRedirectResult(true);
           try {
-            const result = await getRedirectResult(auth);
-            if (result) {
-              // check if link with redirect required
-              const errVal = localStorage.getItem(errAccExistsKey);
-              localStorage.removeItem(errAccExistsKey);
-              if (errVal) {
-                const firebaseError: FirebaseError = JSON.parse(errVal);
-                const verifiedProvider = (
-                  firebaseError.customData?._tokenResponse as any
-                ).verifiedProvider[0];
-                const { providerId } = firebaseError.customData
-                  ?._tokenResponse as any;
-                if (
-                  verifiedProvider === ProviderId.GOOGLE &&
-                  providerId === ProviderId.FACEBOOK
-                ) {
-                  const provider = new FacebookAuthProvider();
-                  await linkWithRedirect(result.user, provider);
-                }
-              }
-            }
+            await getRedirectResult(auth);
           } catch (err: unknown) {
             if (err instanceof FirebaseError) {
-              if (err.code === errAccExistsKey) {
-                const verifiedProvider = (err.customData?._tokenResponse as any)
-                  .verifiedProvider[0];
-                const { providerId } = err.customData?._tokenResponse as any;
-                if (
-                  verifiedProvider === ProviderId.GOOGLE &&
-                  providerId === ProviderId.FACEBOOK
-                ) {
-                  localStorage.setItem(errAccExistsKey, JSON.stringify(err));
-                  signIn(verifiedProvider);
-                }
-              } else {
-                errStr = err.code;
-              }
+              errStr = err.code;
             } else {
               errStr = (err as any).toString();
             }

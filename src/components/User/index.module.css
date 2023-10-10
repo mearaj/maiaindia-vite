@@ -33,11 +33,6 @@
     background-color: rgba(var(--bgPrimaryR), var(--bgPrimaryG), var(--bgPrimaryB), 1);
 }
 
-.buttonFacebook:global(.MuiButtonBase-root) {
-    background-color: #4267B2;
-    color: white;
-}
-
 .buttonSignOut:global(.MuiButtonBase-root) {
     background-color: rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 1);
     justify-content: center;
@@ -67,10 +62,4 @@
 
 .icon {
     font-size: 24px;
-}
-
-.facebookIcon {
-    fill: #4267B2;
-    font-size: 32px;
-    /*border-radius: 50%;*/
 }
