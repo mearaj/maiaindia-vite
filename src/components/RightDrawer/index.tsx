@@ -78,7 +78,8 @@ export default function RightDrawer(_: DrawerProps) {
       const timeDiff = Date.now() - touchStartPos.time;
       const distance = Math.abs(drawerRef.current.offsetLeft);
       const width = drawerRef.current.offsetWidth;
-      if (timeDiff > 0 && distance > 0) {
+      // 50 accounts for horizontal scrollbar size
+      if (timeDiff > 0 && distance > 40) {
         if (timeDiff < minimumTransitionDuration) {
           drawerRef.current.style.transition = `right ${timeDiff}ms`;
           dispatch(setShowMenu(false));

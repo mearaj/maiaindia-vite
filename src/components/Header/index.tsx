@@ -1,4 +1,5 @@
 import Menu from '@mui/icons-material/Menu';
+import Diamond from '@mui/icons-material/Diamond';
 import { Button, IconButton } from '@mui/material';
 import ArrowBack from '@mui/icons-material/ArrowBackIosNew';
 import ShoppingCart from '@mui/icons-material/ShoppingCart';
@@ -68,7 +69,10 @@ export default function Header({
       </div>
       <div className={styles.sectionRight}>
         <div className={styles.drawerInteractionItems}>
-          <Button className={styles.button} onClick={() => {}}>
+          <Button className={styles.button} onClick={() => navigate('/admin')}>
+            <Diamond className={`${styles.customIcon} ${styles.icon}`} />
+          </Button>
+          <Button className={styles.button} onClick={() => navigate('/cart')}>
             <ShoppingCart
               className={`${styles.shoppingCartIcon} ${styles.icon}`}
             />

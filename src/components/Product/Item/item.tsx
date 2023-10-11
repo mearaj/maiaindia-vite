@@ -1,8 +1,7 @@
 import {
   defaultPlaceholderImage,
-  ImageMetadate,
+  ImageMetadata,
   Product,
-  productResolutions,
 } from '@/store/data/data';
 import { useCallback, useEffect, useRef } from 'react';
 import { Box, Card, IconButton } from '@mui/material';
@@ -12,48 +11,21 @@ import { setHomeActiveProduct } from '@/store/features/ui';
 import ProductPrice from '@/components/Product/Price';
 import ProductActions from '@/components/Product/Actions';
 import ContentDrawer from '@/components/ContentDrawer';
-import useDimensions from '@/hooks/dimensions';
 import styles from './index.module.css';
 
 export default function ProductItem({ product }: { product: Product }) {
   const cardContentReference = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
-  const dimensions = useDimensions();
 
-  const getPreferredImageSrc = (): ImageMetadate => {
+  const getPreferredImageSrc = (): ImageMetadata => {
     const image = { ...defaultPlaceholderImage };
-    let includePaths: string[] = [];
-    if (dimensions.width < 600) {
-      includePaths = [
-        productResolutions.res270x203,
-        productResolutions.res270x270,
-      ];
-    } else if (dimensions.width < 1100) {
-      includePaths = [
-        productResolutions.res540x405,
-        productResolutions.res540x540,
-      ];
-    } else {
-      includePaths = [
-        productResolutions.res540x405,
-        productResolutions.res540x540,
-      ];
-    }
-    const found = product.images?.find((res) => {
-      for (let i = 0; i < includePaths.length; i += 1) {
-        if (includePaths[i] === res) {
-          return true;
-        }
+    const images = [...(product.images ?? [])];
+    if (images && images.length > 0) {
+      for (let i = 0; i < images.length; i += 1) {
+        images[i] = `/images/${product.id}/${images[i]}`;
       }
-      return false;
-    });
-    if (found) {
-      const imageDimensions = found.split('x');
-      const width = parseInt(imageDimensions[0], 10);
-      const height = parseInt(imageDimensions[1], 10);
-      image.src = `/images/${product.id}/${found}.png`;
-      image.width = width;
-      image.height = height;
+      image.src = images[images.length - 1];
+      image.srcSet = images.join(',');
     }
     return image;
   };
@@ -86,10 +58,9 @@ export default function ProductItem({ product }: { product: Product }) {
       >
         <Box className={styles.sectionTop}>
           <img
+            srcSet={getPreferredImageSrc().srcSet}
             src={getPreferredImageSrc().src}
             alt={product.name}
-            width={getPreferredImageSrc().width}
-            height={getPreferredImageSrc().height}
             className={styles.img}
           />
         </Box>

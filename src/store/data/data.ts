@@ -19,16 +19,14 @@ export interface Product {
   name: string;
 }
 
-export interface ImageMetadate {
+export interface ImageMetadata {
+  srcSet?: string;
   src: string;
-  width: number;
-  height: number;
 }
 
-export const defaultPlaceholderImage: ImageMetadate = {
+export const defaultPlaceholderImage: ImageMetadata = {
+  srcSet: '/images/logo-circle-dark-green.png',
   src: LogoCircleDarkGreen,
-  width: 425,
-  height: 470,
 };
 
 export const categories: Category[] = [
@@ -49,23 +47,3 @@ export const categories: Category[] = [
     name: 'Bracelets',
   },
 ];
-
-const res270x270 = '270x270';
-const res540x540 = '540x540';
-const res810x810 = '810x810';
-const res1080x1080 = '1080x1080';
-const res270x203 = '270x203';
-const res540x405 = '540x405';
-const res810x608 = '810x608';
-const res1080x810 = '1080x810';
-
-export const productResolutions = {
-  res270x203,
-  res270x270,
-  res540x405,
-  res540x540,
-  res810x608,
-  res810x810,
-  res1080x810,
-  res1080x1080,
-};

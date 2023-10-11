@@ -3,16 +3,20 @@ import ProductPage from '@/pages/Product';
 import CategoriesPage from '@/pages/Home';
 import Providers from '@/providers';
 import RightDrawer from '@/components/RightDrawer';
+import AdminPage from '@/pages/Admin';
+import CartPage from '@/pages/Cart';
 
 function App() {
   return (
     <Providers>
+      <RightDrawer />
       <BrowserRouter>
-        <RightDrawer />
         <Routes>
+          <Route index element={<Navigate to="/home" />} />
           <Route path="/home" element={<CategoriesPage />} />
-          <Route path="/" element={<Navigate to="/home" />} />
           <Route path="/products/:id" element={<ProductPage />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/admin" element={<AdminPage />} />
           <Route path="*" element={<Navigate to="/home" />} />
         </Routes>
       </BrowserRouter>
