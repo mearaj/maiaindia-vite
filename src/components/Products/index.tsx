@@ -36,8 +36,6 @@ function Products() {
     return <Loader />;
   }
 
-  console.log(products);
-
   return (
     <Box className={styles.container}>
       {products &&

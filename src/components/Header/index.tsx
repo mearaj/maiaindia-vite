@@ -69,7 +69,7 @@ export default function Header({
       </div>
       <div className={styles.sectionRight}>
         <div className={styles.drawerInteractionItems}>
-          <Button className={styles.button} onClick={() => navigate('/admin')}>
+          <Button className={styles.button} onClick={() => navigate('/custom')}>
             <Diamond className={`${styles.customIcon} ${styles.icon}`} />
           </Button>
           <Button className={styles.button} onClick={() => navigate('/cart')}>

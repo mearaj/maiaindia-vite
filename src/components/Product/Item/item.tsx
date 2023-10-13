@@ -64,6 +64,7 @@ export default function ProductItem({ product }: { product: Product }) {
             className={styles.img}
           />
         </Box>
+        <br />
         <Box className={styles.sectionBottom}>
           <Box className={styles.productName}>{product.name}</Box>
           <ProductPrice />

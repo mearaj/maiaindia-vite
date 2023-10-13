@@ -5,12 +5,16 @@
     justify-content: space-between;
 }
 
+.sectionTop {
+    flex-grow: 1;
+}
+
 .sectionBottom {
     padding: 4px 16px 16px;
 }
 
 .img {
-    height: auto;
+    height: 100%;
     width: 100%;
     object-fit: fill;
     object-position: center;
@@ -39,4 +43,7 @@
     line-height: 1.2;
     font-weight: 500;
     margin-bottom: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }

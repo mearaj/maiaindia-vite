@@ -46,4 +46,8 @@ export const categories: Category[] = [
     id: 'tADYfOOYk7xRXac0dGpt',
     name: 'Bracelets',
   },
+  {
+    id: '5cEmfaZG7zoj68rt388C',
+    name: 'Custom',
+  },
 ];

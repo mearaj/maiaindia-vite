@@ -2,7 +2,7 @@ import { createApi, fakeBaseQuery } from '@reduxjs/toolkit/query/react';
 import { doc, DocumentData, getDoc, getDocs, Query } from '@firebase/firestore';
 import { FirebaseError } from '@firebase/util';
 import { Product } from '@/store/data/data';
-import { firestore } from '@/config/firebase.ts';
+import { firestore } from '@/config/firebase';
 
 const apiSlice = createApi({
   reducerPath: 'api',
