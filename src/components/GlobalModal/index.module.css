@@ -7,7 +7,7 @@
     padding: 32px;
     background-color: rgba(0, 0, 0, 0.5);
     visibility: hidden;
-    z-index: 100;
+    z-index: 2000;
     backdrop-filter: blur(0px) opacity(0);
 }
 

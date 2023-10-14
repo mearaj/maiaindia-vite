@@ -2,9 +2,17 @@ import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import { PropsWithChildren } from 'react';
 
 declare module '@mui/material/styles' {
-  interface Palette {}
+  interface Theme {
+    dimensions: {
+      appBarHeight: number;
+    };
+  }
 
-  interface PaletteOptions {}
+  interface ThemeOptions {
+    dimensions: {
+      appBarHeight: number;
+    };
+  }
 }
 
 export default function AppThemeProvider({ children }: PropsWithChildren) {
@@ -13,6 +21,9 @@ export default function AppThemeProvider({ children }: PropsWithChildren) {
       primary: {
         main: '#001900',
       },
+    },
+    dimensions: {
+      appBarHeight: 72,
     },
   });
   return (

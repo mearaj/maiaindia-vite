@@ -13,21 +13,12 @@ import { selectCategory, useAppDispatch, useAppSelector } from '@/store';
 import { setCategory } from '@/store/features/category';
 import { categories } from '@/store/data/data';
 import { setShowMenu } from '@/store/features/ui';
-import styles from './index.module.css';
 
-export default function Categories({ className }: { className?: string }) {
+export default function Categories() {
   const dispatch = useAppDispatch();
   const [expanded, setExpanded] = useState(false);
-  let accordionClassName = styles.accordion;
-  if (className) {
-    accordionClassName = `${accordionClassName} ${className}`;
-  }
   return (
-    <Accordion
-      className={accordionClassName}
-      expanded={expanded}
-      onChange={() => setExpanded(!expanded)}
-    >
+    <Accordion expanded={expanded} onChange={() => setExpanded(!expanded)}>
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
         aria-controls="panel1a-content"

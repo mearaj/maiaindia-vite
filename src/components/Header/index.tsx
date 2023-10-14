@@ -1,6 +1,14 @@
 import Menu from '@mui/icons-material/Menu';
 import Diamond from '@mui/icons-material/Diamond';
-import { Button, Card, IconButton } from '@mui/material';
+import {
+  AppBar,
+  Box,
+  Button,
+  SxProps,
+  Theme,
+  Toolbar,
+  useTheme,
+} from '@mui/material';
 import ArrowBack from '@mui/icons-material/ArrowBackIosNew';
 import ShoppingCart from '@mui/icons-material/ShoppingCart';
 import { useAppDispatch } from '@/store';
@@ -9,22 +17,25 @@ import { setShowMenu } from '@/store/features/ui';
 import useDimensions from '@/hooks/dimensions';
 import logoDarkGreen from '@/assets/images/logo-dark-green.png';
 import logoCircleDarkGreen from '@/assets/images/logo-circle-dark-green.png';
-import styles from './index.module.css';
+import RightDrawer from '@/components/RightDrawer';
+import createStyles from './styles';
 
 export interface HeaderProps {
-  className?: string;
   showBackIcon?: boolean;
   onBackIconClick?: () => void;
+  sx?: SxProps<Theme>;
 }
 
 export default function Header({
-  className,
   showBackIcon = false,
   onBackIconClick,
+  sx,
 }: HeaderProps) {
   const dimensions = useDimensions();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const styles = createStyles(theme);
   const handleBackIconClick = () => {
     if (onBackIconClick) {
       onBackIconClick();
@@ -39,52 +50,58 @@ export default function Header({
     dispatch(setShowMenu(true));
   };
 
-  let headerClassName = styles.header;
-  if (className) {
-    headerClassName = `${headerClassName} ${className}`;
-  }
-
   let logoImgSrc = logoCircleDarkGreen;
   if (dimensions.width >= 360) {
     logoImgSrc = logoDarkGreen;
   }
 
   return (
-    <Card className={headerClassName}>
-      <div className={styles.sectionLeft}>
-        {showBackIcon && (
-          <IconButton className={styles.button} onClick={handleBackIconClick}>
-            <ArrowBack className={`${styles.arrowBackIcon} ${styles.icon}`} />
-          </IconButton>
-        )}
-        {!showBackIcon && (
-          <Button className={`${styles.button} ${styles.logoIconButton}`}>
-            <img
-              src={logoImgSrc}
-              className={`${styles.logoIcon} ${styles.icon}`}
-              alt="Logo"
-            />
-          </Button>
-        )}
-      </div>
-      <div className={styles.sectionRight}>
-        <div className={styles.drawerInteractionItems}>
-          <Button className={styles.button} onClick={() => navigate('/custom')}>
-            <Diamond className={`${styles.customIcon} ${styles.icon}`} />
-          </Button>
-          <Button className={styles.button} onClick={() => navigate('/cart')}>
-            <ShoppingCart
-              className={`${styles.shoppingCartIcon} ${styles.icon}`}
-            />
-          </Button>
-          <Button
-            className={styles.button}
-            onClick={() => handleInteractionItemClick()}
-          >
-            <Menu className={`${styles.menuIcon} ${styles.icon}`} />
-          </Button>
-        </div>
-      </div>
-    </Card>
+    <>
+      <AppBar
+        position="sticky"
+        sx={{
+          display: 'flex',
+          height: `${theme.dimensions.appBarHeight}px`,
+          width: '100%',
+          backgroundColor: 'white',
+          ...sx,
+        }}
+      >
+        <Toolbar sx={styles.toolbar}>
+          <Box sx={styles.sectionLeft}>
+            {showBackIcon && (
+              <Button sx={styles.icon} onClick={handleBackIconClick}>
+                <ArrowBack sx={styles.icon} />
+              </Button>
+            )}
+            {!showBackIcon && (
+              <Button sx={styles.icon}>
+                <Box
+                  src={logoImgSrc}
+                  component="img"
+                  sx={styles.icon}
+                  alt="Logo"
+                />
+              </Button>
+            )}
+          </Box>
+          <Box sx={styles.sectionRight}>
+            <Button sx={styles.icon} onClick={() => navigate('/custom')}>
+              <Diamond sx={styles.icon} />
+            </Button>
+            <Button sx={styles.icon} onClick={() => navigate('/cart')}>
+              <ShoppingCart sx={styles.icon} />
+            </Button>
+            <Button
+              sx={styles.icon}
+              onClick={() => handleInteractionItemClick()}
+            >
+              <Menu sx={styles.icon} />
+            </Button>
+          </Box>
+        </Toolbar>
+      </AppBar>
+      <RightDrawer />
+    </>
   );
 }
