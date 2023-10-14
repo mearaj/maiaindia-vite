@@ -14,10 +14,10 @@ import ShoppingCart from '@mui/icons-material/ShoppingCart';
 import { useAppDispatch } from '@/store';
 import { useNavigate } from 'react-router-dom';
 import { setShowMenu } from '@/store/features/ui';
+import Drawer from '@/components/Drawer';
 import useDimensions from '@/hooks/dimensions';
 import logoDarkGreen from '@/assets/images/logo-dark-green.png';
 import logoCircleDarkGreen from '@/assets/images/logo-circle-dark-green.png';
-import RightDrawer from '@/components/RightDrawer';
 import createStyles from './styles';
 
 export interface HeaderProps {
@@ -101,7 +101,7 @@ export default function Header({
           </Box>
         </Toolbar>
       </AppBar>
-      <RightDrawer />
+      <Drawer />
     </>
   );
 }

@@ -22,7 +22,7 @@ export default function CustomPage() {
 
   return (
     <div className={styles.page}>
-      <Header className={styles.header} showBackIcon />
+      <Header showBackIcon />
       <div className={styles.body}>
         <h3 style={{ textAlign: 'center' }}>Request Custom Quote</h3>
         <FormControl fullWidth className={styles.formFieldContainer}>

@@ -70,7 +70,7 @@ export default function ProductPage() {
 
   return (
     <Box className={styles.layout}>
-      <Header className={styles.header} showBackIcon />
+      <Header showBackIcon />
       {body}
     </Box>
   );

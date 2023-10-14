@@ -6,7 +6,7 @@ import styles from './index.module.css';
 export default function CategoriesPage() {
   return (
     <div className={styles.layout}>
-      <Header className={styles.header} />
+      <Header />
       <Videos className={styles.videosContainer} />
       <Products />
     </div>
