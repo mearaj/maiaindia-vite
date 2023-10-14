@@ -37,9 +37,13 @@ export default function Header({
   const theme = useTheme();
   const styles = createStyles(theme);
   const handleBackIconClick = () => {
+    console.log(window.history.state);
     if (onBackIconClick) {
       onBackIconClick();
-    } else if (window.history.state && window.history.state.index > 0) {
+    } else if (
+      window.history.state &&
+      (window.history.state.idx > 0 || window.history.state.index > 0)
+    ) {
       navigate(-1);
     } else {
       navigate('/home', { replace: true });

@@ -9,7 +9,6 @@ import {
 } from '@/store';
 import { Product } from '@/store/data/data';
 import useDimensions from '@/hooks/dimensions';
-import styles from './index.module.css';
 
 export interface ContentDrawerProps extends PropsWithChildren {
   product: Product;
@@ -129,7 +128,13 @@ export default function ContentDrawer({
   return (
     <Card
       ref={sidebarContainerRef}
-      className={styles.sidebarContainer}
+      sx={{
+        position: 'absolute',
+        height: '100%',
+        width: '100%',
+        left: '-100%',
+        borderRadius: 0,
+      }}
       onTouchStart={onTouchStartOrOnMouseDown}
       onTouchMove={onTouchMoveOrOnMouseMouse}
       onTouchEnd={onTouchEndOrOnMouseUp}

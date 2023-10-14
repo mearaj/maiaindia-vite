@@ -4,7 +4,7 @@ import {
   Product,
 } from '@/store/data/data';
 import { useCallback, useEffect, useRef } from 'react';
-import { Box, Card, IconButton } from '@mui/material';
+import { Box, Card, IconButton, Link } from '@mui/material';
 import Close from '@mui/icons-material/Close';
 import { store, useAppDispatch } from '@/store';
 import { setHomeActiveProduct } from '@/store/features/ui';
@@ -49,8 +49,20 @@ export default function ProductItem({ product }: { product: Product }) {
   }, [onWindowClicked]);
 
   return (
-    <Card ref={cardContentReference} className={styles.card} key={product.id}>
-      <Box
+    <Card
+      ref={cardContentReference}
+      sx={{
+        padding: '0px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        position: 'relative',
+        borderRadius: 0,
+      }}
+      key={product.id}
+    >
+      <Link
+        href={`#${product.id}`}
         className={styles.cardBody}
         onClick={(__) => {
           dispatch(setHomeActiveProduct(product.id));
@@ -69,7 +81,7 @@ export default function ProductItem({ product }: { product: Product }) {
           <Box className={styles.productName}>{product.name}</Box>
           <ProductPrice />
         </Box>
-      </Box>
+      </Link>
       <ContentDrawer product={product}>
         <IconButton
           onClick={(_) => {
