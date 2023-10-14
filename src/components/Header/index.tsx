@@ -37,7 +37,6 @@ export default function Header({
   const theme = useTheme();
   const styles = createStyles(theme);
   const handleBackIconClick = () => {
-    console.log(window.history.state);
     if (onBackIconClick) {
       onBackIconClick();
     } else if (

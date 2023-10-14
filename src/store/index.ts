@@ -24,8 +24,6 @@ setupListeners(store.dispatch);
 
 export const selectCategory = (state: RootState) =>
   state.categoryReducer.selectedCategory;
-export const selectShowGlobalLoader = (state: RootState) =>
-  state.uiReducer.showGlobalLoader;
 
 export const selectHomeActiveProduct = (state: RootState) =>
   state.uiReducer.homeActiveProductID;

@@ -59,7 +59,6 @@ export default function ProductItem({ product }: { product: Product }) {
         position: 'relative',
         borderRadius: 0,
       }}
-      key={product.id}
     >
       <Link
         href={`#${product.id}`}
