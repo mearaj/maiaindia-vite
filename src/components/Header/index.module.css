@@ -1,11 +1,11 @@
-.header {
+.header:global(.MuiPaper-root) {
     display: flex;
     height: var(--headerPrimaryHeight);
     width: 100%;
     align-items: center;
-    background-color: rgba(var(--bgPrimaryR), var(--bgPrimaryG), var(--bgPrimaryB), 1);
     padding: 8px;
     justify-content: space-between;
+    border-radius: 0;
 }
 
 .sectionLeft, .sectionRight {
@@ -57,11 +57,10 @@
     width: auto;
     max-height: none;
     max-width: none;
-    fill: rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 0.75);
 }
 
 .button:hover > .icon {
-    fill: rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 1);
+
 }
 
 @media (min-width: 400px) {

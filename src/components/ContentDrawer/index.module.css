@@ -3,6 +3,6 @@
     height: 100%;
     width: 100%;
     left: -100%;
-    background-color: rgba(var(--bgPrimaryR), var(--bgPrimaryG), var(--bgPrimaryB), 1);
+
     overflow-y: auto;
 }

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { PropsWithChildren, useEffect, useRef, useState } from 'react';
-import { Box } from '@mui/material';
+import { Card } from '@mui/material';
 import { setHomeActiveProduct } from '@/store/features/ui';
 import {
   selectHomeActiveProduct,
@@ -19,7 +19,7 @@ export default function ContentDrawer({
   children,
   product,
 }: ContentDrawerProps) {
-  const sidebarContainerRef = useRef<HTMLElement>(null);
+  const sidebarContainerRef = useRef<HTMLDivElement>(null);
   const activeProductID = useAppSelector(selectHomeActiveProduct);
   const dispatch = useAppDispatch();
   const dimensions = useDimensions();
@@ -127,7 +127,7 @@ export default function ContentDrawer({
   ]);
 
   return (
-    <Box
+    <Card
       ref={sidebarContainerRef}
       className={styles.sidebarContainer}
       onTouchStart={onTouchStartOrOnMouseDown}
@@ -136,8 +136,9 @@ export default function ContentDrawer({
       onMouseDown={onTouchStartOrOnMouseDown}
       onMouseMove={onTouchMoveOrOnMouseMouse}
       onMouseUp={onTouchEndOrOnMouseUp}
+      role="presentation"
     >
       {children}
-    </Box>
+    </Card>
   );
 }

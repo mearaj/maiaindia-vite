@@ -34,5 +34,5 @@
 }
 
 .swiper > :global(.swiper-pagination > .swiper-pagination-bullet) {
-    background-color: rgba(var(--bgPrimaryR), var(--bgPrimaryG), var(--bgPrimaryB), 1);
+    
 }

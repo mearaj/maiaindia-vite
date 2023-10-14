@@ -1,6 +1,6 @@
 import Menu from '@mui/icons-material/Menu';
 import Diamond from '@mui/icons-material/Diamond';
-import { Button, IconButton } from '@mui/material';
+import { Button, Card, IconButton } from '@mui/material';
 import ArrowBack from '@mui/icons-material/ArrowBackIosNew';
 import ShoppingCart from '@mui/icons-material/ShoppingCart';
 import { useAppDispatch } from '@/store';
@@ -50,7 +50,7 @@ export default function Header({
   }
 
   return (
-    <header className={headerClassName}>
+    <Card className={headerClassName}>
       <div className={styles.sectionLeft}>
         {showBackIcon && (
           <IconButton className={styles.button} onClick={handleBackIconClick}>
@@ -85,6 +85,6 @@ export default function Header({
           </Button>
         </div>
       </div>
-    </header>
+    </Card>
   );
 }

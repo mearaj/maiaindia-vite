@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Accordion,
   AccordionSummary,
+  Card,
   IconButton,
   Typography,
 } from '@mui/material';
@@ -116,7 +117,7 @@ export default function RightDrawer(_: DrawerProps) {
   }, [resetPosition, dimensions]);
 
   return (
-    <nav
+    <Card
       ref={drawerRef}
       className={styles.nav}
       onTouchStart={onTouchStartOrOnMouseDown}
@@ -161,6 +162,6 @@ export default function RightDrawer(_: DrawerProps) {
         </Accordion>
         <Categories />
       </div>
-    </nav>
+    </Card>
   );
 }

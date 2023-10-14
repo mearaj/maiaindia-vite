@@ -26,16 +26,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    box-shadow: 0 2px 1px -1px rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 0.2),
-    0 1px 1px 0 rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 0.14),
-    0 1px 3px 0 rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 0.12);
     position: relative;
-}
-
-.card:hover, .card:active {
-    box-shadow: 0 2px 4px -1px rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 0.2),
-    0 4px 5px 0 rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 0.14),
-    0 1px 10px 0 rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 0.12);
 }
 
 .productName {

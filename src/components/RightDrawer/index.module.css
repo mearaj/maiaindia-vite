@@ -4,13 +4,11 @@
     right: -100vw;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(var(--bgPrimaryR), var(--bgPrimaryG), var(--bgPrimaryB), 1);
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     border-radius: 0;
-    color: rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 1);
     z-index: 50;
 }
 
@@ -43,7 +41,6 @@
 }
 
 .closeIcon {
-    color: rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 0.5);
     font-size: 32px;
 }
 

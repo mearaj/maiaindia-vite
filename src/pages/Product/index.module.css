@@ -56,14 +56,12 @@
 }
 
 .swiper > :global(.swiper-pagination > .swiper-pagination-bullet) {
-    background-color: rgba(var(--bgPrimaryR), var(--bgPrimaryG), var(--bgPrimaryB), 1);
     position: relative;
 }
 
 .swiper > :global(.swiper-pagination > .swiper-pagination-bullet::before) {
     content: "";
     display: block;
-    background-color: rgba(var(--fgPrimaryR), var(--fgPrimaryG), var(--fgPrimaryB), 1);
     position: absolute;
     border-radius: 50%;
     height: 100%;
