@@ -1,26 +1,29 @@
 import * as React from 'react';
-import { PropsWithChildren, useEffect, useRef, useState } from 'react';
-import { Card } from '@mui/material';
-import { setHomeActiveProduct } from '@/store/features/ui';
 import {
-  selectHomeActiveProduct,
-  useAppDispatch,
-  useAppSelector,
-} from '@/store';
+  Dispatch,
+  PropsWithChildren,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { Card } from '@mui/material';
 import { Product } from '@/store/data/data';
 import useDimensions from '@/hooks/dimensions';
 
 export interface ContentDrawerProps extends PropsWithChildren {
   product: Product;
+  activeProductID: string;
+  setActiveProductID: Dispatch<SetStateAction<string>>;
 }
 
 export default function ContentDrawer({
   children,
   product,
+  activeProductID = '',
+  setActiveProductID,
 }: ContentDrawerProps) {
   const sidebarContainerRef = useRef<HTMLDivElement>(null);
-  const activeProductID = useAppSelector(selectHomeActiveProduct);
-  const dispatch = useAppDispatch();
   const dimensions = useDimensions();
   const minimumTransitionDuration = 250; // milliseconds
   const [touchStart, setTouchStart] = useState({
@@ -85,14 +88,14 @@ export default function ContentDrawer({
       const timeDiff = Date.now() - touchStart.time;
       const distance = Math.abs(sidebarContainerRef.current.offsetLeft);
       const width = sidebarContainerRef.current.offsetWidth;
-      if (timeDiff > 0 && distance > 0) {
+      if (timeDiff > 0 && distance > 0 && activeProductID === product.id) {
         if (timeDiff < minimumTransitionDuration) {
           sidebarContainerRef.current.style.transition = `left ${timeDiff}ms`;
-          dispatch(setHomeActiveProduct(''));
+          setActiveProductID('');
         } else {
           sidebarContainerRef.current.style.transition = `left ${minimumTransitionDuration}ms`;
           if (distance >= width / 2) {
-            dispatch(setHomeActiveProduct(''));
+            setActiveProductID('');
           }
         }
       }

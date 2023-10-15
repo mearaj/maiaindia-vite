@@ -24,10 +24,6 @@ setupListeners(store.dispatch);
 
 export const selectCategory = (state: RootState) =>
   state.categoryReducer.selectedCategory;
-
-export const selectHomeActiveProduct = (state: RootState) =>
-  state.uiReducer.homeActiveProductID;
-
 export const selectShowMenu = (state: RootState) => state.uiReducer.showMenu;
 
 export type RootState = ReturnType<typeof store.getState>;

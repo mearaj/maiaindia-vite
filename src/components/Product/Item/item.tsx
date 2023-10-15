@@ -3,24 +3,16 @@ import {
   ImageMetadata,
   Product,
 } from '@/store/data/data';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Box, IconButton, Paper } from '@mui/material';
 import Close from '@mui/icons-material/Close';
-import {
-  selectHomeActiveProduct,
-  useAppDispatch,
-  useAppSelector,
-} from '@/store';
-import { setHomeActiveProduct } from '@/store/features/ui';
 import ProductPrice from '@/components/Product/Price';
 import ProductActions from '@/components/Product/Actions';
 import ContentDrawer from '@/components/ContentDrawer';
 
 export default function ProductItem({ product }: { product: Product }) {
   const cardContentReference = useRef<HTMLDivElement>(null);
-  const dispatch = useAppDispatch();
-  const activeProductID = useAppSelector(selectHomeActiveProduct);
-
+  const [activeProductID, setActiveProductID] = useState('');
   const getPreferredImageSrc = (): ImageMetadata => {
     const image = { ...defaultPlaceholderImage };
     const images = [...(product.images ?? [])];
@@ -37,14 +29,15 @@ export default function ProductItem({ product }: { product: Product }) {
   const onWindowClicked = useCallback(
     (ev: MouseEvent) => {
       if (cardContentReference && cardContentReference.current) {
-        if (!ev.composedPath().includes(cardContentReference.current)) {
-          if (activeProductID === product.id) {
-            dispatch(setHomeActiveProduct(''));
-          }
+        if (
+          !ev.composedPath().includes(cardContentReference.current) &&
+          activeProductID === product.id
+        ) {
+          setActiveProductID('');
         }
       }
     },
-    [activeProductID, dispatch, product.id]
+    [activeProductID, product.id]
   );
   useEffect(() => {
     window.addEventListener('click', onWindowClicked);
@@ -72,7 +65,7 @@ export default function ProductItem({ product }: { product: Product }) {
           justifyContent: 'space-between',
         }}
         onClick={(__) => {
-          dispatch(setHomeActiveProduct(product.id));
+          setActiveProductID(product.id);
         }}
         role="presentation"
       >
@@ -109,10 +102,14 @@ export default function ProductItem({ product }: { product: Product }) {
           <ProductPrice />
         </Box>
       </Box>
-      <ContentDrawer product={product}>
+      <ContentDrawer
+        product={product}
+        activeProductID={activeProductID}
+        setActiveProductID={setActiveProductID}
+      >
         <IconButton
           onClick={(_) => {
-            dispatch(setHomeActiveProduct(''));
+            setActiveProductID('');
           }}
         >
           <Close />
