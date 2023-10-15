@@ -7,7 +7,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { Card } from '@mui/material';
+import { Paper } from '@mui/material';
 import { Product } from '@/store/data/data';
 import useDimensions from '@/hooks/dimensions';
 
@@ -129,15 +129,15 @@ export default function ContentDrawer({
   ]);
 
   return (
-    <Card
+    <Paper
       ref={sidebarContainerRef}
-      elevation={activeProductID === product.id ? 8 : 1}
       sx={{
         position: 'absolute',
         height: '100%',
         width: '100%',
         left: '-100%',
-        overflow: 'hidden',
+        overflowX: 'hidden',
+        borderRadius: 0,
       }}
       onTouchStart={onTouchStartOrOnMouseDown}
       onTouchMove={onTouchMoveOrOnMouseMouse}
@@ -148,6 +148,6 @@ export default function ContentDrawer({
       role="presentation"
     >
       {children}
-    </Card>
+    </Paper>
   );
 }

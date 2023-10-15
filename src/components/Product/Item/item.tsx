@@ -47,7 +47,7 @@ export default function ProductItem({ product }: { product: Product }) {
   return (
     <Paper
       ref={cardContentReference}
-      elevation={activeProductID === product.id ? 8 : 1}
+      elevation={activeProductID === product.id ? 24 : 1}
       sx={{
         padding: '0px',
         display: 'flex',
@@ -55,6 +55,7 @@ export default function ProductItem({ product }: { product: Product }) {
         justifyContent: 'space-between',
         position: 'relative',
         overflow: 'hidden',
+        borderRadius: 0,
       }}
     >
       <Box
