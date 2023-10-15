@@ -41,15 +41,15 @@ export default function Drawer(_: DrawerProps) {
     setMousePressOrTouchStart(true);
     if (drawerRef && drawerRef.current) {
       drawerRef.current.style.transition = '';
-      if (e.nativeEvent instanceof TouchEvent) {
+      if (e.nativeEvent instanceof MouseEvent) {
+        setTouchStartPos({
+          clientX: drawerRef.current.offsetLeft - e.nativeEvent.clientX,
+          time: Date.now(),
+        });
+      } else if (e.nativeEvent instanceof TouchEvent) {
         setTouchStartPos({
           clientX:
             drawerRef.current.offsetLeft - e.nativeEvent.touches[0].clientX,
-          time: Date.now(),
-        });
-      } else if (e.nativeEvent instanceof MouseEvent) {
-        setTouchStartPos({
-          clientX: drawerRef.current.offsetLeft - e.nativeEvent.clientX,
           time: Date.now(),
         });
       }
@@ -61,10 +61,10 @@ export default function Drawer(_: DrawerProps) {
   ) => {
     if (drawerRef && drawerRef.current && mousePressOrTouchStart) {
       let endX = 0;
-      if (e.nativeEvent instanceof TouchEvent) {
-        endX = e.nativeEvent.touches[0].clientX;
-      } else if (e.nativeEvent instanceof MouseEvent) {
+      if (e.nativeEvent instanceof MouseEvent) {
         endX = e.nativeEvent.clientX;
+      } else if (e.nativeEvent instanceof TouchEvent) {
+        endX = e.nativeEvent.touches[0].clientX;
       }
       let totalDistance = touchStartPos.clientX + endX;
       if (totalDistance < 0) {

@@ -4,9 +4,13 @@ import {
   Product,
 } from '@/store/data/data';
 import { useCallback, useEffect, useRef } from 'react';
-import { Box, Card, IconButton } from '@mui/material';
+import { Box, IconButton, Paper } from '@mui/material';
 import Close from '@mui/icons-material/Close';
-import { store, useAppDispatch } from '@/store';
+import {
+  selectHomeActiveProduct,
+  useAppDispatch,
+  useAppSelector,
+} from '@/store';
 import { setHomeActiveProduct } from '@/store/features/ui';
 import ProductPrice from '@/components/Product/Price';
 import ProductActions from '@/components/Product/Actions';
@@ -15,6 +19,7 @@ import ContentDrawer from '@/components/ContentDrawer';
 export default function ProductItem({ product }: { product: Product }) {
   const cardContentReference = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
+  const activeProductID = useAppSelector(selectHomeActiveProduct);
 
   const getPreferredImageSrc = (): ImageMetadata => {
     const image = { ...defaultPlaceholderImage };
@@ -33,14 +38,13 @@ export default function ProductItem({ product }: { product: Product }) {
     (ev: MouseEvent) => {
       if (cardContentReference && cardContentReference.current) {
         if (!ev.composedPath().includes(cardContentReference.current)) {
-          const productID = store.getState().uiReducer.homeActiveProductID;
-          if (productID === product.id) {
+          if (activeProductID === product.id) {
             dispatch(setHomeActiveProduct(''));
           }
         }
       }
     },
-    [dispatch, product.id]
+    [activeProductID, dispatch, product.id]
   );
   useEffect(() => {
     window.addEventListener('click', onWindowClicked);
@@ -48,15 +52,16 @@ export default function ProductItem({ product }: { product: Product }) {
   }, [onWindowClicked]);
 
   return (
-    <Card
+    <Paper
       ref={cardContentReference}
+      elevation={activeProductID === product.id ? 8 : 1}
       sx={{
         padding: '0px',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
         position: 'relative',
-        borderRadius: 0,
+        overflow: 'hidden',
       }}
     >
       <Box
@@ -69,6 +74,7 @@ export default function ProductItem({ product }: { product: Product }) {
         onClick={(__) => {
           dispatch(setHomeActiveProduct(product.id));
         }}
+        role="presentation"
       >
         <Box sx={{ flexGrow: 1 }}>
           <Box
@@ -113,6 +119,6 @@ export default function ProductItem({ product }: { product: Product }) {
         </IconButton>
         <ProductActions product={product} />
       </ContentDrawer>
-    </Card>
+    </Paper>
   );
 }

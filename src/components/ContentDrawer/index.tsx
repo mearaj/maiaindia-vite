@@ -35,17 +35,17 @@ export default function ContentDrawer({
     setMousePressOrTouchStart(true);
     if (sidebarContainerRef && sidebarContainerRef.current) {
       sidebarContainerRef.current.style.transition = '';
-      if (e.nativeEvent instanceof TouchEvent) {
+      if (e.nativeEvent instanceof MouseEvent) {
+        setTouchStart({
+          clientX:
+            sidebarContainerRef.current.offsetLeft - e.nativeEvent.clientX,
+          time: Date.now(),
+        });
+      } else if (e.nativeEvent instanceof TouchEvent) {
         setTouchStart({
           clientX:
             sidebarContainerRef.current.offsetLeft -
             e.nativeEvent.touches[0].clientX,
-          time: Date.now(),
-        });
-      } else if (e.nativeEvent instanceof MouseEvent) {
-        setTouchStart({
-          clientX:
-            sidebarContainerRef.current.offsetLeft - e.nativeEvent.clientX,
           time: Date.now(),
         });
       }
@@ -61,10 +61,10 @@ export default function ContentDrawer({
       mousePressOrTouchStart
     ) {
       let endX = 0;
-      if (e.nativeEvent instanceof TouchEvent) {
-        endX = e.nativeEvent.touches[0].clientX;
-      } else if (e.nativeEvent instanceof MouseEvent) {
+      if (e.nativeEvent instanceof MouseEvent) {
         endX = e.nativeEvent.clientX;
+      } else if (e.nativeEvent instanceof TouchEvent) {
+        endX = e.nativeEvent.touches[0].clientX;
       }
       let totalDistance = touchStart.clientX + endX;
       if (totalDistance > 0) {
@@ -128,13 +128,13 @@ export default function ContentDrawer({
   return (
     <Card
       ref={sidebarContainerRef}
+      elevation={activeProductID === product.id ? 8 : 1}
       sx={{
         position: 'absolute',
         height: '100%',
         width: '100%',
         left: '-100%',
-        borderRadius: 0,
-        overflowX: 'auto',
+        overflow: 'hidden',
       }}
       onTouchStart={onTouchStartOrOnMouseDown}
       onTouchMove={onTouchMoveOrOnMouseMouse}
