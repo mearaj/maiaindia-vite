@@ -1,16 +1,19 @@
 import CircularProgress from '@mui/material/CircularProgress';
-import styles from './index.module.css';
+import { Box, SxProps, Theme } from '@mui/material';
 
-function Loader({ className }: { className?: string | undefined }) {
-  let loaderClassName = styles.loader;
-  if (className) {
-    loaderClassName += ` ${className}`;
-  }
-
+function Loader(sx?: SxProps<Theme>) {
   return (
-    <div className={loaderClassName}>
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '16px',
+        ...sx,
+      }}
+    >
       <CircularProgress />
-    </div>
+    </Box>
   );
 }
 

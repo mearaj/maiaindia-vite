@@ -1,7 +1,6 @@
 @import "swiper/swiper-bundle.css";
 
 :root {
-    --headerPrimaryHeight: 72px;
     --footerPrimaryHeight: 64px;
     --footerPrimaryBorderHeight: 4px;
     --tabsCommonHeight: 44px;
@@ -18,11 +17,6 @@ html, body {
     padding: 0;
     margin: 0;
 }
-
-@media (min-width: 700px) {
-    --headerPrimaryHeight: 70px;
-}
-
 
 a, a:hover, a:active {
     text-decoration: none;

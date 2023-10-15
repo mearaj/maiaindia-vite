@@ -3,9 +3,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Accordion,
   AccordionSummary,
+  Box,
   Card,
   IconButton,
   Typography,
+  useTheme,
 } from '@mui/material';
 import Close from '@mui/icons-material/Close';
 import ChevronRight from '@mui/icons-material/ChevronRight';
@@ -15,7 +17,6 @@ import useDimensions from '@/hooks/dimensions';
 import Categories from '@/components/Categories';
 import UserComponent from '@/components/User';
 import logoDarkGreen from '@/assets/images/logo-dark-green.png';
-import styles from './index.module.css';
 
 export interface DrawerProps {
   className?: string;
@@ -32,6 +33,7 @@ export default function Drawer(_: DrawerProps) {
     time: 0,
   });
   const [mousePressOrTouchStart, setMousePressOrTouchStart] = useState(false);
+  const theme = useTheme();
 
   const onTouchStartOrOnMouseDown = (
     e: React.TouchEvent<HTMLElement> | React.MouseEvent<HTMLElement>
@@ -119,7 +121,19 @@ export default function Drawer(_: DrawerProps) {
   return (
     <Card
       ref={drawerRef}
-      className={styles.nav}
+      sx={{
+        position: 'fixed',
+        top: '0',
+        right: '-100vw',
+        width: '100vw',
+        height: '100vh',
+        boxSizing: 'border-box',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'stretch',
+        borderRadius: '0',
+        zIndex: theme.zIndex.appBar,
+      }}
       onTouchStart={onTouchStartOrOnMouseDown}
       onTouchMove={onTouchMoveOrOnMouseMouse}
       onTouchEnd={onTouchEndOrOnMouseUp}
@@ -128,24 +142,59 @@ export default function Drawer(_: DrawerProps) {
       onMouseUp={onTouchEndOrOnMouseUp}
       role="presentation"
     >
-      <header className={styles.navHeader}>
-        <div className={styles.sectionLeft}>
-          <div className={styles.logoContainer}>
-            <img src={logoDarkGreen} alt="logo" className={styles.image} />
-          </div>
-        </div>
-        <div className={styles.sectionRight}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          height: theme.dimensions.appBarHeight,
+          padding: '16px',
+          width: '100%',
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            height: '100%',
+          }}
+        >
+          <Box sx={{ height: '100%' }}>
+            <Box
+              component="img"
+              src={logoDarkGreen}
+              alt="logo"
+              sx={{ height: '100%', width: 'auto' }}
+            />
+          </Box>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            height: '100%',
+            flexShrink: '0',
+          }}
+        >
           <IconButton
             onClick={() => {
               dispatch(setShowMenu(false));
             }}
-            className={styles.iconButton}
           >
-            <Close className={styles.closeIcon} />
+            <Close sx={{ fontSize: '32px' }} />
           </IconButton>
-        </div>
-      </header>
-      <div className={styles.navBody}>
+        </Box>
+      </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'stretch',
+          flexGrow: '1',
+          flexShrink: '0',
+          padding: '16px',
+        }}
+      >
         <UserComponent />
         <Accordion
           expanded={false}
@@ -154,14 +203,17 @@ export default function Drawer(_: DrawerProps) {
             dispatch(setShowMenu(false));
             // router.replace('/admin');
           }}
-          className={styles.accordion}
+          sx={{
+            backgroundColor: 'transparent',
+            color: 'inherit',
+          }}
         >
           <AccordionSummary expandIcon={<ChevronRight />}>
             <Typography>Admin</Typography>
           </AccordionSummary>
         </Accordion>
         <Categories />
-      </div>
+      </Box>
     </Card>
   );
 }
