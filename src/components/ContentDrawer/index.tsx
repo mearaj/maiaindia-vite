@@ -134,6 +134,7 @@ export default function ContentDrawer({
         width: '100%',
         left: '-100%',
         borderRadius: 0,
+        overflowX: 'auto',
       }}
       onTouchStart={onTouchStartOrOnMouseDown}
       onTouchMove={onTouchMoveOrOnMouseMouse}

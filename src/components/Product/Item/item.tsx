@@ -4,7 +4,7 @@ import {
   Product,
 } from '@/store/data/data';
 import { useCallback, useEffect, useRef } from 'react';
-import { Box, Card, IconButton, Link } from '@mui/material';
+import { Box, Card, IconButton } from '@mui/material';
 import Close from '@mui/icons-material/Close';
 import { store, useAppDispatch } from '@/store';
 import { setHomeActiveProduct } from '@/store/features/ui';
@@ -60,8 +60,7 @@ export default function ProductItem({ product }: { product: Product }) {
         borderRadius: 0,
       }}
     >
-      <Link
-        href={`#${product.id}`}
+      <Card
         className={styles.cardBody}
         onClick={(__) => {
           dispatch(setHomeActiveProduct(product.id));
@@ -80,7 +79,7 @@ export default function ProductItem({ product }: { product: Product }) {
           <Box className={styles.productName}>{product.name}</Box>
           <ProductPrice />
         </Box>
-      </Link>
+      </Card>
       <ContentDrawer product={product}>
         <IconButton
           onClick={(_) => {
