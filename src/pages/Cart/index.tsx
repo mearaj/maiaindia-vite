@@ -1,10 +1,11 @@
 import { Header } from '@/components';
+import { Box } from '@mui/material';
 
 export default function CartPage() {
   return (
     <>
       <Header showBackIcon />
-      <div>This is the cart page</div>
+      <Box>This is the cart page</Box>
     </>
   );
 }

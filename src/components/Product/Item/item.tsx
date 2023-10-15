@@ -11,7 +11,6 @@ import { setHomeActiveProduct } from '@/store/features/ui';
 import ProductPrice from '@/components/Product/Price';
 import ProductActions from '@/components/Product/Actions';
 import ContentDrawer from '@/components/ContentDrawer';
-import styles from './index.module.css';
 
 export default function ProductItem({ product }: { product: Product }) {
   const cardContentReference = useRef<HTMLDivElement>(null);
@@ -60,34 +59,57 @@ export default function ProductItem({ product }: { product: Product }) {
         borderRadius: 0,
       }}
     >
-      <Card
-        className={styles.cardBody}
+      <Box
+        sx={{
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+        }}
         onClick={(__) => {
           dispatch(setHomeActiveProduct(product.id));
         }}
       >
-        <Box className={styles.sectionTop}>
-          <img
+        <Box sx={{ flexGrow: 1 }}>
+          <Box
+            component="img"
             srcSet={getPreferredImageSrc().srcSet}
             src={getPreferredImageSrc().src}
             alt={product.name}
-            className={styles.img}
+            sx={{
+              height: '100%',
+              width: '100%',
+              objectFit: 'fill',
+              objectPosition: 'center',
+              marginBottom: '8px',
+            }}
           />
         </Box>
         <br />
-        <Box className={styles.sectionBottom}>
-          <Box className={styles.productName}>{product.name}</Box>
+        <Box sx={{ padding: '4px 16px 16px' }}>
+          <Box
+            sx={{
+              fontSize: '12px',
+              lineHeight: 1.2,
+              fontWeight: 500,
+              marginBottom: '8px',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {product.name}
+          </Box>
           <ProductPrice />
         </Box>
-      </Card>
+      </Box>
       <ContentDrawer product={product}>
         <IconButton
           onClick={(_) => {
             dispatch(setHomeActiveProduct(''));
           }}
-          className={styles.closeIconButton}
         >
-          <Close className={styles.closeIcon} />
+          <Close />
         </IconButton>
         <ProductActions product={product} />
       </ContentDrawer>

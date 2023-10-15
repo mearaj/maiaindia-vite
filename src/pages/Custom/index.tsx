@@ -1,9 +1,14 @@
 import { Header } from '@/components';
-import { Button, FormControl, FormLabel, OutlinedInput } from '@mui/material';
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  OutlinedInput,
+} from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { ChangeEvent, useState } from 'react';
 import { defaultPlaceholderImage } from '@/store/data/data';
-import styles from './index.module.css';
 
 export default function CustomPage() {
   const initialValue = {
@@ -21,11 +26,13 @@ export default function CustomPage() {
   };
 
   return (
-    <div className={styles.page}>
+    <Box>
       <Header showBackIcon />
-      <div className={styles.body}>
-        <h3 style={{ textAlign: 'center' }}>Request Custom Quote</h3>
-        <FormControl fullWidth className={styles.formFieldContainer}>
+      <Box sx={{ padding: '16px' }}>
+        <Box component="h3" sx={{ textAlign: 'center' }}>
+          Request Custom Quote
+        </Box>
+        <FormControl fullWidth sx={{ marginBottom: '16px' }}>
           <FormLabel htmlFor="product-name">Item Name</FormLabel>
           <OutlinedInput
             type="text"
@@ -36,7 +43,7 @@ export default function CustomPage() {
             onChange={handleInputNameChange}
           />
         </FormControl>
-        <FormControl fullWidth className={styles.formFieldContainer}>
+        <FormControl fullWidth sx={{ marginBottom: '16px' }}>
           <FormLabel htmlFor="product-details">Item Details</FormLabel>
           <OutlinedInput
             type="text"
@@ -47,14 +54,15 @@ export default function CustomPage() {
             onChange={handleInputDetailsChange}
           />
         </FormControl>
-        <div className={styles.customImageContainer}>
-          <img
+        <Box sx={{ width: '100%' }}>
+          <Box
+            component="img"
             src={defaultPlaceholderImage.src}
             srcSet={defaultPlaceholderImage.srcSet}
             alt="Custom item for quote"
-            className={styles.customImage}
+            sx={{ width: '100%', height: 'auto' }}
           />
-        </div>
+        </Box>
         <Button
           component="label"
           variant="contained"
@@ -64,13 +72,23 @@ export default function CustomPage() {
           <input
             type="file"
             hidden
-            className={styles.inputImageUpload}
+            style={{
+              clip: 'rect(0 0 0 0)',
+              clipPath: 'inset(50%)',
+              height: '1px',
+              overflow: 'hidden',
+              position: 'absolute',
+              bottom: '0',
+              left: '0',
+              whiteSpace: 'nowrap',
+              width: '1px',
+            }}
             accept="image/*"
           />
           Upload Image
         </Button>
-        <div>This is the add custom product page</div>
-      </div>
-    </div>
+        <Box>This is the add custom product page</Box>
+      </Box>
+    </Box>
   );
 }

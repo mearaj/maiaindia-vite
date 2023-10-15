@@ -4,7 +4,6 @@ import AddToCartIcon from '@mui/icons-material/AddShoppingCart';
 import { useAppDispatch } from '@/store';
 import { setHomeActiveProduct } from '@/store/features/ui';
 import { useNavigate, useParams } from 'react-router-dom';
-import styles from './index.module.css';
 import Element = React.JSX.Element;
 
 export default function ProductActions({ product }: { product: Product }) {
@@ -12,10 +11,17 @@ export default function ProductActions({ product }: { product: Product }) {
   const params = useParams();
   const navigate = useNavigate();
   let button: Element | null = null;
+  const buttonStyle = {
+    fontWeight: 'bold',
+    padding: '4px',
+    minHeight: '40px',
+    marginBottom: '16px',
+    boxSizing: 'border-box',
+  };
   if (params.id !== product.id) {
     button = (
       <Button
-        className={`${styles.button}`}
+        sx={buttonStyle}
         variant="contained"
         fullWidth
         // href={`/products/${product.id}`}
@@ -30,24 +36,38 @@ export default function ProductActions({ product }: { product: Product }) {
   }
 
   return (
-    <Box className={styles.buttons}>
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        flexDirection: 'column',
+        padding: '0 12px',
+      }}
+    >
       {button}
       <Button
-        className={`${styles.button} ${styles.addToCartButton}`}
+        sx={{
+          ...buttonStyle,
+          '&:hover': {
+            color: 'inherit',
+            backgroundColor: 'inherit',
+          },
+        }}
         variant="contained"
         fullWidth
         onClick={(__) => {}}
       >
-        <AddToCartIcon className={styles.icon} />
-        <div className={styles.text}>Add</div>
+        <AddToCartIcon
+          sx={{
+            height: '32px',
+            width: 'auto',
+            marginRight: '4px',
+          }}
+        />
+        <Box sx={{ fontSize: '16px' }}>Add</Box>
       </Button>
-      <Button
-        className={`${styles.button}`}
-        variant="contained"
-        fullWidth
-        onClick={() => {}}
-      >
-        <div className={styles.text}>Buy</div>
+      <Button sx={buttonStyle} variant="contained" fullWidth onClick={() => {}}>
+        <Box sx={{ fontSize: '16px' }}>Buy</Box>
       </Button>
     </Box>
   );

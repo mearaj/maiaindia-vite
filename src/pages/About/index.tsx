@@ -1,5 +1,5 @@
-import styles from './index.module.css';
+import { Box } from '@mui/material';
 
 export default function About() {
-  return <div className={styles.page}>This is the about page.</div>;
+  return <Box>This is the about page.</Box>;
 }

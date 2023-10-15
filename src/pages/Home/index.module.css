@@ -21,6 +21,5 @@
 .options {
     display: flex;
     position: sticky;
-    top: var(--headerPrimaryHeight);
     z-index: 1;
 }

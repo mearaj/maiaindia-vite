@@ -11,7 +11,6 @@ import {
   where,
 } from '@firebase/firestore';
 import ProductItem from '@/components/Product/Item/item';
-import styles from './index.module.css';
 import { firestore } from '@/config/firebase';
 
 function Products() {
@@ -37,7 +36,20 @@ function Products() {
   }
 
   return (
-    <Box className={styles.container}>
+    <Box
+      sx={{
+        padding: '16px',
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gridGap: '32px 16px',
+        gridAutoRows: '1fr',
+        '@media (min-width: 1000px)': {
+          gridTemplateColumns: '1fr 1fr 1fr',
+          padding: '32px',
+          gridGap: '32px 32px',
+        },
+      }}
+    >
       {products &&
         products.map((el) => {
           return <ProductItem key={el.id} product={el} />;

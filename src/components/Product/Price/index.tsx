@@ -1,24 +1,54 @@
-import styles from './index.module.css';
+import { Box, SxProps, Theme } from '@mui/material';
 
-export default function ProductPrice({ className }: { className?: string }) {
-  let pricingClassName = styles.pricing;
-  if (className) {
-    pricingClassName = `${styles.pricing} ${className}`;
-  }
-
+export default function ProductPrice(sx?: SxProps<Theme>) {
   return (
-    <div className={pricingClassName}>
-      <div className={styles.sellingAmountContainer}>
-        <div className={styles.sellingAmountCurrency}>₹</div>
-        <div className={styles.sellingAmount}>25,000&nbsp;</div>
-      </div>
-      <div className={styles.mrpContainer}>
-        <div className={styles.mrp}>M.R.P.&nbsp;</div>
-        <div className={styles.mrpAmountContainer}>
-          <div className={styles.mrpAmountCurrency}>₹</div>
-          <s className={styles.mrpAmount}>35,000</s>
-        </div>
-      </div>
-    </div>
+    <Box
+      sx={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        fontSize: '12px',
+        alignItems: 'center',
+        ...sx,
+      }}
+    >
+      <Box sx={{ display: 'flex' }}>
+        <Box
+          sx={{
+            fontSize: '12px',
+          }}
+        >
+          ₹
+        </Box>
+        <Box
+          sx={{
+            fontSize: '20px',
+            fontWeight: '600',
+          }}
+        >
+          25,000&nbsp;
+        </Box>
+      </Box>
+      <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
+        <Box
+          sx={{
+            fontSize: '12px',
+            fontWeight: '300',
+          }}
+        >
+          M.R.P.&nbsp;
+        </Box>
+        <Box sx={{ display: 'flex' }}>
+          <Box sx={{ fontSize: '12px' }}>₹</Box>
+          <Box
+            sx={{
+              fontSize: '12px',
+              fontWeight: 300,
+            }}
+          >
+            35,000
+          </Box>
+        </Box>
+      </Box>
+    </Box>
   );
 }
