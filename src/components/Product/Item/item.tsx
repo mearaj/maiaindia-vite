@@ -18,7 +18,14 @@ export default function ProductItem({ product }: { product: Product }) {
     const images = [...(product.images ?? [])];
     if (images && images.length > 0) {
       for (let i = 0; i < images.length; i += 1) {
-        images[i] = `/images/${product.id}/${images[i]}`;
+        const dim = images[i].match(/(\d+[xX]\d+)/);
+        console.log(dim);
+        if (dim && dim?.length > 0) {
+          const dims = dim[0].split(/[xX]/);
+          if (dims.length > 0) {
+            images[i] = `/images/${product.id}/${images[i]} ${dims[0]}w`;
+          }
+        }
       }
       image.src = images[images.length - 1];
       image.srcSet = images.join(',');

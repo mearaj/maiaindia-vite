@@ -27,3 +27,11 @@ export const auth = getAuth(firebaseApp);
 export const storage = getStorage(firebaseApp);
 
 export default firebaseApp;
+
+// Do not uncomment this, only used for uploading docs during development
+// const uploadDocs = async () => {
+//   for (let i = 0; i < products.length; i += 1) {
+//     setDoc(doc(firestore, 'products', products[i].id), products[i]);
+//   }
+// };
+// uploadDocs();

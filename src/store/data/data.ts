@@ -22,6 +22,7 @@ export interface Product {
 export interface ImageMetadata {
   srcSet?: string;
   src: string;
+  sizes?: string;
 }
 
 export const defaultPlaceholderImage: ImageMetadata = {
