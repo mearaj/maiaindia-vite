@@ -13,7 +13,7 @@
 }
 
 .slide:global(.swiper-slide)::after {
-    content: "";
+    content: '';
     display: block;
     position: absolute;
     top: 0;
@@ -34,5 +34,4 @@
 }
 
 .swiper > :global(.swiper-pagination > .swiper-pagination-bullet) {
-
 }

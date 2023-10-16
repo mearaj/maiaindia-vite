@@ -60,7 +60,7 @@
 }
 
 .swiper > :global(.swiper-pagination > .swiper-pagination-bullet::before) {
-    content: "";
+    content: '';
     display: block;
     position: absolute;
     border-radius: 50%;

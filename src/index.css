@@ -1,4 +1,4 @@
-@import "swiper/swiper-bundle.css";
+@import 'swiper/swiper-bundle.css';
 
 :root {
     --footerPrimaryHeight: 64px;
@@ -7,18 +7,22 @@
     --cartColor: 255, 200, 0;
 }
 
-*, ::after, ::before {
+*,
+::after,
+::before {
     box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
     height: 100%;
     width: 100%;
     padding: 0;
     margin: 0;
 }
 
-a, a:hover, a:active {
+a,
+a:hover,
+a:active {
     text-decoration: none;
 }
-
