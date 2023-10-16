@@ -38,11 +38,10 @@ function Products() {
   return (
     <Box
       sx={{
-        padding: '16px',
+        padding: '8px',
         display: 'grid',
         gridTemplateColumns: '1fr 1fr',
-        gridGap: '32px 16px',
-        gridAutoRows: '1fr',
+        gridGap: '24px 8px',
         '@media (min-width: 1000px)': {
           gridTemplateColumns: '1fr 1fr 1fr',
           padding: '32px',

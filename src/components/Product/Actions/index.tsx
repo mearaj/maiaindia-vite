@@ -35,9 +35,10 @@ export default function ProductActions({ product }: { product: Product }) {
     <Box
       sx={{
         display: 'flex',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         flexDirection: 'column',
-        padding: '0 12px',
+        padding: '12px',
+        height: '100%',
       }}
     >
       {button}
@@ -62,7 +63,12 @@ export default function ProductActions({ product }: { product: Product }) {
         />
         <Box sx={{ fontSize: '16px' }}>Add</Box>
       </Button>
-      <Button sx={buttonStyle} variant="contained" fullWidth onClick={() => {}}>
+      <Button
+        sx={{ ...buttonStyle, marginBottom: 0 }}
+        variant="contained"
+        fullWidth
+        onClick={() => {}}
+      >
         <Box sx={{ fontSize: '16px' }}>Buy</Box>
       </Button>
     </Box>

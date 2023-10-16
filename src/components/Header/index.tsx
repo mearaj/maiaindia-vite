@@ -9,7 +9,7 @@ import {
   Toolbar,
   useTheme,
 } from '@mui/material';
-import ArrowBack from '@mui/icons-material/ArrowBackIosNew';
+import ArrowBack from '@mui/icons-material/ArrowBackIos';
 import ShoppingCart from '@mui/icons-material/ShoppingCart';
 import { useAppDispatch } from '@/store';
 import { useNavigate } from 'react-router-dom';
@@ -73,12 +73,15 @@ export default function Header({
         <Toolbar sx={styles.toolbar}>
           <Box sx={styles.sectionLeft}>
             {showBackIcon && (
-              <Button sx={styles.icon} onClick={handleBackIconClick}>
-                <ArrowBack sx={styles.icon} />
+              <Button
+                sx={{ height: '100%', padding: 0, minWidth: 0 }}
+                onClick={handleBackIconClick}
+              >
+                <ArrowBack style={styles.icon} />
               </Button>
             )}
             {!showBackIcon && (
-              <Button sx={styles.icon}>
+              <Button sx={{ height: '100%', padding: 0, minWidth: 0 }}>
                 <Box
                   src={logoImgSrc}
                   component="img"
@@ -89,16 +92,13 @@ export default function Header({
             )}
           </Box>
           <Box sx={styles.sectionRight}>
-            <Button sx={styles.icon} onClick={() => navigate('/custom')}>
+            <Button onClick={() => navigate('/custom')}>
               <Diamond sx={styles.icon} />
             </Button>
-            <Button sx={styles.icon} onClick={() => navigate('/cart')}>
+            <Button onClick={() => navigate('/cart')}>
               <ShoppingCart sx={styles.icon} />
             </Button>
-            <Button
-              sx={styles.icon}
-              onClick={() => handleInteractionItemClick()}
-            >
+            <Button onClick={() => handleInteractionItemClick()}>
               <Menu sx={styles.icon} />
             </Button>
           </Box>

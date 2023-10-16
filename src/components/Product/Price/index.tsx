@@ -25,7 +25,7 @@ export default function ProductPrice(sx?: SxProps<Theme>) {
             fontWeight: '600',
           }}
         >
-          25,000&nbsp;
+          N/A&nbsp;
         </Box>
       </Box>
       <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
@@ -45,7 +45,7 @@ export default function ProductPrice(sx?: SxProps<Theme>) {
               fontWeight: 300,
             }}
           >
-            35,000
+            N/A
           </Box>
         </Box>
       </Box>

@@ -145,6 +145,7 @@ export default function ContentDrawer({
       onMouseDown={onTouchStartOrOnMouseDown}
       onMouseMove={onTouchMoveOrOnMouseMouse}
       onMouseUp={onTouchEndOrOnMouseUp}
+      onClick={() => setActiveProductID('')}
       role="presentation"
     >
       {children}

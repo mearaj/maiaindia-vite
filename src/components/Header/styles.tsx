@@ -29,7 +29,6 @@ const iconStyles = (_: Theme) => ({
   height: '100%',
   width: 'auto',
   maxHeight: 'none',
-  maxWidth: '72px',
 });
 
 export default function styles(theme: Theme) {

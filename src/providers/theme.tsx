@@ -23,7 +23,7 @@ export default function AppThemeProvider({ children }: PropsWithChildren) {
       },
     },
     dimensions: {
-      appBarHeight: 72,
+      appBarHeight: 64,
     },
   });
   return (
