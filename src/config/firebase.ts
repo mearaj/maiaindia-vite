@@ -20,13 +20,13 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const firebaseApp = initializeApp(firebaseConfig);
+const appFirebase = initializeApp(firebaseConfig);
 // const analytics = getAnalytics(firebaseApp);
-export const firestore = getFirestore(firebaseApp);
-export const auth = getAuth(firebaseApp);
-export const storage = getStorage(firebaseApp);
+const appFirestore = getFirestore(appFirebase);
+const appFirebaseAuth = getAuth(appFirebase);
+const appFirebaseStorage = getStorage(appFirebase);
 
-export default firebaseApp;
+export default appFirebase;
 
 // Do not uncomment this, only used for uploading docs during development
 // const uploadDocs = async () => {
@@ -35,3 +35,4 @@ export default firebaseApp;
 //   }
 // };
 // uploadDocs();
+export { appFirestore, appFirebaseAuth, appFirebaseStorage };

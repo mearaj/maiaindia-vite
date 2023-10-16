@@ -2,7 +2,7 @@ import { createApi, fakeBaseQuery } from '@reduxjs/toolkit/query/react';
 import { doc, DocumentData, getDoc, getDocs, Query } from '@firebase/firestore';
 import { FirebaseError } from '@firebase/util';
 import { Product } from '@/store/data/data';
-import { firestore } from '@/config/firebase';
+import { appFirestore } from '@/config/firebase';
 
 const apiSlice = createApi({
   reducerPath: 'api',
@@ -36,7 +36,7 @@ const apiSlice = createApi({
     getProduct: builder.query<Product, string>({
       async queryFn(productID) {
         try {
-          const productRef = doc(firestore, 'products', productID);
+          const productRef = doc(appFirestore, 'products', productID);
           const docSnap = await getDoc(productRef);
           if (!docSnap.exists()) {
             return { error: 'No such document' };

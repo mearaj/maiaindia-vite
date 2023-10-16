@@ -15,7 +15,7 @@ import {
   User,
 } from '@firebase/auth';
 import { FirebaseError } from '@firebase/util';
-import { auth } from '@/config/firebase';
+import { appFirebaseAuth } from '@/config/firebase';
 
 export interface AuthState {
   isLoading: boolean;
@@ -49,7 +49,7 @@ export default function FirebaseProvider({ children }: PropsWithChildren) {
   const signOut = async () => {
     setIsSigningOut(true);
     try {
-      await signOutFirebase(auth);
+      await signOutFirebase(appFirebaseAuth);
       setUser(null);
     } catch (e: unknown) {
       if (e instanceof FirebaseError) {
@@ -74,7 +74,7 @@ export default function FirebaseProvider({ children }: PropsWithChildren) {
       setIsSigningIn(true);
       localStorage.setItem(redirectKey, providerID);
       try {
-        await signInWithRedirect(auth, provider);
+        await signInWithRedirect(appFirebaseAuth, provider);
       } catch (e: unknown) {
         if (e instanceof FirebaseError) {
           setError(e.code);
@@ -96,7 +96,7 @@ export default function FirebaseProvider({ children }: PropsWithChildren) {
         if (providerIDAlt) {
           setIsLoadingRedirectResult(true);
           try {
-            await getRedirectResult(auth);
+            await getRedirectResult(appFirebaseAuth);
           } catch (err: unknown) {
             if (err instanceof FirebaseError) {
               errStr = err.code;
@@ -113,7 +113,7 @@ export default function FirebaseProvider({ children }: PropsWithChildren) {
   }, []);
 
   useEffect(() => {
-    return onAuthStateChanged(auth, (userAlt) => {
+    return onAuthStateChanged(appFirebaseAuth, (userAlt) => {
       setIsLoadingAuth(false);
       setUser(userAlt);
     });

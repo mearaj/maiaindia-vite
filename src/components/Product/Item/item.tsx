@@ -9,6 +9,7 @@ import Close from '@mui/icons-material/Close';
 import ProductPrice from '@/components/Product/Price';
 import ProductActions from '@/components/Product/Actions';
 import ContentDrawer from '@/components/ContentDrawer';
+import staticProducts from '@/assets/data/products_id';
 
 export default function ProductItem({ product }: { product: Product }) {
   const cardContentReference = useRef<HTMLDivElement>(null);
@@ -17,17 +18,23 @@ export default function ProductItem({ product }: { product: Product }) {
     const image = { ...defaultPlaceholderImage };
     const images = [...(product.images ?? [])];
     if (images && images.length > 0) {
+      const found = staticProducts.find((p) => p === product.id);
       for (let i = 0; i < images.length; i += 1) {
         const dim = images[i].match(/(\d+[xX]\d+)/);
-        console.log(dim);
         if (dim && dim?.length > 0) {
           const dims = dim[0].split(/[xX]/);
           if (dims.length > 0) {
-            images[i] = `/images/${product.id}/${images[i]} ${dims[0]}w`;
+            if (found) {
+              images[i] = `/images/${product.id}/${images[i]} ${dims[0]}w`;
+            } else {
+              images[
+                i
+              ] = `https://firebasestorage.googleapis.com/v0/b/maiaindia.appspot.com/o/images%2F${product.id}%2F${images[i]}?alt=media ${dims[0]}w`;
+            }
           }
         }
       }
-      image.src = images[images.length - 1];
+      [image.src] = images[images.length - 1].split(' ');
       image.srcSet = images.join(',');
     }
     return image;

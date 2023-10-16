@@ -11,12 +11,12 @@ import {
   where,
 } from '@firebase/firestore';
 import ProductItem from '@/components/Product/Item/item';
-import { firestore } from '@/config/firebase';
+import { appFirestore } from '@/config/firebase';
 
 function Products() {
   const category = useAppSelector(selectCategory);
   const generateQuery: () => Query<DocumentData, DocumentData> = () => {
-    const productsRef = collection(firestore, 'products');
+    const productsRef = collection(appFirestore, 'products');
     let productsQuery: Query<DocumentData, DocumentData>;
     if (!category || category.id === defaultCategory.id) {
       productsQuery = query(productsRef);
