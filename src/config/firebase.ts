@@ -10,8 +10,8 @@ import { getStorage } from '@firebase/storage';
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: 'AIzaSyBdG_eyuxuA9EHs8DCYKR2B51AtBOhNKv0',
-  authDomain: 'maiaindia.firebaseapp.com',
-  // authDomain: 'maiaindia.com',
+  // authDomain: 'maiaindia.firebaseapp.com',
+  authDomain: 'maiaindia.com',
   projectId: 'maiaindia',
   storageBucket: 'maiaindia.appspot.com',
   messagingSenderId: '1088462500931',

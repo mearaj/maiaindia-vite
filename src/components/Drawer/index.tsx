@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import {
   Accordion,
   AccordionSummary,
@@ -17,6 +17,7 @@ import useDimensions from '@/hooks/dimensions';
 import Categories from '@/components/Categories';
 import UserComponent from '@/components/User';
 import logoDarkGreen from '@/assets/images/logo-dark-green.png';
+import { FirebaseContext } from '@/providers/firebase';
 
 export interface DrawerProps {
   className?: string;
@@ -34,6 +35,9 @@ export default function Drawer(_: DrawerProps) {
   });
   const [mousePressOrTouchStart, setMousePressOrTouchStart] = useState(false);
   const theme = useTheme();
+  const { user } = useContext(FirebaseContext);
+  console.log(user?.email);
+  console.log(import.meta.env.VITE_ADMIN_EMAIL);
 
   const onTouchStartOrOnMouseDown = (
     e: React.TouchEvent<HTMLElement> | React.MouseEvent<HTMLElement>
@@ -196,22 +200,24 @@ export default function Drawer(_: DrawerProps) {
         }}
       >
         <UserComponent />
-        <Accordion
-          expanded={false}
-          onChange={(___) => null}
-          onClick={() => {
-            dispatch(setShowMenu(false));
-            // router.replace('/admin');
-          }}
-          sx={{
-            backgroundColor: 'transparent',
-            color: 'inherit',
-          }}
-        >
-          <AccordionSummary expandIcon={<ChevronRight />}>
-            <Typography>Admin</Typography>
-          </AccordionSummary>
-        </Accordion>
+        {user && user.email === import.meta.env.VITE_ADMIN_EMAIL && (
+          <Accordion
+            expanded={false}
+            onChange={(___) => null}
+            onClick={() => {
+              dispatch(setShowMenu(false));
+              // router.replace('/admin');
+            }}
+            sx={{
+              backgroundColor: 'transparent',
+              color: 'inherit',
+            }}
+          >
+            <AccordionSummary expandIcon={<ChevronRight />}>
+              <Typography>Admin</Typography>
+            </AccordionSummary>
+          </Accordion>
+        )}
         <Categories />
       </Box>
     </Paper>

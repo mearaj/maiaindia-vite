@@ -4,7 +4,7 @@ import {
   Product,
 } from '@/store/data/data';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Box, IconButton, Paper } from '@mui/material';
+import { Box, IconButton, Paper, useTheme } from '@mui/material';
 import Close from '@mui/icons-material/Close';
 import ProductPrice from '@/components/Product/Price';
 import ProductActions from '@/components/Product/Actions';
@@ -14,6 +14,7 @@ import staticProducts from '@/assets/data/products_id';
 export default function ProductItem({ product }: { product: Product }) {
   const cardContentReference = useRef<HTMLDivElement>(null);
   const [activeProductID, setActiveProductID] = useState('');
+  const theme = useTheme();
   const getPreferredImageSrc = (): ImageMetadata => {
     const image = { ...defaultPlaceholderImage };
     const images = [...(product.images ?? [])];
@@ -61,7 +62,6 @@ export default function ProductItem({ product }: { product: Product }) {
   return (
     <Paper
       ref={cardContentReference}
-      elevation={activeProductID === product.id ? 24 : 1}
       sx={{
         padding: '0px',
         display: 'flex',
@@ -70,6 +70,10 @@ export default function ProductItem({ product }: { product: Product }) {
         position: 'relative',
         overflow: 'hidden',
         borderRadius: 0,
+        boxShadow: activeProductID === product.id ? 1 : 24,
+        ':hover': {
+          boxShadow: theme.shadows[1],
+        },
       }}
     >
       <Box

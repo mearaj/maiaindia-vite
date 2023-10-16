@@ -50,20 +50,21 @@ export default function ProductPage() {
           loop
           pagination
         >
-          {[1, 2, 3, 4, 5].map((_, index) => {
-            return (
-              // eslint-disable-next-line react/no-array-index-key
-              <SwiperSlide key={index} className={styles.slide}>
-                <img
-                  srcSet={getPreferredImageSrc().srcSet}
-                  src={getPreferredImageSrc().src}
-                  alt={product.name}
-                  className={styles.image}
-                  placeholder="blur"
-                />
-              </SwiperSlide>
-            );
-          })}
+          {[{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }].map(
+            (item) => {
+              return (
+                <SwiperSlide key={item.id} className={styles.slide}>
+                  <img
+                    srcSet={getPreferredImageSrc().srcSet}
+                    src={getPreferredImageSrc().src}
+                    alt={product.name}
+                    className={styles.image}
+                    placeholder="blur"
+                  />
+                </SwiperSlide>
+              );
+            }
+          )}
         </Swiper>
         <div className={styles.productDetails}>
           <div className={styles.productName}>{product.name}</div>
