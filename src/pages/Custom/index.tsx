@@ -4,6 +4,7 @@ import {
   Button,
   FormControl,
   FormLabel,
+  Link,
   OutlinedInput,
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -87,7 +88,12 @@ export default function CustomPage() {
           />
           Upload Image
         </Button>
-        <Box>This is the add custom product page</Box>
+        <Link
+          target="_blank"
+          href="https://api.whatsapp.com/send?phone=+919967717702&text=Hi"
+        >
+          Send Message
+        </Link>
       </Box>
     </Box>
   );

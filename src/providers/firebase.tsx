@@ -6,16 +6,15 @@ import {
   useState,
 } from 'react';
 import {
-  getRedirectResult,
   GoogleAuthProvider,
   onAuthStateChanged,
   ProviderId,
-  signInWithRedirect,
+  signInWithPopup,
   signOut as signOutFirebase,
   User,
 } from '@firebase/auth';
 import { FirebaseError } from '@firebase/util';
-import { appFirebaseAuth } from '@/config/firebase';
+import { appFirebaseAuth } from '@/firebase';
 
 export interface AuthState {
   isLoading: boolean;
@@ -36,11 +35,9 @@ const initialState: AuthState = {
 };
 
 export const FirebaseContext = createContext<AuthState>(initialState);
-const redirectKey = '@firebase/auth.getRedirectResult';
 
 export default function FirebaseProvider({ children }: PropsWithChildren) {
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
-  const [isLoadingRedirectResult, setIsLoadingRedirectResult] = useState(false);
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [user, setUser] = useState<User | null>(null);
@@ -72,9 +69,8 @@ export default function FirebaseProvider({ children }: PropsWithChildren) {
     }
     if (provider) {
       setIsSigningIn(true);
-      localStorage.setItem(redirectKey, providerID);
       try {
-        await signInWithRedirect(appFirebaseAuth, provider);
+        await signInWithPopup(appFirebaseAuth, provider);
       } catch (e: unknown) {
         if (e instanceof FirebaseError) {
           setError(e.code);
@@ -85,32 +81,6 @@ export default function FirebaseProvider({ children }: PropsWithChildren) {
       setIsSigningIn(false);
     }
   };
-
-  useEffect(() => {
-    const providerID = localStorage.getItem(redirectKey);
-    if (providerID) {
-      const onGetRedirectResult = async () => {
-        const providerIDAlt = localStorage.getItem(redirectKey);
-        localStorage.removeItem(redirectKey);
-        let errStr: string | null = null;
-        if (providerIDAlt) {
-          setIsLoadingRedirectResult(true);
-          try {
-            await getRedirectResult(appFirebaseAuth);
-          } catch (err: unknown) {
-            if (err instanceof FirebaseError) {
-              errStr = err.code;
-            } else {
-              errStr = (err as any).toString();
-            }
-          }
-          setError(errStr);
-          setIsLoadingRedirectResult(false);
-        }
-      };
-      onGetRedirectResult();
-    }
-  }, []);
 
   useEffect(() => {
     return onAuthStateChanged(appFirebaseAuth, (userAlt) => {
@@ -125,22 +95,14 @@ export default function FirebaseProvider({ children }: PropsWithChildren) {
 
   const authState = useMemo(
     () => ({
-      isLoading:
-        isLoadingAuth || isLoadingRedirectResult || isSigningIn || isSigningOut,
+      isLoading: isLoadingAuth || isSigningIn || isSigningOut,
       signIn,
       signOut,
       user,
       error,
       clearError,
     }),
-    [
-      error,
-      isLoadingAuth,
-      isLoadingRedirectResult,
-      isSigningIn,
-      isSigningOut,
-      user,
-    ]
+    [error, isLoadingAuth, isSigningIn, isSigningOut, user]
   );
 
   return (

@@ -36,8 +36,6 @@ export default function Drawer(_: DrawerProps) {
   const [mousePressOrTouchStart, setMousePressOrTouchStart] = useState(false);
   const theme = useTheme();
   const { user } = useContext(FirebaseContext);
-  console.log(user?.email);
-  console.log(import.meta.env.VITE_ADMIN_EMAIL);
 
   const onTouchStartOrOnMouseDown = (
     e: React.TouchEvent<HTMLElement> | React.MouseEvent<HTMLElement>
