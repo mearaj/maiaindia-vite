@@ -5,8 +5,6 @@ const toolbarStyles = (_: Theme) => ({
   width: '100%',
   alignItems: 'center',
   justifyContent: 'space-between',
-  paddingTop: '4px',
-  paddingBottom: '4px',
 });
 
 const sectionLeftStyles = (_: Theme) => ({
@@ -31,16 +29,31 @@ const iconStyles = (_: Theme) => ({
   maxHeight: 'none',
 });
 
+const logoIconButtonStyles = (_: Theme) => ({
+  height: '100%',
+  minWidth: '0px',
+  padding: '6px 0px',
+});
+const iconButtonStyles = (_: Theme) => ({
+  height: '100%',
+  padding: '12px 4px',
+  minWidth: '0px',
+});
+
 export default function styles(theme: Theme) {
   const toolbar = toolbarStyles(theme);
   const sectionLeft = sectionLeftStyles(theme);
   const sectionRight = sectionRightStyles(theme);
+  const logoIconButton = logoIconButtonStyles(theme);
+  const iconButton = iconButtonStyles(theme);
   const icon = iconStyles(theme);
 
   return {
     toolbar,
     sectionLeft,
     sectionRight,
+    logoIconButton,
+    iconButton,
     icon,
   };
 }

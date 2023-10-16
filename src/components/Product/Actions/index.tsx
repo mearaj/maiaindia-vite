@@ -37,7 +37,7 @@ export default function ProductActions({ product }: { product: Product }) {
         display: 'flex',
         justifyContent: 'center',
         flexDirection: 'column',
-        padding: '12px',
+        padding: '16px 12px',
         height: '100%',
       }}
     >

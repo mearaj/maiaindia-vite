@@ -42,7 +42,7 @@ const apiSlice = createApi({
             return { error: 'No such document' };
           }
           const data = docSnap.data() as Product;
-          data.id = productID;
+          data.id = docSnap.id;
           return { data };
         } catch (e: unknown) {
           if (e instanceof FirebaseError) {

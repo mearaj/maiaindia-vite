@@ -73,15 +73,12 @@ export default function Header({
         <Toolbar sx={styles.toolbar}>
           <Box sx={styles.sectionLeft}>
             {showBackIcon && (
-              <Button
-                sx={{ height: '100%', padding: 0, minWidth: 0 }}
-                onClick={handleBackIconClick}
-              >
+              <Button sx={styles.logoIconButton} onClick={handleBackIconClick}>
                 <ArrowBack style={styles.icon} />
               </Button>
             )}
             {!showBackIcon && (
-              <Button sx={{ height: '100%', padding: 0, minWidth: 0 }}>
+              <Button sx={styles.logoIconButton}>
                 <Box
                   src={logoImgSrc}
                   component="img"
@@ -92,13 +89,16 @@ export default function Header({
             )}
           </Box>
           <Box sx={styles.sectionRight}>
-            <Button onClick={() => navigate('/custom')}>
+            <Button sx={styles.iconButton} onClick={() => navigate('/custom')}>
               <Diamond sx={styles.icon} />
             </Button>
-            <Button onClick={() => navigate('/cart')}>
+            <Button sx={styles.iconButton} onClick={() => navigate('/cart')}>
               <ShoppingCart sx={styles.icon} />
             </Button>
-            <Button onClick={() => handleInteractionItemClick()}>
+            <Button
+              sx={styles.iconButton}
+              onClick={() => handleInteractionItemClick()}
+            >
               <Menu sx={styles.icon} />
             </Button>
           </Box>
