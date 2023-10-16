@@ -4,12 +4,11 @@ import {
   Button,
   FormControl,
   FormLabel,
-  Link,
   OutlinedInput,
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import WhatsApp from '@mui/icons-material/WhatsApp';
 import { ChangeEvent, useState } from 'react';
-import { defaultPlaceholderImage } from '@/store/data/data';
 
 export default function CustomPage() {
   const initialValue = {
@@ -18,10 +17,6 @@ export default function CustomPage() {
     image: '',
   };
   const [data, setData] = useState(initialValue);
-
-  const handleInputNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setData({ ...data, name: e.target.value });
-  };
   const handleInputDetailsChange = (e: ChangeEvent<HTMLInputElement>) => {
     setData({ ...data, details: e.target.value });
   };
@@ -30,22 +25,43 @@ export default function CustomPage() {
     <Box>
       <Header showBackIcon />
       <Box sx={{ padding: '16px' }}>
-        <Box component="h3" sx={{ textAlign: 'center' }}>
-          Request Custom Quote
+        <Button
+          startIcon={<WhatsApp />}
+          variant="contained"
+          sx={{
+            textTransform: 'none',
+            textAlign: 'center',
+            margin: '8px auto',
+            fontWeight: 'bold',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            width: '100%',
+          }}
+          href="https://api.whatsapp.com/send?phone=+919967717702&text=Hi"
+        >
+          Click for Whats App Chat
+        </Button>
+        <Box
+          sx={{ textAlign: 'center', margin: '8px auto', fontWeight: 'bold' }}
+        >
+          OR
         </Box>
+        <Button
+          sx={{
+            textAlign: 'center',
+            margin: '0 auto 8px auto',
+            fontWeight: 'bold',
+            width: '100%',
+          }}
+          href="#product-details"
+        >
+          Request Custom Quote
+        </Button>
         <FormControl fullWidth sx={{ marginBottom: '16px' }}>
-          <FormLabel htmlFor="product-name">Item Name</FormLabel>
-          <OutlinedInput
-            type="text"
-            id="product-name"
-            fullWidth
-            size="small"
-            value={data.name}
-            onChange={handleInputNameChange}
-          />
-        </FormControl>
-        <FormControl fullWidth sx={{ marginBottom: '16px' }}>
-          <FormLabel htmlFor="product-details">Item Details</FormLabel>
+          <FormLabel sx={{ marginBottom: '8px' }} htmlFor="product-details">
+            Requirement Details
+          </FormLabel>
           <OutlinedInput
             type="text"
             id="product-details"
@@ -53,17 +69,10 @@ export default function CustomPage() {
             size="small"
             value={data.details}
             onChange={handleInputDetailsChange}
+            multiline
           />
         </FormControl>
-        <Box sx={{ width: '100%' }}>
-          <Box
-            component="img"
-            src={defaultPlaceholderImage.src}
-            srcSet={defaultPlaceholderImage.srcSet}
-            alt="Custom item for quote"
-            sx={{ width: '100%', height: 'auto' }}
-          />
-        </Box>
+
         <Button
           component="label"
           variant="contained"
@@ -86,14 +95,8 @@ export default function CustomPage() {
             }}
             accept="image/*"
           />
-          Upload Image
+          Add Image
         </Button>
-        <Link
-          target="_blank"
-          href="https://api.whatsapp.com/send?phone=+919967717702&text=Hi"
-        >
-          Send Message
-        </Link>
       </Box>
     </Box>
   );
