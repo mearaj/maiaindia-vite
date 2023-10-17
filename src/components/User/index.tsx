@@ -4,6 +4,7 @@ import { ProviderId } from '@firebase/auth';
 import Loader from '@/components/Loader';
 import { FirebaseContext } from '@/providers/firebase';
 import GoogleIcon from '@/icons/google-g';
+import imagePlaceholder from '@/assets/images/placeholder.svg';
 
 export default function UserComponent() {
   const { user, isLoading, signIn, signOut } = useContext(FirebaseContext);
@@ -37,23 +38,45 @@ export default function UserComponent() {
     return (
       <Box
         sx={{
-          flexShrink: '1',
-          flexGrow: '0',
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          flexDirection: 'column',
+          marginBottom: '32px',
         }}
       >
-        <Button
-          sx={{
-            ...buttonStyle,
-            justifyContent: 'center',
-            fontWeight: 'bold',
-          }}
-          onClick={signOut}
+        <Box
+          sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
         >
-          Sign Out
-        </Button>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Box
+              component="img"
+              src={user.photoURL ?? imagePlaceholder}
+              alt="user"
+              sx={{ width: '60px', borderRadius: '50%', marginRight: '16px' }}
+            />
+          </Box>
+          <Box>
+            <Box>{user.displayName}</Box>
+            <Button
+              sx={{
+                ...buttonStyle,
+                fontWeight: 'bold',
+                textAlign: 'start',
+                padding: '0',
+                margin: '0px',
+                lineHeight: '1.2',
+              }}
+              onClick={signOut}
+            >
+              Sign Out
+            </Button>
+          </Box>
+        </Box>
       </Box>
     );
   }

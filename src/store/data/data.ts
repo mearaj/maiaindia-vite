@@ -1,5 +1,3 @@
-import LogoCircleDarkGreen from '@/assets/images/logo-circle-dark-green.png';
-
 export interface CategoriesFilter {
   category: Category;
   sortBy: string;
@@ -21,14 +19,9 @@ export interface Product {
 
 export interface ImageMetadata {
   srcSet?: string;
-  src: string;
+  src?: string;
   sizes?: string;
 }
-
-export const defaultPlaceholderImage: ImageMetadata = {
-  srcSet: '/images/logo-circle-dark-green.png',
-  src: LogoCircleDarkGreen,
-};
 
 export const categories: Category[] = [
   {

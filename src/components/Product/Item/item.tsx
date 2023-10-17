@@ -1,20 +1,18 @@
-import {
-  defaultPlaceholderImage,
-  ImageMetadata,
-  Product,
-} from '@/store/data/data';
+import { ImageMetadata, Product } from '@/store/data/data';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Box, Paper } from '@mui/material';
+import { Box, Paper, useTheme } from '@mui/material';
 import ProductPrice from '@/components/Product/Price';
 import ProductActions from '@/components/Product/Actions';
 import ContentDrawer from '@/components/ContentDrawer';
 import staticProducts from '@/assets/data/products_id';
+import Placeholder from '@/icons/placeholder';
 
 export default function ProductItem({ product }: { product: Product }) {
   const cardContentReference = useRef<HTMLDivElement>(null);
   const [activeProductID, setActiveProductID] = useState('');
+  const theme = useTheme();
   const getPreferredImageSrc = (): ImageMetadata => {
-    const image = { ...defaultPlaceholderImage };
+    const image: ImageMetadata = {};
     const images = [...(product.images ?? [])];
     if (images && images.length > 0) {
       const found = staticProducts.find((p) => p === product.id);
@@ -83,20 +81,34 @@ export default function ProductItem({ product }: { product: Product }) {
         }}
         role="presentation"
       >
-        <Box sx={{}}>
-          <Box
-            component="img"
-            srcSet={getPreferredImageSrc().srcSet}
-            src={getPreferredImageSrc().src}
-            alt={product.name}
-            sx={{
-              height: 'auto',
-              width: '100%',
-              objectFit: 'fill',
-              objectPosition: 'center',
-              marginBottom: '8px',
-            }}
-          />
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+          }}
+        >
+          {!getPreferredImageSrc().srcSet ? (
+            <Placeholder
+              height="auto"
+              width="100%"
+              fillOne={theme.palette.primary.light}
+            />
+          ) : (
+            <Box
+              component="img"
+              srcSet={getPreferredImageSrc().srcSet}
+              src={getPreferredImageSrc().src}
+              alt={product.name}
+              sx={{
+                height: 'auto',
+                width: '100%',
+                objectFit: 'fill',
+                objectPosition: 'center',
+                marginBottom: '8px',
+              }}
+            />
+          )}
         </Box>
         <Box sx={{ padding: '4px 16px 16px' }}>
           <Box

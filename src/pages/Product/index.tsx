@@ -3,11 +3,12 @@ import { Box } from '@mui/material';
 import { useGetProductQuery } from '@/store/api/api';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
-import { defaultPlaceholderImage, ImageMetadata } from '@/store/data/data';
+import { ImageMetadata } from '@/store/data/data';
 import { useParams } from 'react-router-dom';
 import ProductPrice from '@/components/Product/Price';
 import ProductActions from '@/components/Product/Actions';
 import styles from './index.module.css';
+import Placeholder from '@/icons/placeholder';
 
 export default function ProductPage() {
   const params = useParams();
@@ -24,7 +25,7 @@ export default function ProductPage() {
     body = <Box className={styles.bodyAlt}>Product Not found</Box>;
   } else {
     const getPreferredImageSrc = (): ImageMetadata => {
-      const image = { ...defaultPlaceholderImage };
+      const image: ImageMetadata = {};
       const images = [...(product.images ?? [])];
       if (images && images.length > 0) {
         for (let i = 0; i < images.length; i += 1) {
@@ -54,13 +55,17 @@ export default function ProductPage() {
             (item) => {
               return (
                 <SwiperSlide key={item.id} className={styles.slide}>
-                  <img
-                    srcSet={getPreferredImageSrc().srcSet}
-                    src={getPreferredImageSrc().src}
-                    alt={product.name}
-                    className={styles.image}
-                    placeholder="blur"
-                  />
+                  {getPreferredImageSrc().srcSet ? (
+                    <Placeholder height="100%" width="auto" />
+                  ) : (
+                    <img
+                      srcSet={getPreferredImageSrc().srcSet}
+                      src={getPreferredImageSrc().src}
+                      alt={product.name}
+                      className={styles.image}
+                      placeholder="blur"
+                    />
+                  )}
                 </SwiperSlide>
               );
             }
