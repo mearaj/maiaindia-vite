@@ -55,7 +55,7 @@ export default function ProductPage() {
             (item) => {
               return (
                 <SwiperSlide key={item.id} className={styles.slide}>
-                  {getPreferredImageSrc().srcSet ? (
+                  {!getPreferredImageSrc().srcSet ? (
                     <Placeholder height="100%" width="auto" />
                   ) : (
                     <img
