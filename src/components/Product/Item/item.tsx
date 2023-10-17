@@ -90,8 +90,11 @@ export default function ProductItem({ product }: { product: Product }) {
         >
           {!getPreferredImageSrc().srcSet ? (
             <Placeholder
-              height="auto"
-              width="100%"
+              style={{
+                height: 'auto',
+                width: '100%',
+                backgroundColor: theme.palette.primary.light,
+              }}
               fillOne={theme.palette.primary.light}
             />
           ) : (
