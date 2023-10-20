@@ -1,10 +1,10 @@
 import { Box, Button } from '@mui/material';
 import { useContext } from 'react';
 import { ProviderId } from '@firebase/auth';
+import imagePlaceholder from '@/assets/images/placeholder.svg';
 import Loader from '@/components/Loader';
 import { FirebaseContext } from '@/providers/firebase';
 import GoogleIcon from '@/icons/google-g';
-import imagePlaceholder from '@/assets/images/placeholder.svg';
 
 export default function UserComponent() {
   const { user, isLoading, signIn, signOut } = useContext(FirebaseContext);

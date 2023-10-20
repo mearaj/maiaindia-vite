@@ -1,6 +1,6 @@
 import { Swiper, SwiperClass, SwiperSlide } from 'swiper/react';
-import { Pagination } from 'swiper/modules';
 import { SyntheticEvent, useEffect, useState } from 'react';
+import { FreeMode } from 'swiper/modules';
 import styles from './index.module.css';
 
 export default function Videos({ className }: { className?: string }) {
@@ -57,7 +57,7 @@ export default function Videos({ className }: { className?: string }) {
       className={swiperClassName}
       slideActiveClass={styles.active}
       slidesPerView={1}
-      modules={[Pagination]}
+      modules={[FreeMode]}
       pagination
       loop
       spaceBetween={0}

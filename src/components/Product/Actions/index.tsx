@@ -1,10 +1,15 @@
-import { Box, Button } from '@mui/material';
-import { Product } from '@/store/data/data';
+import { Box, Button, SxProps, Theme } from '@mui/material';
 import AddToCartIcon from '@mui/icons-material/AddShoppingCart';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Product } from '@/data/store';
 import Element = React.JSX.Element;
 
-export default function ProductActions({ product }: { product: Product }) {
+interface ProductActionProps {
+  product: Product;
+  sx?: SxProps<Theme>;
+}
+
+export default function ProductActions({ product, sx }: ProductActionProps) {
   const params = useParams();
   const navigate = useNavigate();
   let button: Element | null = null;
@@ -38,17 +43,13 @@ export default function ProductActions({ product }: { product: Product }) {
         justifyContent: 'center',
         flexDirection: 'column',
         padding: '16px 12px',
-        height: '100%',
+        ...sx,
       }}
     >
       {button}
       <Button
         sx={{
           ...buttonStyle,
-          '&:hover': {
-            color: 'inherit',
-            backgroundColor: 'inherit',
-          },
         }}
         variant="contained"
         fullWidth

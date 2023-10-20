@@ -39,14 +39,18 @@ const iconButtonStyles = (_: Theme) => ({
   padding: '12px 4px',
   minWidth: '0px',
 });
+const linkStyles = (_: Theme) => ({
+  height: '100%',
+});
 
-export default function styles(theme: Theme) {
+export default function createStyles(theme: Theme) {
   const toolbar = toolbarStyles(theme);
   const sectionLeft = sectionLeftStyles(theme);
   const sectionRight = sectionRightStyles(theme);
   const logoIconButton = logoIconButtonStyles(theme);
   const iconButton = iconButtonStyles(theme);
   const icon = iconStyles(theme);
+  const link = linkStyles(theme);
 
   return {
     toolbar,
@@ -55,5 +59,6 @@ export default function styles(theme: Theme) {
     logoIconButton,
     iconButton,
     icon,
+    link,
   };
 }

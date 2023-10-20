@@ -1,6 +1,13 @@
 import { Box, SxProps, Theme } from '@mui/material';
+import { Product } from '@/data/store';
 
-export default function ProductPrice(sx?: SxProps<Theme>) {
+export default function ProductPrice({
+  sx,
+  product,
+}: {
+  sx?: SxProps<Theme>;
+  product: Product;
+}) {
   return (
     <Box
       sx={{
@@ -25,7 +32,7 @@ export default function ProductPrice(sx?: SxProps<Theme>) {
             fontWeight: '600',
           }}
         >
-          N/A&nbsp;
+          {product.price.sp}&nbsp;
         </Box>
       </Box>
       <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
@@ -45,7 +52,7 @@ export default function ProductPrice(sx?: SxProps<Theme>) {
               fontWeight: 300,
             }}
           >
-            N/A
+            {product.price.mrp}
           </Box>
         </Box>
       </Box>

@@ -1,6 +1,7 @@
 .swiper {
     height: 100%;
     width: 100%;
+    flex-shrink: 0;
 }
 
 .slide:global(.swiper-slide) {
@@ -28,7 +29,7 @@
     object-fit: fill;
 }
 
-.swiper > :global(.swiper-pagination) {
+.swiper > :global(.swiper-pagination.swiper-pagination-bullets) {
     bottom: unset;
     top: 16px;
 }

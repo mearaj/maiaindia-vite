@@ -3,11 +3,11 @@ import { Box, useTheme } from '@mui/material';
 import { useGetProductQuery } from '@/store/api/api';
 import { Swiper, SwiperClass, SwiperSlide } from 'swiper/react';
 import { FreeMode, Navigation, Thumbs } from 'swiper/modules';
-import { ImageMetadata } from '@/store/data/data';
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
-import ProductPrice from '@/components/Product/Price';
+import getPreferredImageSrc from '@/misc';
 import ProductActions from '@/components/Product/Actions';
+import ProductPrice from '@/components/Product/Price';
 import styles from './index.module.css';
 import Placeholder from '@/icons/placeholder';
 
@@ -35,25 +35,8 @@ export default function ProductPage() {
       </Box>
     );
   }
-  const getPreferredImageSrc = (): ImageMetadata => {
-    const image: ImageMetadata = {};
-    const images = [...(product.images ?? [])];
-    if (images && images.length > 0) {
-      for (let i = 0; i < images.length; i += 1) {
-        const dim = images[i].match(/(\d+[xX]\d+)/);
-        if (dim && dim?.length > 0) {
-          const dims = dim[0].split(/[xX]/);
-          if (dims.length > 0) {
-            images[i] = `/images/${product.id}/${images[i]} ${dims[0]}w`;
-          }
-        }
-      }
-      image.src = images[images.length - 1];
-      image.srcSet = images.join(',');
-    }
-    return image;
-  };
 
+  const preferredImgSrc = getPreferredImageSrc(product);
   return (
     <Box className={styles.layout}>
       <Header showBackIcon />
@@ -70,7 +53,7 @@ export default function ProductPage() {
             (item) => {
               return (
                 <SwiperSlide key={item.id} className={styles.slide}>
-                  {!getPreferredImageSrc().srcSet ? (
+                  {!preferredImgSrc.srcSet ? (
                     <Placeholder
                       fillOne={theme.palette.primary.light}
                       height="100%"
@@ -82,8 +65,8 @@ export default function ProductPage() {
                     />
                   ) : (
                     <img
-                      srcSet={getPreferredImageSrc().srcSet}
-                      src={getPreferredImageSrc().src}
+                      srcSet={preferredImgSrc.srcSet}
+                      src={preferredImgSrc.src}
                       alt={product.name}
                       className={styles.image}
                       placeholder="blur"
@@ -98,7 +81,7 @@ export default function ProductPage() {
           onSwiper={setThumbsSwiper}
           className={styles.swiperThumbs}
           modules={[FreeMode, Navigation, Thumbs]}
-          spaceBetween={8}
+          spaceBetween={18}
           slidesPerView={3}
           freeMode
           watchSlidesProgress
@@ -108,20 +91,21 @@ export default function ProductPage() {
             (item) => {
               return (
                 <SwiperSlide key={item.id} className={styles.thumbsSlide}>
-                  {!getPreferredImageSrc().srcSet ? (
+                  {!preferredImgSrc.srcSet ? (
                     <Placeholder
                       fillOne={theme.palette.primary.light}
                       height="100%"
+                      className={styles.image}
                       style={{
                         backgroundColor: theme.palette.primary.light,
                         height: '100%',
-                        width: 'auto',
+                        width: '100%',
                       }}
                     />
                   ) : (
                     <img
-                      srcSet={getPreferredImageSrc().srcSet}
-                      src={getPreferredImageSrc().src}
+                      srcSet={preferredImgSrc.srcSet}
+                      src={preferredImgSrc.src}
                       alt={product.name}
                       className={styles.image}
                       placeholder="blur"
@@ -134,9 +118,9 @@ export default function ProductPage() {
         </Swiper>
         <div className={styles.productDetails}>
           <div className={styles.productName}>{product.name}</div>
-          <ProductPrice />
+          <ProductPrice product={product} />
         </div>
-        <ProductActions product={product} />
+        <ProductActions product={product} sx={{ height: 'auto' }} />
       </Box>
     </Box>
   );

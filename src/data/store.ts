@@ -8,13 +8,20 @@ export interface Category {
   id: string;
 }
 
-export const defaultCategory = { id: 'All', name: 'All' };
+export interface ProductPrice {
+  timestamp: number;
+  currency: string;
+  mrp: number;
+  sp: number;
+}
 
 export interface Product {
   categoryID: string;
   id: string;
   images?: string[];
   name: string;
+  price: ProductPrice;
+  priceHistory?: ProductPrice[];
 }
 
 export interface ImageMetadata {
@@ -24,10 +31,6 @@ export interface ImageMetadata {
 }
 
 export const categories: Category[] = [
-  {
-    id: 'All',
-    name: 'All',
-  },
   {
     id: 'V6LHSd8AFdxKTPofH5k9',
     name: 'Pendants',

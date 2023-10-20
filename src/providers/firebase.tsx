@@ -1,6 +1,7 @@
 import {
   createContext,
   PropsWithChildren,
+  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -23,6 +24,7 @@ export interface AuthState {
   signOut: () => Promise<void>;
   error: string | null;
   clearError: () => void;
+  isAdmin: () => boolean;
 }
 
 const initialState: AuthState = {
@@ -32,6 +34,7 @@ const initialState: AuthState = {
   signOut: async () => {},
   error: null,
   clearError: () => {},
+  isAdmin: () => false,
 };
 
 export const FirebaseContext = createContext<AuthState>(initialState);
@@ -93,6 +96,19 @@ export default function FirebaseProvider({ children }: PropsWithChildren) {
     setError(null);
   };
 
+  const isAdmin = useCallback(() => {
+    if (!user) {
+      return false;
+    }
+    const adminUsers = import.meta.env.VITE_ADMIN_EMAIL.split(',');
+    for (let i = 0; i < adminUsers.length; i += 1) {
+      if (user.email === adminUsers[i]) {
+        return true;
+      }
+    }
+    return false;
+  }, [user]);
+
   const authState = useMemo(
     () => ({
       isLoading: isLoadingAuth || isSigningIn || isSigningOut,
@@ -101,8 +117,9 @@ export default function FirebaseProvider({ children }: PropsWithChildren) {
       user,
       error,
       clearError,
+      isAdmin,
     }),
-    [error, isLoadingAuth, isSigningIn, isSigningOut, user]
+    [error, isAdmin, isLoadingAuth, isSigningIn, isSigningOut, user]
   );
 
   return (

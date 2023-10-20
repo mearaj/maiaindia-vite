@@ -1,33 +1,25 @@
 import * as React from 'react';
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import {
-  Accordion,
-  AccordionSummary,
-  Box,
-  IconButton,
-  Paper,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Box, IconButton, useTheme } from '@mui/material';
 import Close from '@mui/icons-material/Close';
-import ChevronRight from '@mui/icons-material/ChevronRight';
 import { selectShowMenu, useAppDispatch, useAppSelector } from '@/store';
 import { setShowMenu } from '@/store/features/ui';
-import useDimensions from '@/hooks/dimensions';
-import Categories from '@/components/Categories';
-import UserComponent from '@/components/User';
 import logoDarkGreen from '@/assets/images/logo-dark-green.png';
-import { FirebaseContext } from '@/providers/firebase';
+import useDimensions from '@/hooks/dimensions';
+import UserComponent from '@/components/User';
+import AdminComponent from '@/components/Admin';
+import createStyles from './styles';
+import Categories from '@/components/Categories';
 
 export interface DrawerProps {
   className?: string;
 }
 
-export default function Drawer(_: DrawerProps) {
+export default function NavDrawer(_: DrawerProps) {
   const drawerRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
   const showMenu = useAppSelector(selectShowMenu);
-  const minimumTransitionDuration = 250; // milliseconds
+  const minTransDuration = 250; // milliseconds
   const dimensions = useDimensions();
   const [touchStartPos, setTouchStartPos] = useState({
     clientX: 0,
@@ -35,7 +27,7 @@ export default function Drawer(_: DrawerProps) {
   });
   const [mousePressOrTouchStart, setMousePressOrTouchStart] = useState(false);
   const theme = useTheme();
-  const { user } = useContext(FirebaseContext);
+  const styles = createStyles(theme);
 
   const onTouchStartOrOnMouseDown = (
     e: React.TouchEvent<HTMLElement> | React.MouseEvent<HTMLElement>
@@ -85,11 +77,11 @@ export default function Drawer(_: DrawerProps) {
       const width = drawerRef.current.offsetWidth;
       // 50 accounts for horizontal scrollbar size
       if (timeDiff > 0 && distance > 40) {
-        if (timeDiff < minimumTransitionDuration) {
+        if (timeDiff < minTransDuration) {
           drawerRef.current.style.transition = `right ${timeDiff}ms`;
           dispatch(setShowMenu(false));
         } else {
-          drawerRef.current.style.transition = `right ${minimumTransitionDuration}ms`;
+          drawerRef.current.style.transition = `right ${minTransDuration}ms`;
           if (distance >= width / 2) {
             dispatch(setShowMenu(false));
           }
@@ -107,7 +99,7 @@ export default function Drawer(_: DrawerProps) {
       drawerRef.current &&
       !mousePressOrTouchStart
     ) {
-      drawerRef.current.style.transition = `right ${minimumTransitionDuration}ms`;
+      drawerRef.current.style.transition = `right ${minTransDuration}ms`;
       if (showMenu) {
         drawerRef.current.style.right = '0px';
       } else {
@@ -121,21 +113,9 @@ export default function Drawer(_: DrawerProps) {
   }, [resetPosition, dimensions]);
 
   return (
-    <Paper
+    <Box
       ref={drawerRef}
-      sx={{
-        position: 'fixed',
-        top: '0',
-        right: '-100vw',
-        width: '100vw',
-        height: '100vh',
-        boxSizing: 'border-box',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'stretch',
-        borderRadius: '0',
-        zIndex: theme.zIndex.drawer,
-      }}
+      sx={styles.root}
       onTouchStart={onTouchStartOrOnMouseDown}
       onTouchMove={onTouchMoveOrOnMouseMouse}
       onTouchEnd={onTouchEndOrOnMouseUp}
@@ -144,16 +124,7 @@ export default function Drawer(_: DrawerProps) {
       onMouseUp={onTouchEndOrOnMouseUp}
       role="presentation"
     >
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          height: theme.dimensions.appBarHeight,
-          padding: '16px',
-          width: '100%',
-        }}
-      >
+      <Box sx={styles.header}>
         <Box
           sx={{
             display: 'flex',
@@ -187,37 +158,11 @@ export default function Drawer(_: DrawerProps) {
           </IconButton>
         </Box>
       </Box>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'stretch',
-          flexGrow: '1',
-          flexShrink: '0',
-          padding: '16px',
-        }}
-      >
+      <Box sx={styles.main}>
         <UserComponent />
-        {user && user.email === import.meta.env.VITE_ADMIN_EMAIL && (
-          <Accordion
-            expanded={false}
-            onChange={(___) => null}
-            onClick={() => {
-              dispatch(setShowMenu(false));
-              // router.replace('/admin');
-            }}
-            sx={{
-              backgroundColor: 'transparent',
-              color: 'inherit',
-            }}
-          >
-            <AccordionSummary expandIcon={<ChevronRight />}>
-              <Typography>Admin</Typography>
-            </AccordionSummary>
-          </Accordion>
-        )}
+        <AdminComponent />
         <Categories />
       </Box>
-    </Paper>
+    </Box>
   );
 }

@@ -1,7 +1,7 @@
 import { createApi, fakeBaseQuery } from '@reduxjs/toolkit/query/react';
 import { doc, DocumentData, getDoc, getDocs, Query } from '@firebase/firestore';
 import { FirebaseError } from '@firebase/util';
-import { Product } from '@/store/data/data';
+import { Product } from '@/data/store';
 import { appFirestore } from '@/firebase';
 
 const apiSlice = createApi({
@@ -19,6 +19,7 @@ const apiSlice = createApi({
               name: (product.data() as unknown as Product).name,
               images: (product.data() as unknown as Product).images,
               categoryID: (product.data() as unknown as Product).categoryID,
+              price: (product.data() as unknown as Product).price,
             });
           });
           return { data: products };

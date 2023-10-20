@@ -4,16 +4,14 @@ import Products from '@/components/Products';
 import Videos from '@/components/Videos';
 import styles from './index.module.css';
 
-export default function CategoriesPage() {
+export default function HomePage() {
   return (
     <Box
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        flexGrow: '1',
+        height: '100%',
         width: '100%',
-        flexShrink: '1',
         position: 'relative',
+        overflowY: 'auto',
       }}
     >
       <Header />

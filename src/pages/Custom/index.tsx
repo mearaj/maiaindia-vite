@@ -81,6 +81,7 @@ export default function CustomPage() {
           <input
             type="file"
             hidden
+            required
             style={{
               clip: 'rect(0 0 0 0)',
               clipPath: 'inset(50%)',

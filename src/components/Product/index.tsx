@@ -1,41 +1,16 @@
-import { ImageMetadata, Product } from '@/store/data/data';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Box, Paper, useTheme } from '@mui/material';
-import ProductPrice from '@/components/Product/Price';
+import { Product } from '@/data/store';
+import getPreferredImageSrc from '@/misc';
 import ProductActions from '@/components/Product/Actions';
+import ProductPrice from '@/components/Product/Price';
 import ContentDrawer from '@/components/ContentDrawer';
-import staticProducts from '@/assets/data/products_id';
 import Placeholder from '@/icons/placeholder';
 
-export default function ProductItem({ product }: { product: Product }) {
+export default function ProductComponent({ product }: { product: Product }) {
   const cardContentReference = useRef<HTMLDivElement>(null);
   const [activeProductID, setActiveProductID] = useState('');
   const theme = useTheme();
-  const getPreferredImageSrc = (): ImageMetadata => {
-    const image: ImageMetadata = {};
-    const images = [...(product.images ?? [])];
-    if (images && images.length > 0) {
-      const found = staticProducts.find((p) => p === product.id);
-      for (let i = 0; i < images.length; i += 1) {
-        const dim = images[i].match(/(\d+[xX]\d+)/);
-        if (dim && dim?.length > 0) {
-          const dims = dim[0].split(/[xX]/);
-          if (dims.length > 0) {
-            if (found) {
-              images[i] = `/images/${product.id}/${images[i]} ${dims[0]}w`;
-            } else {
-              images[
-                i
-              ] = `https://firebasestorage.googleapis.com/v0/b/maiaindia.appspot.com/o/images%2F${product.id}%2F${images[i]}?alt=media ${dims[0]}w`;
-            }
-          }
-        }
-      }
-      [image.src] = images[images.length - 1].split(' ');
-      image.srcSet = images.join(',');
-    }
-    return image;
-  };
 
   const onWindowClicked = useCallback(
     (ev: MouseEvent) => {
@@ -54,6 +29,8 @@ export default function ProductItem({ product }: { product: Product }) {
     window.addEventListener('click', onWindowClicked);
     return () => window.removeEventListener('click', onWindowClicked);
   }, [onWindowClicked]);
+
+  const preferredImgSrc = getPreferredImageSrc(product);
 
   return (
     <Paper
@@ -88,7 +65,7 @@ export default function ProductItem({ product }: { product: Product }) {
             justifyContent: 'flex-start',
           }}
         >
-          {!getPreferredImageSrc().srcSet ? (
+          {!preferredImgSrc.srcSet ? (
             <Placeholder
               style={{
                 height: 'auto',
@@ -100,8 +77,8 @@ export default function ProductItem({ product }: { product: Product }) {
           ) : (
             <Box
               component="img"
-              srcSet={getPreferredImageSrc().srcSet}
-              src={getPreferredImageSrc().src}
+              srcSet={preferredImgSrc.srcSet}
+              src={preferredImgSrc.src}
               alt={product.name}
               sx={{
                 height: 'auto',
@@ -113,13 +90,13 @@ export default function ProductItem({ product }: { product: Product }) {
             />
           )}
         </Box>
-        <Box sx={{ padding: '4px 16px 16px' }}>
+        <Box sx={{ padding: '4px 8px 4px' }}>
           <Box
             sx={{
-              fontSize: '12px',
-              lineHeight: 1.2,
+              fontSize: '14px',
+              lineHeight: 1,
+              marginBottom: '4px',
               fontWeight: 500,
-              marginBottom: '8px',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -127,7 +104,7 @@ export default function ProductItem({ product }: { product: Product }) {
           >
             {product.name}
           </Box>
-          <ProductPrice />
+          <ProductPrice product={product} />
         </Box>
       </Box>
       <ContentDrawer
@@ -135,7 +112,7 @@ export default function ProductItem({ product }: { product: Product }) {
         activeProductID={activeProductID}
         setActiveProductID={setActiveProductID}
       >
-        <ProductActions product={product} />
+        <ProductActions product={product} sx={{ height: '100%' }} />
       </ContentDrawer>
     </Paper>
   );

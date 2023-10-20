@@ -1,29 +1,33 @@
 import { useGetProductsQuery } from '@/store/api/api';
 import { Loader } from '@/components';
 import { Box } from '@mui/material';
-import { defaultCategory } from '@/store/data/data';
-import { selectCategory, useAppSelector } from '@/store';
 import {
   collection,
   DocumentData,
-  query,
   Query,
+  query,
   where,
 } from '@firebase/firestore';
-import ProductItem from '@/components/Product/Item/item';
+import { categories } from '@/data/store';
+import { useContext } from 'react';
 import { appFirestore } from '@/firebase';
+import ProductComponent from '@/components/Product';
+import { CategoriesContext } from '@/providers/categories';
 
 function Products() {
-  const category = useAppSelector(selectCategory);
+  const categoryContext = useContext(CategoriesContext);
   const generateQuery: () => Query<DocumentData, DocumentData> = () => {
     const productsRef = collection(appFirestore, 'products');
-    let productsQuery: Query<DocumentData, DocumentData>;
-    if (!category || category.id === defaultCategory.id) {
+    let productsQuery: Query<DocumentData, DocumentData> = query(productsRef);
+    const found = categories.find(
+      (eachCategory) => eachCategory.id === categoryContext.category.id
+    );
+    if (!found) {
       productsQuery = query(productsRef);
     } else {
       productsQuery = query(
         productsRef,
-        where('categoryID', '==', category.id)
+        where('categoryID', '==', categoryContext.category.id ?? '')
       );
     }
     return productsQuery;
@@ -45,13 +49,13 @@ function Products() {
         '@media (min-width: 1000px)': {
           gridTemplateColumns: '1fr 1fr 1fr',
           padding: '32px',
-          gridGap: '32px 32px',
+          gridGap: '32px',
         },
       }}
     >
       {products &&
         products.map((el) => {
-          return <ProductItem key={el.id} product={el} />;
+          return <ProductComponent key={el.id} product={el} />;
         })}
     </Box>
   );

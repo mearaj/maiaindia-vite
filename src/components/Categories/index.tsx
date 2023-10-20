@@ -8,15 +8,21 @@ import {
   Typography,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { useState } from 'react';
-import { selectCategory, useAppDispatch, useAppSelector } from '@/store';
-import { setCategory } from '@/store/features/category';
-import { categories } from '@/store/data/data';
+import { useContext, useState } from 'react';
+import { useAppDispatch } from '@/store';
 import { setShowMenu } from '@/store/features/ui';
+import { categories } from '@/data/store';
+import {
+  CategoriesContext,
+  defaultSelectedCategory,
+} from '@/providers/categories';
+
+const availableCategories = [defaultSelectedCategory, ...categories];
 
 export default function Categories() {
   const dispatch = useAppDispatch();
   const [expanded, setExpanded] = useState(false);
+  const categoriesContext = useContext(CategoriesContext);
   return (
     <Accordion expanded={expanded} onChange={() => setExpanded(!expanded)}>
       <AccordionSummary
@@ -30,25 +36,25 @@ export default function Categories() {
         <RadioGroup
           aria-labelledby="demo-controlled-radio-buttons-group"
           name="controlled-radio-buttons-group"
-          value={useAppSelector(selectCategory).id}
+          value={categoriesContext.category.id}
           onChange={(_, v) => {
-            const foundCategory = categories.find(
-              (category) => category.id === v
+            const foundCategory = availableCategories.find(
+              (eachCategory) => eachCategory.id === v
             );
             if (foundCategory) {
-              dispatch(setCategory(foundCategory));
+              categoriesContext.setCategory(foundCategory);
               dispatch(setShowMenu(false));
               setExpanded(false);
             }
           }}
         >
-          {categories.map((category) => {
+          {availableCategories.map((eachCategory) => {
             return (
               <FormControlLabel
-                key={category.id}
-                value={category.id}
+                key={eachCategory.id}
+                value={eachCategory.id}
                 control={<Radio />}
-                label={category.name}
+                label={eachCategory.name}
               />
             );
           })}
