@@ -27,24 +27,7 @@ import { addDoc, collection, deleteDoc, doc } from '@firebase/firestore';
 import { ref, uploadBytes } from '@firebase/storage';
 import { appFirebaseStorage, appFirestore } from '@/firebase';
 import { useNavigate } from 'react-router-dom';
-
-interface AddProductForm {
-  name: string;
-  details: string;
-  image?: {
-    url: string;
-    height: number;
-    width: number;
-    extension: string;
-    file: File | null;
-  };
-  mrp: number | string;
-  sp: number | string;
-  category: Category;
-  processingState: 'error' | 'warning' | 'info' | 'success' | 'none';
-  processingMsg: string;
-  allowDismissAction: boolean;
-}
+import { AddProductForm } from '@/pages/Admin/AddProduct/helper';
 
 export default function AdminAddProductPage() {
   const initialValue: AddProductForm = {
@@ -88,7 +71,7 @@ export default function AdminAddProductPage() {
         setData({
           ...data,
           processingState: 'info',
-          processingMsg: 'Uploading image locally...',
+          processingMsg: 'Uploading image locally',
           allowDismissAction: false,
         });
         const file: File | null = event.target.files[0];
@@ -238,28 +221,6 @@ export default function AdminAddProductPage() {
         allowDismissAction: true,
       });
     }
-    console.log(res.id);
-    // setTimeout(() => {
-    //   setData({
-    //     ...data,
-    //     apiUploadState: ApiUploadStateEnum.UploadingImage,
-    //     uploadStateMsg: 'Uploading image now',
-    //   });
-    //   setTimeout(() => {
-    //     setData({
-    //       ...data,
-    //       apiUploadState: ApiUploadStateEnum.UploadSuccess,
-    //       uploadStateMsg: 'Successfully uploaded product',
-    //     });
-    //     setTimeout(() => {
-    //       setData({
-    //         ...data,
-    //         apiUploadState: ApiUploadStateEnum.None,
-    //         uploadStateMsg: '',
-    //       });
-    //     });
-    //   });
-    // });
   };
 
   const handleReset = (
