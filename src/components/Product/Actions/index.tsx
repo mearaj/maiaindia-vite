@@ -24,7 +24,7 @@ export default function ProductActions({ product, sx }: ProductActionProps) {
     button = (
       <Button
         sx={buttonStyle}
-        variant="contained"
+        variant="outlined"
         fullWidth
         // href={`/products/${product.id}`}
         onClick={(_) => {
@@ -51,7 +51,7 @@ export default function ProductActions({ product, sx }: ProductActionProps) {
         sx={{
           ...buttonStyle,
         }}
-        variant="contained"
+        variant="outlined"
         fullWidth
         onClick={(__) => {}}
       >
@@ -66,7 +66,7 @@ export default function ProductActions({ product, sx }: ProductActionProps) {
       </Button>
       <Button
         sx={{ ...buttonStyle, marginBottom: 0 }}
-        variant="contained"
+        variant="outlined"
         fullWidth
         onClick={() => {}}
       >

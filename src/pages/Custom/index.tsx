@@ -27,7 +27,7 @@ export default function CustomPage() {
       <Box sx={{ padding: '16px' }}>
         <Button
           startIcon={<WhatsApp />}
-          variant="contained"
+          variant="outlined"
           sx={{
             textTransform: 'none',
             textAlign: 'center',
@@ -70,11 +70,12 @@ export default function CustomPage() {
             value={data.details}
             onChange={handleInputDetailsChange}
             multiline
+            minRows={3}
           />
         </FormControl>
         <Button
           component="label"
-          variant="contained"
+          variant="outlined"
           fullWidth
           startIcon={<CloudUploadIcon />}
         >
