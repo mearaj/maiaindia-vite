@@ -13,11 +13,11 @@ import {
 } from '@mui/material';
 import ArrowBack from '@mui/icons-material/ArrowBackIos';
 import ShoppingCart from '@mui/icons-material/ShoppingCart';
-import { useAppDispatch } from '@/store';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { setShowMenu } from '@/store/features/ui';
 import logoDarkGreen from '@/assets/images/logo-dark-green.png';
 import logoCircleDarkGreen from '@/assets/images/logo-circle-dark-green.png';
+import { useRecoilState } from 'recoil';
+import { menuAtom } from '@/recoil/state.ts';
 import useDimensions from '@/hooks/dimensions';
 import createStyles from './styles';
 
@@ -33,7 +33,7 @@ export default function Header({
   sx,
 }: HeaderProps) {
   const dimensions = useDimensions();
-  const dispatch = useAppDispatch();
+  const [, setShowMenu] = useRecoilState(menuAtom);
   const navigate = useNavigate();
   const theme = useTheme();
   const styles = createStyles(theme);
@@ -53,7 +53,7 @@ export default function Header({
   };
 
   const handleInteractionItemClick = () => {
-    dispatch(setShowMenu(true));
+    setShowMenu(true);
   };
 
   let logoImgSrc = logoCircleDarkGreen;

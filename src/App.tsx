@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import { useAppDispatch } from '@/store';
-import { setShowMenu } from '@/store/features/ui';
 import { useCallback, useEffect } from 'react';
+import { useRecoilState } from 'recoil';
+import { menuAtom } from '@/recoil/state';
 import ProductPage from '@/pages/Product';
 import HomePage from '@/pages/Home';
 import CartPage from '@/pages/Cart';
@@ -12,12 +12,12 @@ import AdminAddProductPage from '@/pages/Admin/AddProduct';
 import NavDrawer from '@/components/NavDrawer';
 
 function App() {
-  const dispatch = useAppDispatch();
   const location = useLocation();
+  const [, setShowMenu] = useRecoilState(menuAtom);
 
   const closeDrawer = useCallback(() => {
-    dispatch(setShowMenu(false));
-  }, [dispatch]);
+    setShowMenu(false);
+  }, [setShowMenu]);
 
   useEffect(() => {
     closeDrawer();

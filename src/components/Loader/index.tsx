@@ -1,7 +1,11 @@
 import CircularProgress from '@mui/material/CircularProgress';
 import { Box, SxProps, Theme } from '@mui/material';
 
-function Loader(sx?: SxProps<Theme>) {
+interface LoaderContainerProps {
+  sx?: SxProps<Theme>;
+}
+
+function Loader({ sx }: LoaderContainerProps) {
   return (
     <Box
       sx={{

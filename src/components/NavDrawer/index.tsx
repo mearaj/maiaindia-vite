@@ -2,9 +2,9 @@ import * as React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Box, IconButton, useTheme } from '@mui/material';
 import Close from '@mui/icons-material/Close';
-import { selectShowMenu, useAppDispatch, useAppSelector } from '@/store';
-import { setShowMenu } from '@/store/features/ui';
 import logoDarkGreen from '@/assets/images/logo-dark-green.png';
+import { useRecoilState } from 'recoil';
+import { menuAtom } from '@/recoil/state';
 import useDimensions from '@/hooks/dimensions';
 import UserComponent from '@/components/User';
 import AdminComponent from '@/components/Admin';
@@ -17,8 +17,7 @@ export interface DrawerProps {
 
 export default function NavDrawer(_: DrawerProps) {
   const drawerRef = useRef<HTMLDivElement>(null);
-  const dispatch = useAppDispatch();
-  const showMenu = useAppSelector(selectShowMenu);
+  const [showMenu, setShowMenu] = useRecoilState(menuAtom);
   const minTransDuration = 250; // milliseconds
   const dimensions = useDimensions();
   const [touchStartPos, setTouchStartPos] = useState({
@@ -79,11 +78,11 @@ export default function NavDrawer(_: DrawerProps) {
       if (timeDiff > 0 && distance > 40) {
         if (timeDiff < minTransDuration) {
           drawerRef.current.style.transition = `right ${timeDiff}ms`;
-          dispatch(setShowMenu(false));
+          setShowMenu(false);
         } else {
           drawerRef.current.style.transition = `right ${minTransDuration}ms`;
           if (distance >= width / 2) {
-            dispatch(setShowMenu(false));
+            setShowMenu(false);
           }
         }
       }
@@ -151,7 +150,7 @@ export default function NavDrawer(_: DrawerProps) {
         >
           <IconButton
             onClick={() => {
-              dispatch(setShowMenu(false));
+              setShowMenu(false);
             }}
           >
             <Close sx={{ fontSize: '32px' }} />

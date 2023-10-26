@@ -8,21 +8,21 @@ import {
   Typography,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { useContext, useState } from 'react';
-import { useAppDispatch } from '@/store';
-import { setShowMenu } from '@/store/features/ui';
+import { useState } from 'react';
 import { categories } from '@/data/store';
+import { useRecoilState } from 'recoil';
 import {
-  CategoriesContext,
+  categoryAtom,
   defaultSelectedCategory,
-} from '@/providers/categories';
+  menuAtom,
+} from '@/recoil/state';
 
 const availableCategories = [defaultSelectedCategory, ...categories];
 
 export default function Categories() {
-  const dispatch = useAppDispatch();
   const [expanded, setExpanded] = useState(false);
-  const categoriesContext = useContext(CategoriesContext);
+  const [, setShowMenu] = useRecoilState(menuAtom);
+  const [selectedCategory, setCategory] = useRecoilState(categoryAtom);
   return (
     <Accordion expanded={expanded} onChange={() => setExpanded(!expanded)}>
       <AccordionSummary
@@ -36,14 +36,14 @@ export default function Categories() {
         <RadioGroup
           aria-labelledby="demo-controlled-radio-buttons-group"
           name="controlled-radio-buttons-group"
-          value={categoriesContext.category.id}
+          value={selectedCategory.id}
           onChange={(_, v) => {
             const foundCategory = availableCategories.find(
               (eachCategory) => eachCategory.id === v
             );
             if (foundCategory) {
-              categoriesContext.setCategory(foundCategory);
-              dispatch(setShowMenu(false));
+              setCategory(foundCategory);
+              setShowMenu(() => false);
               setExpanded(false);
             }
           }}

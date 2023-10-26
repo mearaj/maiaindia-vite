@@ -74,7 +74,8 @@ module.exports = {
           ["@/misc", "./src/misc"],
           ["@/pages", "./src/pages"],
           ["@/providers", "./src/providers"],
-          ["@/store", "./src/store"]
+          ["@/store", "./src/store"],
+          ["@/recoil", "./src/recoil"]
         ]
       }
     }
