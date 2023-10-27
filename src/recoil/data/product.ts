@@ -1,4 +1,20 @@
-const productsID = [
+export interface ProductPrice {
+  timestamp: number;
+  currency: string;
+  mrp: number;
+  sp: number;
+}
+
+export interface Product {
+  categoryID: string;
+  id: string;
+  images?: string[];
+  name: string;
+  price: ProductPrice;
+  priceHistory?: ProductPrice[];
+}
+
+const product = [
   '3TdmeLkq6uJ08HOG5seJ',
   '7tUCAsGzwAJsnAfYikpt',
   'CZ7mfK3JWqJLaIo5gYVY',
@@ -14,4 +30,4 @@ const productsID = [
   'z7q1fjhbtSG5hW1Kf2HS',
 ];
 
-export default productsID;
+export default product;

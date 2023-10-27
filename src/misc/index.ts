@@ -1,5 +1,5 @@
-import { ImageMetadata, Product } from '@/data/store';
-import staticProducts from '@/data/products_id';
+import staticProducts, { Product } from '@/recoil/data/product';
+import { ImageMetadata } from '@/recoil/data/image';
 
 const getPreferredImageSrc = (product: Product): ImageMetadata => {
   const image: ImageMetadata = {};

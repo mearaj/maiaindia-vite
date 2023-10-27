@@ -8,17 +8,18 @@ import {
   Theme,
   Typography,
 } from '@mui/material';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { Add, AddTask, Home } from '@mui/icons-material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { NavLink } from 'react-router-dom';
-import { FirebaseContext } from '@/providers/firebase';
+import { useRecoilValue } from 'recoil';
+import { isAdminSelector } from '@/recoil/selectors/isAdmin';
 
 export default function AdminComponent() {
-  const { isAdmin } = useContext(FirebaseContext);
+  const isAdmin = useRecoilValue(isAdminSelector);
   const [expanded, setExpanded] = useState(false);
 
-  if (!isAdmin()) {
+  if (!isAdmin) {
     return null;
   }
   const linkButtonStyle: SxProps<Theme> = {

@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react';
 import { Paper } from '@mui/material';
-import { Product } from '@/data/store';
+import { Product } from '@/recoil/data/product';
 import useDimensions from '@/hooks/dimensions';
 
 export interface ContentDrawerProps extends PropsWithChildren {

@@ -1,4 +1,4 @@
-import { Category } from '@/data/store';
+import { Category } from '@/recoil/data/category';
 
 export interface AddProductForm {
   name: string;

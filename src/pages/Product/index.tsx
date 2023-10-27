@@ -1,11 +1,13 @@
 import { Header, Loader } from '@/components';
 import { Box, useTheme } from '@mui/material';
-import { useGetProductQuery } from '@/store/api/api';
 import { Swiper, SwiperClass, SwiperSlide } from 'swiper/react';
 import { FreeMode, Navigation, Thumbs } from 'swiper/modules';
 import { useParams } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import getPreferredImageSrc from '@/misc';
+import { useRecoilState, useRecoilValueLoadable } from 'recoil';
+import { productIdAtom } from '@/recoil/atoms/product';
+import { productIdSelector } from '@/recoil/selectors/productId';
 import ProductActions from '@/components/Product/Actions';
 import ProductPrice from '@/components/Product/Price';
 import styles from './index.module.css';
@@ -13,25 +15,53 @@ import Placeholder from '@/icons/placeholder';
 
 export default function ProductPage() {
   const params = useParams();
-  const { isFetching, data: product } = useGetProductQuery(params.id as string);
+  const [productID, setProductID] = useRecoilState(productIdAtom);
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperClass | undefined>();
   const theme = useTheme();
+  const productLoadable = useRecoilValueLoadable(productIdSelector);
+  const { data: product, error } = productLoadable.contents;
 
-  if (isFetching) {
+  useEffect(() => {
+    const paramsID = params.id as string;
+    if (productID !== paramsID) {
+      setProductID(paramsID);
+    }
+  }, [params.id, productID, setProductID]);
+
+  if (productLoadable.state === 'hasError' || error) {
     return (
       <Box className={styles.layout}>
         <Header showBackIcon />
-        <Box className={styles.bodyAlt}>
-          <Loader />
-        </Box>
+        <Box className={styles.bodyAlt}>{error}</Box>
       </Box>
     );
   }
+  if (productLoadable.state === 'loading' || params.id !== productID) {
+    return <Loader showHeader showBackIcon />;
+  }
+
   if (!product) {
     return (
-      <Box className={styles.layout}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'stretch',
+          height: '100%',
+          width: '100%',
+        }}
+      >
         <Header showBackIcon />
-        <Box className={styles.bodyAlt}>Product Not found</Box>
+        <Box
+          sx={{
+            display: 'flex',
+            flexGrow: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          Something went wrong
+        </Box>
       </Box>
     );
   }
@@ -81,8 +111,8 @@ export default function ProductPage() {
           onSwiper={setThumbsSwiper}
           className={styles.swiperThumbs}
           modules={[FreeMode, Navigation, Thumbs]}
-          spaceBetween={18}
-          slidesPerView={3}
+          spaceBetween={4}
+          slidesPerView={2}
           freeMode
           watchSlidesProgress
           loop

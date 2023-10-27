@@ -1,7 +1,7 @@
 import { Box, Button, SxProps, Theme } from '@mui/material';
 import AddToCartIcon from '@mui/icons-material/AddShoppingCart';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Product } from '@/data/store';
+import { Product } from '@/recoil/data/product';
 import Element = React.JSX.Element;
 
 interface ProductActionProps {

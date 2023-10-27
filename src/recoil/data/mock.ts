@@ -1,4 +1,4 @@
-import { Product } from '@/data/store';
+import { Product } from '@/recoil/data/product';
 
 const mockProducts: Product[] = [
   {

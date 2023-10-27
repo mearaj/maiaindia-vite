@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Box, Paper, useTheme } from '@mui/material';
-import { Product } from '@/data/store';
+import { Product } from '@/recoil/data/product';
 import getPreferredImageSrc from '@/misc';
 import ProductActions from '@/components/Product/Actions';
 import ProductPrice from '@/components/Product/Price';

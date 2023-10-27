@@ -1,11 +1,21 @@
 import { Box } from '@mui/material';
-import { Product } from '@/data/store';
-import { useRecoilValue } from 'recoil';
-import { productsSelector } from '@/recoil/state';
+import { Product } from '@/recoil/data/product';
+import { useRecoilValueLoadable } from 'recoil';
+import { Loader } from '@/components';
+import { productsSelector } from '@/recoil';
 import ProductComponent from '@/components/Product';
 
 function Products() {
-  const products = useRecoilValue(productsSelector);
+  const productsLoadable = useRecoilValueLoadable(productsSelector);
+  const { data: products, error } = productsLoadable.contents;
+
+  if (productsLoadable.state === 'hasError' || error) {
+    return <Box>{error}</Box>;
+  }
+
+  if (productsLoadable.state === 'loading') {
+    return <Loader />;
+  }
 
   return (
     <Box

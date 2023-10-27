@@ -17,7 +17,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import logoDarkGreen from '@/assets/images/logo-dark-green.png';
 import logoCircleDarkGreen from '@/assets/images/logo-circle-dark-green.png';
 import { useRecoilState } from 'recoil';
-import { menuAtom } from '@/recoil/state.ts';
+import { menuAtom } from '@/recoil/atoms/menu';
 import useDimensions from '@/hooks/dimensions';
 import createStyles from './styles';
 

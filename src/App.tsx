@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useCallback, useEffect } from 'react';
 import { useRecoilState } from 'recoil';
-import { menuAtom } from '@/recoil/state';
+import { menuAtom } from '@/recoil/atoms/menu';
 import ProductPage from '@/pages/Product';
 import HomePage from '@/pages/Home';
 import CartPage from '@/pages/Cart';

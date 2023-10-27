@@ -9,13 +9,10 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useState } from 'react';
-import { categories } from '@/data/store';
 import { useRecoilState } from 'recoil';
-import {
-  categoryAtom,
-  defaultSelectedCategory,
-  menuAtom,
-} from '@/recoil/state';
+import { menuAtom } from '@/recoil/atoms/menu';
+import { categoryAtom } from '@/recoil/atoms/category';
+import { categories, defaultSelectedCategory } from '@/recoil/data/category';
 
 const availableCategories = [defaultSelectedCategory, ...categories];
 

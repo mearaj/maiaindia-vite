@@ -37,6 +37,7 @@ module.exports = {
     "@typescript-eslint/no-explicit-any": 0,
     "react/jsx-props-no-spreading": 0,
     "no-underscore-dangle": 0,
+    "import/prefer-default-export": 0,
     "@typescript-eslint/no-unused-vars": [
       "warn",
       {

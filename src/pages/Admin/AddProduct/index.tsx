@@ -21,7 +21,7 @@ import {
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import Button from '@mui/material/Button';
-import { categories, Category } from '@/data/store';
+import { categories, Category } from '@/recoil/data/category';
 import { CloseOutlined, KeyboardArrowDown } from '@mui/icons-material';
 import { addDoc, collection, deleteDoc, doc } from '@firebase/firestore';
 import { ref, uploadBytes } from '@firebase/storage';

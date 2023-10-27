@@ -1,5 +1,5 @@
 import { Box, SxProps, Theme } from '@mui/material';
-import { Product } from '@/data/store';
+import { Product } from '@/recoil/data/product';
 
 export default function ProductPrice({
   sx,

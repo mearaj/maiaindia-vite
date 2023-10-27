@@ -1,13 +1,19 @@
 import { Box, Button } from '@mui/material';
-import { useContext } from 'react';
-import { ProviderId } from '@firebase/auth';
+import { useContext, useState } from 'react';
 import imagePlaceholder from '@/assets/images/placeholder.svg';
+import { useRecoilValue } from 'recoil';
+import { userAtom } from '@/recoil/atoms';
+import { signInWithGooglePopUp } from '@/firebase/signIn';
+import { signOut } from '@/firebase/signOut';
 import Loader from '@/components/Loader';
 import { FirebaseContext } from '@/providers/firebase';
 import GoogleIcon from '@/icons/google-g';
 
 export default function UserComponent() {
-  const { user, isLoading, signIn, signOut } = useContext(FirebaseContext);
+  const { isLoadingAuth } = useContext(FirebaseContext);
+  const [isSigningOut, setIsSigningOut] = useState(false);
+  const [signingIn, setSigningIn] = useState(false);
+  const user = useRecoilValue(userAtom);
   const buttonStyle = {
     display: 'flex',
     alignItems: 'center',
@@ -30,7 +36,19 @@ export default function UserComponent() {
     marginRight: '16px',
   };
 
-  if (isLoading) {
+  const signIn = async () => {
+    setSigningIn(true);
+    await signInWithGooglePopUp();
+    setSigningIn(false);
+  };
+
+  const signOutUser = async () => {
+    setIsSigningOut(true);
+    await signOut();
+    setIsSigningOut(false);
+  };
+
+  if (isLoadingAuth) {
     return <Loader />;
   }
 
@@ -71,9 +89,14 @@ export default function UserComponent() {
                 margin: '0px',
                 lineHeight: '1.2',
               }}
-              onClick={signOut}
+              onClick={signOutUser}
+              disabled={isSigningOut}
             >
-              Sign Out
+              {isSigningOut ? (
+                <Loader loaderParentSx={{ padding: 0 }} />
+              ) : (
+                'Sign Out'
+              )}
             </Button>
           </Box>
         </Box>
@@ -92,11 +115,17 @@ export default function UserComponent() {
         justifyContent: 'center',
       }}
     >
-      <Button sx={buttonStyle} onClick={async () => signIn(ProviderId.GOOGLE)}>
+      <Button sx={buttonStyle} onClick={signIn}>
         <Box sx={iconContainerStyle}>
           <GoogleIcon style={{ fontSize: '24px' }} />
         </Box>
-        <Box sx={{ fontWeight: 'bold', textAlign: 'left' }}>Google Sign In</Box>
+        {signingIn ? (
+          <Loader loaderParentSx={{ padding: 0 }} />
+        ) : (
+          <Box sx={{ fontWeight: 'bold', textAlign: 'left' }}>
+            Google Sign In
+          </Box>
+        )}
       </Button>
     </Box>
   );

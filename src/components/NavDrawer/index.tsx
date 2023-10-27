@@ -4,7 +4,7 @@ import { Box, IconButton, useTheme } from '@mui/material';
 import Close from '@mui/icons-material/Close';
 import logoDarkGreen from '@/assets/images/logo-dark-green.png';
 import { useRecoilState } from 'recoil';
-import { menuAtom } from '@/recoil/state';
+import { menuAtom } from '@/recoil/atoms/menu';
 import useDimensions from '@/hooks/dimensions';
 import UserComponent from '@/components/User';
 import AdminComponent from '@/components/Admin';
