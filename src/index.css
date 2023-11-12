@@ -1,0 +1,30 @@
+@import 'swiper/swiper-bundle.css';
+
+:root {
+    --footerPrimaryHeight: 64px;
+    --footerPrimaryBorderHeight: 4px;
+    --tabsCommonHeight: 44px;
+    --cartColor: 255, 200, 0;
+}
+
+*,
+::after,
+::before {
+    box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+a,
+a:hover,
+a:active {
+    text-decoration: none;
+}
