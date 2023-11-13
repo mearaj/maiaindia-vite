@@ -25,7 +25,7 @@ import { UserProfile } from '@/firebase/user';
 
 const userPlaceholderUrl = `https://firebasestorage.googleapis.com/v0/b/maiaindia.appspot.com/o/images%2Fuser-placeholder.svg?alt=media`;
 
-export default function FirebaseWatcher({ children }: PropsWithChildren) {
+export default function FirebaseProvider({ children }: PropsWithChildren) {
   const setIsLoadingAuth = useSetRecoilState(authLoadingAtom);
   const setCartAtom = useSetRecoilState(cartAtom);
   const [, setUser] = useRecoilState(userAtom);
@@ -52,7 +52,7 @@ export default function FirebaseWatcher({ children }: PropsWithChildren) {
     [setCartAtom]
   );
 
-  const updateProfileOnAuthChange = useCallback(
+  const updateProfile = useCallback(
     async (user: User | null) => {
       if (user != null) {
         let photoURL = userPlaceholderUrl;
@@ -120,17 +120,11 @@ export default function FirebaseWatcher({ children }: PropsWithChildren) {
 
   useEffect(() => {
     return onAuthStateChanged(appFirebaseAuth, async (user) => {
-      await updateProfileOnAuthChange(user);
+      await updateProfile(user);
       retrieveCart(user);
       setIsLoadingAuth(false);
     });
-  }, [
-    updateProfileOnAuthChange,
-    retrieveCart,
-    setCartAtom,
-    setIsLoadingAuth,
-    setUser,
-  ]);
+  }, [updateProfile, retrieveCart, setCartAtom, setIsLoadingAuth, setUser]);
 
   // Whenever the product is updated in the backend, this function
   // clear caches and forces re-evaluation (by re-fetching products)

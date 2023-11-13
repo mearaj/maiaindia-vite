@@ -33,16 +33,15 @@ export const getProductByID = async (
 ): Promise<{ data: Product | undefined; error: string }> => {
   try {
     if (productID === '') {
-      return { data: undefined, error: 'Product not found' };
+      return { data: undefined, error: 'Product id cannot be empty!' };
     }
     const productRef = doc(appFirestore, 'products', productID);
     const docSnap = await getDoc(productRef);
     if (!docSnap.exists()) {
-      return { data: undefined, error: 'Product not found' };
+      return { data: undefined, error: 'Product not found!' };
     }
     const product = docSnap.data() as Product;
-    product.id = docSnap.id;
-    return { data: product, error: '' };
+    return { data: { ...product, id: docSnap.id }, error: '' };
   } catch (e) {
     if (e instanceof FirebaseError) {
       return { data: undefined, error: e.code };

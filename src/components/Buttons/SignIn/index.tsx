@@ -1,13 +1,13 @@
 import { Box, Button, ButtonProps, useTheme } from '@mui/material';
 import React from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
-import { signInWithGooglePopUp } from '@/firebase/signIn';
-import { authLoadingAtom } from '@/recoil/atoms/authLoading';
 import Loader from '@/components/Loader';
 import GoogleIcon from '@/icons/google-g';
 import createStyles from '@/components/Buttons/SignIn/styles';
+import useSignInWithGooglePopup from '@/hooks/useSignInWithGooglePopup';
 
+export const useSignInWithGooglePopUp = () => {};
 export default function SignInButton({
   children: _children,
   sx,
@@ -16,7 +16,7 @@ export default function SignInButton({
   const user = useRecoilValue(userAtom);
   const theme = useTheme();
   const styles = createStyles(theme);
-  const [isAuthLoading, setIsAuthLoading] = useRecoilState(authLoadingAtom);
+  const { isAuthLoading, signInWithGooglePopUp } = useSignInWithGooglePopup();
 
   const iconContainerStyle = styles.iconContainer;
   const buttonStyle = { ...styles.button, ...sx };
@@ -24,7 +24,6 @@ export default function SignInButton({
   const signIn = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsAuthLoading(true);
     await signInWithGooglePopUp();
   };
 

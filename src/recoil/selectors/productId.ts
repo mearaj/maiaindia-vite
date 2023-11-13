@@ -22,9 +22,6 @@ export const productIdSelector = selectorFamily({
       data: Product | undefined;
       error: String;
     }> => {
-      if (productID === '') {
-        return { data: undefined, error: 'Product not found' };
-      }
       return getProductByID(productID);
     },
 });

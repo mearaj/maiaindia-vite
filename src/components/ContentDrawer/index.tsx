@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { Card } from '@mui/material';
 import { Product } from '@/firebase/product';
-import useDimensions from '@/hooks/dimensions';
+import useDimensions from '@/hooks/useDimensions';
 
 export interface ContentDrawerProps extends PropsWithChildren {
   product: Product;

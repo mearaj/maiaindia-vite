@@ -522,27 +522,6 @@ export default function AdminAddProductPage() {
         }}
       >
         <LinearProgress sx={{ width: '100%' }} />
-        {/* <Box */}
-        {/*  sx={{ */}
-        {/*    padding: '16px', */}
-        {/*    backgroundColor: theme.palette.primary.contrastText, */}
-        {/*  }} */}
-        {/* > */}
-        {/* <Box */}
-        {/*  sx={{ */}
-        {/*    display: 'inline', */}
-        {/*    clipPath: 'inset(0 0 0 0)', */}
-        {/*    animation: 'ellipsisAnim 1s steps(4, end) infinite', */}
-        {/*    '@keyframes ellipsisAnim': { */}
-        {/*      to: { */}
-        {/*        clipPath: 'inset(0px 3ch 0px 0px)', */}
-        {/*      }, */}
-        {/*    }, */}
-        {/*  }} */}
-        {/* > */}
-        {/*  ... */}
-        {/* </Box> */}
-        {/* </Box> */}
         {data.processingState !== 'none' && (
           <Alert
             onClose={data.allowDismissAction ? handleReset : undefined}

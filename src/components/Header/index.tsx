@@ -19,7 +19,7 @@ import logoCircleDarkGreen from '@/assets/images/logo-circle-dark-green.png';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { menuAtom } from '@/recoil/atoms/menu';
 import { cartAtom } from '@/recoil/atoms/cart';
-import useDimensions from '@/hooks/dimensions';
+import useDimensions from '@/hooks/useDimensions';
 import createStyles from './styles';
 
 import { appAbsoluteRoutes } from '@/Router';

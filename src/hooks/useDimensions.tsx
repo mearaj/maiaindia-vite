@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 
-export interface Dimensions {
+export interface UseDimensions {
   height: number;
   width: number;
 }
 
 export default function useDimensions() {
-  const [dimensions, setDimensions] = useState<Dimensions>({
+  const [dimensions, setDimensions] = useState<UseDimensions>({
     height: 0,
     width: 0,
   });

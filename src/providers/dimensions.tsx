@@ -1,7 +1,7 @@
 import { createContext, PropsWithChildren } from 'react';
-import useDimensions, { Dimensions } from '@/hooks/dimensions';
+import useDimensions, { UseDimensions } from '@/hooks/useDimensions';
 
-export const DimensionsContext = createContext<Dimensions>({
+export const DimensionsContext = createContext<UseDimensions>({
   height: 0,
   width: 0,
 });

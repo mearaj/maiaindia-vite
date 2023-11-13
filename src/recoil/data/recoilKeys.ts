@@ -9,5 +9,6 @@ export const recoilKeys = {
   isAdminSelector: 'isAdminSelector',
   authLoadingAtom: 'authLoadingAtom',
   cartAtom: 'cartAtom',
+  cartSelector: 'cartSelector',
   selectedChatUser: 'selectedChatUser',
 };

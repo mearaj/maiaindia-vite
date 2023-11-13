@@ -8,7 +8,7 @@ import { menuAtom } from '@/recoil/atoms/menu';
 import AdminAccordion from '@/components/Accordions/Admin';
 import CategoriesAccordion from '@/components/Accordions/Categories';
 import NavLinksAccordion from '@/components/Accordions/NavLinks';
-import useDimensions from '@/hooks/dimensions';
+import useDimensions from '@/hooks/useDimensions';
 import UserComponent from '@/components/User';
 import createStyles from './styles';
 
