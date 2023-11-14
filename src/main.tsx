@@ -4,17 +4,17 @@ import { RouterProvider } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import './index.css';
 import Providers from '@/providers';
-import FirebaseProvider from '@/providers/firebase';
 import { router } from '@/Router';
+import FirebaseSideEffects from '@/firebase/firebase';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <RecoilRoot>
-      <FirebaseProvider>
+      <FirebaseSideEffects>
         <Providers>
           <RouterProvider router={router} />
         </Providers>
-      </FirebaseProvider>
+      </FirebaseSideEffects>
     </RecoilRoot>
   </React.StrictMode>
 );

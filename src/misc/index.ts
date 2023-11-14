@@ -1,6 +1,7 @@
 import imagePlaceholder from '@/assets/images/placeholder.svg';
 import { Location } from 'react-router-dom';
 import { Product, ProductImage } from '@/firebase/product';
+import { Cart, defaultPlaceholderCart } from '@/firebase/cart';
 
 const defaultProductImage: ProductImage = {
   width: 680,
@@ -42,3 +43,35 @@ export const isActiveByStartsWith = (
 };
 
 export default getPreferredImageSrc;
+
+export const mergeCartItems = (localCart: Cart, apiCart: Cart): Cart => {
+  const localCartKeys = Object.keys(localCart.items);
+  const apiCartKeys = Object.keys(apiCart.items);
+  if (localCartKeys.length === 0) {
+    return apiCart;
+  }
+  if (apiCartKeys.length === 0) {
+    return localCart;
+  }
+  let cart: Cart = defaultPlaceholderCart;
+  const mergedKeys = [...localCartKeys, ...apiCartKeys];
+  const mergedUniqueKeys = mergedKeys.filter((eachKey, index, origArray) => {
+    return origArray.indexOf(eachKey) === index;
+  });
+  mergedUniqueKeys.forEach((eachKey) => {
+    let quantity = 0;
+    if (localCart.items[eachKey]) {
+      quantity = localCart.items[eachKey].quantity;
+    }
+    if (apiCart.items[eachKey]) {
+      quantity =
+        apiCart.items[eachKey].quantity > quantity
+          ? apiCart.items[eachKey].quantity
+          : quantity;
+    }
+    if (quantity > 0) {
+      cart = { ...cart, items: { ...cart.items, [eachKey]: { quantity } } };
+    }
+  });
+  return cart;
+};
