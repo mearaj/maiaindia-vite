@@ -27,8 +27,7 @@ export default function UserComponent() {
         )}
         <Box>
           {user && <Box>{user.user.displayName}</Box>}
-          <SignOutButton />
-          <SignInButton />
+          {user ? <SignOutButton /> : <SignInButton />}
         </Box>
       </Box>
     </Box>

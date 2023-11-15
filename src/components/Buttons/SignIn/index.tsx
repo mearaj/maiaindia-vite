@@ -1,7 +1,7 @@
 import { Box, Button, ButtonProps, useTheme } from '@mui/material';
 import React from 'react';
-import { useRecoilValue } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
+import { useRecoilValueLoadable } from 'recoil';
 import Loader from '@/components/Loader';
 import GoogleIcon from '@/icons/google-g';
 import createStyles from '@/components/Buttons/SignIn/styles';
@@ -13,13 +13,10 @@ export default function SignInButton({
   sx,
   ...otherProps
 }: ButtonProps) {
-  const user = useRecoilValue(userAtom);
+  const { contents: user, state } = useRecoilValueLoadable(userAtom);
   const theme = useTheme();
   const styles = createStyles(theme);
   const { isAuthLoading, signInWithGooglePopUp } = useSignInWithGooglePopup();
-
-  const iconContainerStyle = styles.iconContainer;
-  const buttonStyle = { ...styles.button, ...sx };
 
   const signIn = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
@@ -31,12 +28,22 @@ export default function SignInButton({
     return null;
   }
 
+  const iconContainerStyle = styles.iconContainer;
+  const buttonStyle = { ...styles.button, ...sx };
+
   return (
-    <Button sx={{ ...buttonStyle }} onClick={signIn} {...otherProps}>
+    <Button
+      sx={{ ...buttonStyle }}
+      onClick={signIn}
+      {...otherProps}
+      disabled={isAuthLoading.state !== 'idle'}
+    >
       <Box sx={iconContainerStyle}>
         <GoogleIcon style={{ fontSize: '24px' }} />
       </Box>
-      {isAuthLoading ? (
+      {isAuthLoading.state !== 'idle' ||
+      state === 'loading' ||
+      state !== 'hasValue' ? (
         <Loader loaderParentSx={{ padding: 0 }} />
       ) : (
         <Box sx={{ fontWeight: 'bold', textAlign: 'left', lineHeight: 1 }}>

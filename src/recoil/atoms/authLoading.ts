@@ -3,13 +3,18 @@ import { recoilKeys } from '@/recoil/data/recoilKeys';
 import { onAuthStateChanged } from '@firebase/auth';
 import { appFirebaseAuth } from '@/firebase';
 
-export const authLoadingAtom = atom<boolean>({
+interface AuthLoadingState {
+  state: 'idle' | 'loading' | 'signingIn' | 'signingOut';
+  error: string | null;
+}
+
+export const authLoadingAtom = atom<AuthLoadingState>({
   key: recoilKeys.authLoadingAtom,
-  default: true,
+  default: { state: 'loading', error: null },
   effects: [
     ({ setSelf }) =>
-      onAuthStateChanged(appFirebaseAuth, async (_user) => {
-        setSelf(false);
+      onAuthStateChanged(appFirebaseAuth, (_user) => {
+        setSelf({ state: 'idle', error: null });
       }),
   ],
 });

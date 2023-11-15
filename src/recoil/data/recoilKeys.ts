@@ -10,5 +10,5 @@ export const recoilKeys = {
   authLoadingAtom: 'authLoadingAtom',
   cartAtom: 'cartAtom',
   cartSelector: 'cartSelector',
-  selectedChatUser: 'selectedChatUser',
+  selectedChatUserAtom: 'selectedChatUserAtom',
 };

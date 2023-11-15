@@ -15,8 +15,8 @@ export default function useSignInWithGooglePopup() {
   }, [error]);
 
   const signInWithGooglePopUp = useCallback(async (): Promise<void> => {
-    if (!isAuthLoading) {
-      setIsAuthLoading(true);
+    if (isAuthLoading.state === 'idle') {
+      setIsAuthLoading({ state: 'loading', error: null });
       clearError();
       try {
         const provider = new GoogleAuthProvider();
@@ -24,13 +24,18 @@ export default function useSignInWithGooglePopup() {
       } catch (e) {
         if (e instanceof Error) {
           setError(e.message);
-          return;
+        } else {
+          setError('An unknown error');
         }
-        setError('An unknown error');
       } finally {
-        setIsAuthLoading(false);
+        /* empty */
       }
     }
   }, [clearError, isAuthLoading, setIsAuthLoading]);
-  return { isAuthLoading, error, clearError, signInWithGooglePopUp };
+  return {
+    isAuthLoading,
+    error,
+    clearError,
+    signInWithGooglePopUp,
+  };
 }

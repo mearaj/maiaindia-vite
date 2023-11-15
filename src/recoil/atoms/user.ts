@@ -6,8 +6,8 @@ import { appFirebaseAuth, appFirebaseStorage, appFirestore } from '@/firebase';
 import { getDownloadURL, ref, uploadBytes } from '@firebase/storage';
 import { collection, doc, getDoc, setDoc } from '@firebase/firestore';
 import { ChatUser } from '@/config';
-import { userPlaceholderUrl } from '@/firebase/firebase';
 
+const userPlaceholderUrl = `https://firebasestorage.googleapis.com/v0/b/maiaindia.appspot.com/o/images%2Fuser-placeholder.svg?alt=media`;
 const onAuthStateChangeCallbackEffect: AtomEffect<AppUser | null> = ({
   setSelf,
 }) => {
@@ -82,6 +82,6 @@ export const userAtom = atom<AppUser | null>({
 });
 
 export const selectedChatUserAtom = atom<ChatUser | null>({
-  key: recoilKeys.selectedChatUser,
+  key: recoilKeys.selectedChatUserAtom,
   default: null,
 });

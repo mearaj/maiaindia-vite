@@ -5,16 +5,13 @@ import { RecoilRoot } from 'recoil';
 import './index.css';
 import Providers from '@/providers';
 import { router } from '@/Router';
-import FirebaseSideEffects from '@/firebase/firebase';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <RecoilRoot>
-      <FirebaseSideEffects>
-        <Providers>
-          <RouterProvider router={router} />
-        </Providers>
-      </FirebaseSideEffects>
+      <Providers>
+        <RouterProvider router={router} />
+      </Providers>
     </RecoilRoot>
   </React.StrictMode>
 );
