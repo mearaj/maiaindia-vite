@@ -5,13 +5,16 @@ import { RecoilRoot } from 'recoil';
 import './index.css';
 import Providers from '@/providers';
 import { router } from '@/Router';
+import RecoilManager from '@/components/RecoilManager';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <RecoilRoot>
-      <Providers>
-        <RouterProvider router={router} />
-      </Providers>
+      <RecoilManager>
+        <Providers>
+          <RouterProvider router={router} />
+        </Providers>
+      </RecoilManager>
     </RecoilRoot>
   </React.StrictMode>
 );

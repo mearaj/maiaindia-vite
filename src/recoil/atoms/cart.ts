@@ -11,20 +11,20 @@ export const cartAtom = atom<Cart>({
   key: recoilKeys.cartAtom,
   default: defaultPlaceholderCart,
   effects: [
-    ({ onSet, getPromise, setSelf, trigger }) => {
+    ({ onSet, getPromise, setSelf }) => {
       const loadCart = async () => {
         const user = await getPromise(userAtom);
         if (user) {
           let apiCart: Cart = defaultPlaceholderCart;
-          let localCart: Cart = defaultPlaceholderCart;
+          let localCart: Cart = await getPromise(cartAtom);
           const localCartString = await localforage.getItem(
             user.user.uid + recoilKeys.cartAtom
           );
           if (typeof localCartString === 'string') {
             localCart = JSON.parse(localCartString);
           }
-          const cartRef = doc(appFirestore, 'carts', user.user.uid);
-          const cartSnapShot = await getDoc(cartRef);
+          const userDocRef = doc(appFirestore, 'users', user.user.uid);
+          const cartSnapShot = await getDoc(userDocRef);
           if (cartSnapShot.exists()) {
             apiCart = cartSnapShot.data() as Cart;
           }
@@ -33,28 +33,28 @@ export const cartAtom = atom<Cart>({
             localCart = defaultPlaceholderCart;
           }
           const mergedCart = mergeCartItems(apiCart, localCart);
+          const cartString = JSON.stringify(mergedCart);
+          await localforage.setItem(
+            user.user.uid + recoilKeys.cartAtom,
+            cartString
+          );
+          try {
+            await setDoc(userDocRef, { cart: mergedCart }, { merge: true });
+          } catch (e) {
+            /* empty */
+          }
           setSelf(mergedCart);
         } else {
           setSelf(defaultPlaceholderCart);
         }
       };
-      if (trigger === 'get') {
-        loadCart();
-      }
+      // if (trigger === 'get') {
+      //
+      // }
+      // loadCart();
 
-      onSet(async (cart) => {
-        const user = await getPromise(userAtom);
-        if (user) {
-          const cartString = JSON.stringify(cart);
-          const cartRef = doc(appFirestore, 'carts', user.user.uid);
-          await setDoc(cartRef, cart);
-          await localforage.setItem(
-            user.user.uid + recoilKeys.cartAtom,
-            cartString
-          );
-        } else {
-          setSelf(defaultPlaceholderCart);
-        }
+      onSet(async () => {
+        await loadCart();
       });
     },
   ],

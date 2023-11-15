@@ -45,8 +45,8 @@ export const isActiveByStartsWith = (
 export default getPreferredImageSrc;
 
 export const mergeCartItems = (localCart: Cart, apiCart: Cart): Cart => {
-  const localCartKeys = Object.keys(localCart.items);
-  const apiCartKeys = Object.keys(apiCart.items);
+  const localCartKeys = Object.keys(localCart.items ?? {});
+  const apiCartKeys = Object.keys(apiCart.items ?? {});
   if (localCartKeys.length === 0) {
     return apiCart;
   }
