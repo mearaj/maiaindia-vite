@@ -8,13 +8,44 @@ import { useSetRecoilState } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import { AuthState, authStateAtom } from '@/recoil/atoms/authState';
 import { cartAtom } from '@/recoil/atoms/cart';
-import { defaultPlaceholderCart } from '@/firebase/cart';
+import { Cart, defaultPlaceholderCart } from '@/firebase/cart';
+import localforage from 'localforage';
+import { recoilKeys } from '@/recoil/data/recoilKeys';
+import { mergeCartItems } from '@/misc';
 
 const userPlaceholderUrl = `https://firebasestorage.googleapis.com/v0/b/maiaindia.appspot.com/o/images%2Fuser-placeholder.svg?alt=media`;
 export default function RecoilManager({ children }: PropsWithChildren) {
   const setUser = useSetRecoilState(userAtom);
-  const setCart = useSetRecoilState(cartAtom);
   const setAuthState = useSetRecoilState(authStateAtom);
+  const setCart = useSetRecoilState(cartAtom);
+
+  const updateCartOnAuthChange = useCallback(
+    async (user: User | null) => {
+      if (user === null) {
+        setCart(defaultPlaceholderCart);
+        return;
+      }
+      let localCart = defaultPlaceholderCart;
+      let apiCart: Cart = defaultPlaceholderCart;
+      const localCartString = await localforage.getItem(
+        user.uid + recoilKeys.cartAtom
+      );
+      if (typeof localCartString === 'string') {
+        localCart = JSON.parse(localCartString);
+      }
+      const userDocRef = doc(appFirestore, 'users', user.uid);
+      const cartSnapShot = await getDoc(userDocRef);
+      if (cartSnapShot.exists()) {
+        apiCart = cartSnapShot.data().cart as Cart;
+      }
+      if (!('items' in localCart)) {
+        localCart = defaultPlaceholderCart;
+      }
+      const mergedCart = mergeCartItems(apiCart, localCart);
+      setCart(mergedCart);
+    },
+    [setCart]
+  );
 
   const updateUserOnAuthChange = useCallback(
     async (user: User | null) => {
@@ -58,7 +89,11 @@ export default function RecoilManager({ children }: PropsWithChildren) {
           const docSnapshot = await getDoc(docRef);
           if (!docSnapshot.exists()) {
             const usersRef = collection(appFirestore, 'users');
-            await setDoc(doc(usersRef, user.uid), { profile }, { merge: true });
+            await setDoc(
+              doc(usersRef, user.uid),
+              { profile },
+              { mergeFields: ['profile'] }
+            );
           } else {
             const obtainedProfile = docSnapshot.data().profile as UserProfile;
             if (obtainedProfile.displayName != null) {
@@ -86,10 +121,8 @@ export default function RecoilManager({ children }: PropsWithChildren) {
   useEffect(() => {
     return onAuthStateChanged(appFirebaseAuth, async (authUser) => {
       await updateUserOnAuthChange(authUser);
-      if (authUser === null) {
-        setCart(defaultPlaceholderCart);
-      }
+      await updateCartOnAuthChange(authUser);
     });
-  }, [setCart, updateUserOnAuthChange]);
+  }, [updateCartOnAuthChange, updateUserOnAuthChange]);
   return children;
 }
