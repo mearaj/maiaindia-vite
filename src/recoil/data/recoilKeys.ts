@@ -7,7 +7,7 @@ export const recoilKeys = {
   productIdSelector: 'productIdSelector',
   userAtom: 'userAtom',
   isAdminSelector: 'isAdminSelector',
-  authLoadingAtom: 'authLoadingAtom',
+  authState: 'authState',
   cartAtom: 'cartAtom',
   cartSelector: 'cartSelector',
   selectedChatUserAtom: 'selectedChatUserAtom',

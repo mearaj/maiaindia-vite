@@ -2,6 +2,7 @@ import { Box, Button, ButtonProps, useTheme } from '@mui/material';
 import React from 'react';
 import { userAtom } from '@/recoil/atoms';
 import { useRecoilValueLoadable } from 'recoil';
+import { AuthState } from '@/recoil/atoms/authState';
 import Loader from '@/components/Loader';
 import GoogleIcon from '@/icons/google-g';
 import createStyles from '@/components/Buttons/SignIn/styles';
@@ -36,12 +37,12 @@ export default function SignInButton({
       sx={{ ...buttonStyle }}
       onClick={signIn}
       {...otherProps}
-      disabled={isAuthLoading.state !== 'idle'}
+      disabled={isAuthLoading !== AuthState.idle}
     >
       <Box sx={iconContainerStyle}>
         <GoogleIcon style={{ fontSize: '24px' }} />
       </Box>
-      {isAuthLoading.state !== 'idle' ||
+      {isAuthLoading !== AuthState.idle ||
       state === 'loading' ||
       state !== 'hasValue' ? (
         <Loader loaderParentSx={{ padding: 0 }} />

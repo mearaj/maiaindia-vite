@@ -6,7 +6,7 @@ import { getDownloadURL, ref, uploadBytes } from '@firebase/storage';
 import { collection, doc, getDoc, setDoc } from '@firebase/firestore';
 import { useSetRecoilState } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
-import { authLoadingAtom } from '@/recoil/atoms/authLoading';
+import { AuthState, authStateAtom } from '@/recoil/atoms/authState';
 import { cartAtom } from '@/recoil/atoms/cart';
 import { defaultPlaceholderCart } from '@/firebase/cart';
 
@@ -14,7 +14,7 @@ const userPlaceholderUrl = `https://firebasestorage.googleapis.com/v0/b/maiaindi
 export default function RecoilManager({ children }: PropsWithChildren) {
   const setUser = useSetRecoilState(userAtom);
   const setCart = useSetRecoilState(cartAtom);
-  const setAuthState = useSetRecoilState(authLoadingAtom);
+  const setAuthState = useSetRecoilState(authStateAtom);
 
   const updateUserOnAuthChange = useCallback(
     async (user: User | null) => {
@@ -78,15 +78,15 @@ export default function RecoilManager({ children }: PropsWithChildren) {
       } else {
         setUser(null);
       }
-      setAuthState({ state: 'idle', error: null });
+      setAuthState(AuthState.idle);
     },
     [setAuthState, setUser]
   );
 
   useEffect(() => {
-    return onAuthStateChanged(appFirebaseAuth, async (user) => {
-      await updateUserOnAuthChange(user);
-      if (user === null) {
+    return onAuthStateChanged(appFirebaseAuth, async (authUser) => {
+      await updateUserOnAuthChange(authUser);
+      if (authUser === null) {
         setCart(defaultPlaceholderCart);
       }
     });

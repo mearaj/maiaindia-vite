@@ -1,13 +1,14 @@
 import { Button } from '@mui/material';
-import React, { useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import React from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import { signOut } from '@/firebase/signOut';
+import { AuthState, authStateAtom } from '@/recoil/atoms/authState';
 import Loader from '@/components/Loader';
 
 export default function SignOutButton() {
-  const [isSigningOut, setIsSigningOut] = useState(false);
   const user = useRecoilValue(userAtom);
+  const [authState, setAuthState] = useRecoilState(authStateAtom);
   const buttonStyle = {
     display: 'flex',
     alignItems: 'center',
@@ -25,9 +26,8 @@ export default function SignOutButton() {
   ) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsSigningOut(true);
+    setAuthState(AuthState.signingOut);
     await signOut();
-    setIsSigningOut(false);
   };
 
   if (!user) {
@@ -45,9 +45,13 @@ export default function SignOutButton() {
         lineHeight: '1.2',
       }}
       onClick={signOutUser}
-      disabled={isSigningOut}
+      disabled={authState !== AuthState.idle}
     >
-      {isSigningOut ? <Loader loaderParentSx={{ padding: 0 }} /> : 'Sign Out'}
+      {authState !== AuthState.idle ? (
+        <Loader loaderParentSx={{ padding: 0 }} />
+      ) : (
+        'Sign Out'
+      )}
     </Button>
   );
 }
