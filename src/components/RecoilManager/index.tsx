@@ -15,8 +15,6 @@ import { userAtom } from '@/recoil/atoms';
 import { AuthState, authStateAtom } from '@/recoil/atoms/authState';
 import { cartAtom } from '@/recoil/atoms/cart';
 import { Cart, defaultPlaceholderCart } from '@/firebase/cart';
-import localforage from 'localforage';
-import { recoilKeys } from '@/recoil/data/recoilKeys';
 
 const userPlaceholderUrl = `https://firebasestorage.googleapis.com/v0/b/maiaindia.appspot.com/o/images%2Fuser-placeholder.svg?alt=media`;
 export default function RecoilManager({ children }: PropsWithChildren) {
@@ -30,25 +28,13 @@ export default function RecoilManager({ children }: PropsWithChildren) {
         setCart(defaultPlaceholderCart);
         return;
       }
-      let localCart = defaultPlaceholderCart;
       let apiCart: Cart = defaultPlaceholderCart;
-      const localCartString = await localforage.getItem(
-        user.uid + recoilKeys.cartAtom
-      );
-      if (typeof localCartString === 'string') {
-        localCart = JSON.parse(localCartString);
-      }
       const userDocRef = doc(appFirestore, 'users', user.uid);
       const cartSnapShot = await getDoc(userDocRef);
       if (cartSnapShot.exists()) {
         apiCart = cartSnapShot.data().cart ?? defaultPlaceholderCart;
       }
-      if (!('items' in localCart)) {
-        localCart = defaultPlaceholderCart;
-      }
-      const selectedCart =
-        localCart.updatedAt > apiCart.updatedAt ? localCart : apiCart;
-      setCart(selectedCart);
+      setCart(apiCart);
     },
     [setCart]
   );
@@ -130,13 +116,17 @@ export default function RecoilManager({ children }: PropsWithChildren) {
         return () => {};
       }
       const docRef = doc(appFirestore, 'users', user.uid);
-      return onSnapshot(docRef, (userQuerySnapshot) => {
+      return onSnapshot(docRef, async (userQuerySnapshot) => {
         if (!userQuerySnapshot.exists()) {
           return;
         }
         const apiCart = userQuerySnapshot.data().cart ?? defaultPlaceholderCart;
-        if (apiCart.updatedAt > cart.updatedAt) {
-          setCart(apiCart);
+        if (
+          apiCart.updatedAt > cart.updatedAt &&
+          apiCart.updatedAt !== cart.updatedAt
+        ) {
+          setCart({ ...apiCart });
+          console.log('setting cart');
         }
       });
     },
@@ -150,6 +140,7 @@ export default function RecoilManager({ children }: PropsWithChildren) {
       async (authUser) => {
         await updateUserOnAuthChange(authUser);
         await updateCartOnAuthChange(authUser);
+        cartSubscription();
         cartSubscription = listenToUserOnAuthChanges(authUser);
       }
     );

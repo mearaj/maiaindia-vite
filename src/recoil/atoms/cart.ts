@@ -4,7 +4,6 @@ import { Cart, defaultPlaceholderCart } from '@/firebase/cart';
 import { userAtom } from '@/recoil/atoms/user';
 import { doc, setDoc } from '@firebase/firestore';
 import { appFirestore } from '@/firebase';
-import * as localforage from 'localforage';
 
 export const cartAtom = atom<Cart>({
   key: recoilKeys.cartAtom,
@@ -19,11 +18,6 @@ export const cartAtom = atom<Cart>({
         }
         const userDocRef = doc(appFirestore, 'users', user.user.uid);
         try {
-          const cartString = JSON.stringify(localCart as Cart);
-          await localforage.setItem(
-            user.user.uid + recoilKeys.cartAtom,
-            cartString
-          );
           await setDoc(
             userDocRef,
             { cart: localCart },
