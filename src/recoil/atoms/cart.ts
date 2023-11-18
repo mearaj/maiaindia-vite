@@ -2,13 +2,41 @@ import { atom } from 'recoil';
 import { recoilKeys } from '@/recoil/data/recoilKeys';
 import { Cart, defaultPlaceholderCart } from '@/firebase/cart';
 import { userAtom } from '@/recoil/atoms/user';
-import { doc, setDoc } from '@firebase/firestore';
-import { appFirestore } from '@/firebase';
+import { doc, onSnapshot, setDoc } from '@firebase/firestore';
+import { appFirebaseAuth, appFirestore } from '@/firebase';
+import { onAuthStateChanged, User } from '@firebase/auth';
 
 export const cartAtom = atom<Cart>({
   key: recoilKeys.cartAtom,
   default: defaultPlaceholderCart,
   effects: [
+    ({ setSelf }) => {
+      let cartSubscription = () => {};
+      const authSubscription = onAuthStateChanged(
+        appFirebaseAuth,
+        async (user: User | null) => {
+          if (user === null) {
+            cartSubscription();
+            return;
+          }
+          const docRef = doc(appFirestore, 'users', user.uid);
+          cartSubscription = onSnapshot(docRef, async (userQuerySnapShot) => {
+            if (!userQuerySnapShot.exists()) {
+              setSelf(defaultPlaceholderCart);
+              return;
+            }
+            const apiCart =
+              userQuerySnapShot.data().cart ?? defaultPlaceholderCart;
+            setSelf(apiCart);
+          });
+        }
+      );
+      return () => {
+        cartSubscription();
+        authSubscription();
+        setSelf(defaultPlaceholderCart);
+      };
+    },
     ({ onSet, getPromise, setSelf }) => {
       onSet(async (localCart) => {
         const user = await getPromise(userAtom);
@@ -17,15 +45,11 @@ export const cartAtom = atom<Cart>({
           return;
         }
         const userDocRef = doc(appFirestore, 'users', user.user.uid);
-        try {
-          await setDoc(
-            userDocRef,
-            { cart: localCart },
-            { mergeFields: ['cart'] }
-          );
-        } catch (e) {
-          /* empty */
-        }
+        await setDoc(
+          userDocRef,
+          { cart: localCart },
+          { mergeFields: ['cart'] }
+        );
       });
     },
   ],

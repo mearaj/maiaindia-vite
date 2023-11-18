@@ -3,41 +3,15 @@ import { appFirebaseAuth, appFirebaseStorage, appFirestore } from '@/firebase';
 import { UserProfile } from '@/firebase/user';
 import { onAuthStateChanged, User } from '@firebase/auth';
 import { getDownloadURL, ref, uploadBytes } from '@firebase/storage';
-import {
-  collection,
-  doc,
-  getDoc,
-  onSnapshot,
-  setDoc,
-} from '@firebase/firestore';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { collection, doc, getDoc, setDoc } from '@firebase/firestore';
+import { useSetRecoilState } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import { AuthState, authStateAtom } from '@/recoil/atoms/authState';
-import { cartAtom } from '@/recoil/atoms/cart';
-import { Cart, defaultPlaceholderCart } from '@/firebase/cart';
 
 const userPlaceholderUrl = `https://firebasestorage.googleapis.com/v0/b/maiaindia.appspot.com/o/images%2Fuser-placeholder.svg?alt=media`;
 export default function RecoilManager({ children }: PropsWithChildren) {
   const setUser = useSetRecoilState(userAtom);
   const setAuthState = useSetRecoilState(authStateAtom);
-  const [cart, setCart] = useRecoilState(cartAtom);
-
-  const updateCartOnAuthChange = useCallback(
-    async (user: User | null) => {
-      if (user === null) {
-        setCart(defaultPlaceholderCart);
-        return;
-      }
-      let apiCart: Cart = defaultPlaceholderCart;
-      const userDocRef = doc(appFirestore, 'users', user.uid);
-      const cartSnapShot = await getDoc(userDocRef);
-      if (cartSnapShot.exists()) {
-        apiCart = cartSnapShot.data().cart ?? defaultPlaceholderCart;
-      }
-      setCart(apiCart);
-    },
-    [setCart]
-  );
 
   const updateUserOnAuthChange = useCallback(
     async (user: User | null) => {
@@ -110,48 +84,18 @@ export default function RecoilManager({ children }: PropsWithChildren) {
     [setAuthState, setUser]
   );
 
-  const listenToUserOnAuthChanges = useCallback(
-    (user: User | null) => {
-      if (user === null) {
-        return () => {};
-      }
-      const docRef = doc(appFirestore, 'users', user.uid);
-      return onSnapshot(docRef, async (userQuerySnapshot) => {
-        if (!userQuerySnapshot.exists()) {
-          return;
-        }
-        const apiCart = userQuerySnapshot.data().cart ?? defaultPlaceholderCart;
-        if (
-          apiCart.updatedAt > cart.updatedAt &&
-          apiCart.updatedAt !== cart.updatedAt
-        ) {
-          setCart({ ...apiCart });
-          console.log('setting cart');
-        }
-      });
-    },
-    [cart.updatedAt, setCart]
-  );
-
   useEffect(() => {
-    let cartSubscription = () => {};
+    // let cartSubscription = () => {};
     const subscription = onAuthStateChanged(
       appFirebaseAuth,
       async (authUser) => {
         await updateUserOnAuthChange(authUser);
-        await updateCartOnAuthChange(authUser);
-        cartSubscription();
-        cartSubscription = listenToUserOnAuthChanges(authUser);
       }
     );
     return () => {
       subscription();
-      cartSubscription();
     };
-  }, [
-    listenToUserOnAuthChanges,
-    updateCartOnAuthChange,
-    updateUserOnAuthChange,
-  ]);
+  }, [updateUserOnAuthChange]);
+
   return children;
 }

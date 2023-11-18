@@ -10,11 +10,10 @@ import RecoilManager from '@/components/RecoilManager';
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <RecoilRoot>
-      <RecoilManager>
-        <Providers>
-          <RouterProvider router={router} />
-        </Providers>
-      </RecoilManager>
+      <RecoilManager />
+      <Providers>
+        <RouterProvider router={router} />
+      </Providers>
     </RecoilRoot>
   </React.StrictMode>
 );
