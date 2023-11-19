@@ -12,21 +12,9 @@ const whatsAppButtonStyles = (_: Theme): SxProps<Theme> => {
     width: '100%',
   };
 };
-
-const customQuoteButtonStyles = (_: Theme): SxProps<Theme> => {
-  return {
-    textAlign: 'center',
-    margin: '0 auto 8px auto',
-    fontWeight: 'bold',
-    width: '100%',
-  };
-};
-
 export default function createStyles(theme: Theme) {
   const whatsAppButton = whatsAppButtonStyles(theme);
-  const customQuoteButton = customQuoteButtonStyles(theme);
   return {
     whatsAppButton,
-    customQuoteButton,
   };
 }

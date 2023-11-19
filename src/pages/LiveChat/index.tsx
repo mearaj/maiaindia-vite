@@ -6,7 +6,7 @@ import { Attachment, Send } from '@mui/icons-material';
 import { useRef, useState } from 'react';
 import Button from '@mui/material/Button';
 import { selectedChatUserAtom } from '@/recoil/atoms/user';
-import CommonPageLayout from '@/components/CommonPageLayout';
+import CommonPageLayout from '@/components/Layouts/CommonPage';
 import SignInButton from '@/components/Buttons/SignIn';
 import SelectChatUserComponent from '@/components/SelectChatUser';
 

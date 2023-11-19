@@ -1,45 +1,37 @@
-import { Header } from '@/components';
 import { Box, useTheme } from '@mui/material';
 import { useRecoilValue } from 'recoil';
-import { userAtom } from '@/recoil/atoms';
 import { cartAtom } from '@/recoil/atoms/cart';
-import SignInButton from '@/components/Buttons/SignIn';
+import { ReactNode } from 'react';
 import createStyles from './styles';
 import CartItemComponent from '@/components/CartItem';
-import CommonPageLayout from '@/components/CommonPageLayout';
+import CommonAuthPage from '@/components/Layouts/CommonAuthPage';
 
 export default function CartPage() {
-  const user = useRecoilValue(userAtom);
   const cart = useRecoilValue(cartAtom);
   const theme = useTheme();
 
   const styles = createStyles(theme);
 
-  if (!user) {
-    return (
-      <CommonPageLayout>
-        <Box>Sign in required</Box>
-        <SignInButton />
-      </CommonPageLayout>
-    );
-  }
+  let selectedComponent: ReactNode;
 
   if (!cart.items || Object.keys(cart.items).length < 1) {
-    return (
-      <CommonPageLayout>
-        <Box>Your cart is empty!</Box>
-      </CommonPageLayout>
-    );
-  }
-
-  return (
-    <Box sx={{ ...styles.root, justifyContent: 'flexStart' }}>
-      <Header />
+    selectedComponent = <Box>Your cart is empty!</Box>;
+  } else {
+    selectedComponent = (
       <Box sx={styles.cartBody}>
         {Object.keys(cart.items).map((productID) => {
           return <CartItemComponent key={productID} productId={productID} />;
         })}
       </Box>
-    </Box>
+    );
+  }
+
+  return (
+    <CommonAuthPage
+      showHeader
+      sxRootProps={{ ...styles.root, justifyContent: 'flexStart' }}
+    >
+      {selectedComponent}
+    </CommonAuthPage>
   );
 }
