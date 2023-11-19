@@ -9,9 +9,13 @@ import { AdminHomePage } from '@/pages/Admin';
 import AdminOrdersPage from '@/pages/Admin/Orders';
 import AdminAddProductPage from '@/pages/Admin/AddProduct';
 // Abs implies absolute
+
+const homeAbs = '/products';
+const homeRelative = 'products';
+
 export const appAbsoluteRoutes = {
   root: '/',
-  home: '/home',
+  home: homeAbs,
   products: '/products',
   productDetails: '/products/:id',
   cart: '/cart',
@@ -25,7 +29,7 @@ export const appAbsoluteRoutes = {
 
 export const appRelativeRoutes = {
   root: '',
-  home: 'home',
+  home: homeRelative,
   products: 'products',
   productDetails: 'products/:id',
   cart: 'cart',
@@ -51,7 +55,7 @@ export const router = createBrowserRouter([
         element: <ProductsPage />,
       },
       {
-        path: appRelativeRoutes.home,
+        path: '/home',
         element: <Navigate to={appAbsoluteRoutes.products} />,
       },
       {

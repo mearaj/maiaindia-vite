@@ -50,9 +50,9 @@ export default function Header({
       // window.history.state &&
       // (window.history.state.idx > 0 || window.history.state.index > 0)
     ) {
-      navigate('/home', { replace: true });
+      navigate(appAbsoluteRoutes.products, { replace: true });
     } else {
-      navigate('/home', { replace: true });
+      navigate(appAbsoluteRoutes.products, { replace: true });
     }
   };
 
@@ -87,7 +87,7 @@ export default function Header({
             <Link
               variant="button"
               component={NavLink}
-              to="/home"
+              to={appAbsoluteRoutes.products}
               sx={styles.link}
             >
               <Button sx={styles.logoIconButton}>
