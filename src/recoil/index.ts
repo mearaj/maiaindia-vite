@@ -1,1 +1,1 @@
-export { productsSelector, activeProductIdSelector } from '@/recoil/selectors';
+export { productsSelector } from '@/recoil/selectors';

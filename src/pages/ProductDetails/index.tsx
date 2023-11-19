@@ -3,11 +3,10 @@ import { Box } from '@mui/material';
 import { Swiper, SwiperClass, SwiperSlide } from 'swiper/react';
 import { FreeMode, Navigation, Thumbs } from 'swiper/modules';
 import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import getPreferredImageSrc from '@/misc';
-import { useRecoilState, useRecoilValueLoadable } from 'recoil';
-import { activeProductIdAtom } from '@/recoil/atoms/product';
-import { activeProductIdSelector } from '@/recoil/selectors/productId';
+import { useRecoilValueLoadable } from 'recoil';
+import { productIdSelector } from '@/recoil/selectors/productId';
 import ProductPrice from '@/components/Product/Price';
 import styles from './index.module.css';
 import AddUpdateButton from '@/components/Buttons/AddUpdate';
@@ -15,31 +14,24 @@ import BuyButton from '@/components/Buttons/Buy';
 
 export default function ProductDetailsPage() {
   const params = useParams();
-  const [productID, setProductID] = useRecoilState(activeProductIdAtom);
+  const { contents, state } = useRecoilValueLoadable(
+    productIdSelector(params.id as string)
+  );
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperClass | undefined>();
-  const productLoadable = useRecoilValueLoadable(activeProductIdSelector);
-  const { data: product, error } = productLoadable.contents;
 
-  useEffect(() => {
-    const paramsID = params.id as string;
-    if (productID !== paramsID) {
-      setProductID(paramsID);
-    }
-  }, [params.id, productID, setProductID]);
-
-  if (productLoadable.state === 'hasError' || error) {
+  if (state === 'hasError') {
     return (
       <Box className={styles.layout}>
         <Header />
-        <Box className={styles.bodyAlt}>{error}</Box>
+        <Box className={styles.bodyAlt}>{contents.toString()}</Box>
       </Box>
     );
   }
-  if (productLoadable.state === 'loading' || params.id !== productID) {
+  if (state === 'loading') {
     return <Loader showHeader />;
   }
 
-  const preferredImgSrc = getPreferredImageSrc(product);
+  const preferredImgSrc = getPreferredImageSrc(contents);
   return (
     <Box className={styles.layout}>
       <Header showBackIcon />
@@ -93,15 +85,15 @@ export default function ProductDetailsPage() {
           })}
         </Swiper>
         <div className={styles.productDetails}>
-          <div className={styles.productName}>{product.name}</div>
-          <ProductPrice product={product} />
+          <div className={styles.productName}>{contents.name}</div>
+          <ProductPrice product={contents} />
         </div>
         <Box sx={{ padding: '16px' }}>
           <AddUpdateButton
-            product={product}
+            product={contents}
             sxAddButton={{ marginBottom: '16px' }}
           />
-          <BuyButton product={product} />
+          <BuyButton product={contents} />
         </Box>
       </Box>
     </Box>

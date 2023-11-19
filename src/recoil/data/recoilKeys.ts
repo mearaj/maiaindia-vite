@@ -4,7 +4,6 @@ export const recoilKeys = {
   productsSelector: 'productsSelector',
   allProductsAtom: 'allProductsAtom',
   activeProductIdAtom: 'activeProductIdAtom',
-  activeProductIdSelector: 'activeProductIdSelector',
   productIdSelector: 'productIdSelector',
   userAtom: 'userAtom',
   isAdminSelector: 'isAdminSelector',
