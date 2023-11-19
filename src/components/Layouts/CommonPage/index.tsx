@@ -1,7 +1,7 @@
 import { Header } from '@/components';
 import { Box, SxProps, Theme, useTheme } from '@mui/material';
 import { PropsWithChildren } from 'react';
-import createStyles from './styles';
+import createStyles from '@/components/Layouts/CommonPageLayout/styles';
 
 interface CommonPageLayoutProps extends PropsWithChildren {
   sxBodyProps?: SxProps<Theme>;
