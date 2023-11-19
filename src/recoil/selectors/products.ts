@@ -1,34 +1,18 @@
 import { selector } from 'recoil';
 import { recoilKeys } from '@/recoil/data/recoilKeys';
-import {
-  collection,
-  DocumentData,
-  query,
-  Query,
-  where,
-} from '@firebase/firestore';
-import { appFirestore } from '@/firebase';
 import { categoryAtom } from '@/recoil/atoms';
-import { categories } from '@/firebase/category';
-import { getProducts } from '@/firebase/products';
+import { defaultSelectedCategory } from '@/firebase/category';
+import { allProductsAtom } from '@/recoil/atoms/allProducts';
 
 export const productsSelector = selector({
   key: recoilKeys.productsSelector,
-  get: async ({ get }) => {
-    const productsRef = collection(appFirestore, 'products');
-    let productsQuery: Query<DocumentData, DocumentData>;
+  get: ({ get }) => {
     const selectedCategory = get(categoryAtom);
-    const found = categories.find(
-      (eachCategory) => eachCategory.id === selectedCategory.id
-    );
-    if (!found) {
-      productsQuery = query(productsRef);
-    } else {
-      productsQuery = query(
-        productsRef,
-        where('categoryID', '==', selectedCategory.id ?? '')
-      );
+    if (selectedCategory.id === defaultSelectedCategory.id) {
+      return get(allProductsAtom);
     }
-    return getProducts(productsQuery);
+    return get(allProductsAtom).filter(
+      (eachProduct) => eachProduct.categoryID === selectedCategory.id
+    );
   },
 });

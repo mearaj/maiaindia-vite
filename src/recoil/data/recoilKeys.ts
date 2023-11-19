@@ -2,6 +2,7 @@ export const recoilKeys = {
   menuAtom: 'menuAtom',
   categoryAtom: 'categoryAtom',
   productsSelector: 'productsSelector',
+  allProductsAtom: 'allProductsAtom',
   activeProductIdAtom: 'activeProductIdAtom',
   activeProductIdSelector: 'activeProductIdSelector',
   productIdSelector: 'productIdSelector',

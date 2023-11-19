@@ -1,5 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
+import { getDatabase } from 'firebase/database';
 import { getAuth } from '@firebase/auth';
 import { getFirestore } from '@firebase/firestore';
 import { getStorage } from '@firebase/storage';
@@ -16,6 +17,8 @@ const firebaseConfig = {
   storageBucket: 'maiaindia.appspot.com',
   messagingSenderId: '1088462500931',
   appId: '1:1088462500931:web:d0dd90bc67ec3a27ab10f6',
+  databaseURL:
+    'https://maiaindia-default-rtdb.asia-southeast1.firebasedatabase.app',
   measurementId: 'G-1Z4HVC0Q9E',
 };
 
@@ -25,6 +28,8 @@ const appFirebase = initializeApp(firebaseConfig);
 const appFirestore = getFirestore(appFirebase);
 const appFirebaseAuth = getAuth(appFirebase);
 const appFirebaseStorage = getStorage(appFirebase);
+
+const appFirebaseRealtime = getDatabase(appFirebase);
 
 export default appFirebase;
 
@@ -51,4 +56,9 @@ export default appFirebase;
 //   }
 // };
 // deleteIDProp();
-export { appFirestore, appFirebaseAuth, appFirebaseStorage };
+export {
+  appFirestore,
+  appFirebaseAuth,
+  appFirebaseStorage,
+  appFirebaseRealtime,
+};
