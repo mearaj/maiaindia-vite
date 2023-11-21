@@ -4,7 +4,7 @@ import { cartAtom } from '@/recoil/atoms/cart';
 import { ReactNode } from 'react';
 import createStyles from './styles';
 import CartItemComponent from '@/components/CartItem';
-import CommonAuthPage from '@/components/Layouts/CommonAuthPage';
+import CommonPageLayout from '@/components/Layouts/CommonPage';
 
 export default function CartPage() {
   const cart = useRecoilValue(cartAtom);
@@ -27,11 +27,11 @@ export default function CartPage() {
   }
 
   return (
-    <CommonAuthPage
+    <CommonPageLayout
       showHeader
       sxRootProps={{ ...styles.root, justifyContent: 'flexStart' }}
     >
       {selectedComponent}
-    </CommonAuthPage>
+    </CommonPageLayout>
   );
 }

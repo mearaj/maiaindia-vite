@@ -1,7 +1,7 @@
 import { Box, Button, ButtonProps, useTheme } from '@mui/material';
 import React from 'react';
 import { userAtom } from '@/recoil/atoms';
-import { useRecoilValueLoadable } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { AuthState } from '@/recoil/atoms/authState';
 import Loader from '@/components/Loader';
 import GoogleIcon from '@/icons/google-g';
@@ -14,7 +14,7 @@ export default function SignInButton({
   sx,
   ...otherProps
 }: ButtonProps) {
-  const { contents: user, state } = useRecoilValueLoadable(userAtom);
+  const user = useRecoilValue(userAtom);
   const theme = useTheme();
   const styles = createStyles(theme);
   const { isAuthLoading, signInWithGooglePopUp } = useSignInWithGooglePopup();
@@ -42,9 +42,7 @@ export default function SignInButton({
       <Box sx={iconContainerStyle}>
         <GoogleIcon style={{ fontSize: '24px' }} />
       </Box>
-      {isAuthLoading !== AuthState.idle ||
-      state === 'loading' ||
-      state !== 'hasValue' ? (
+      {isAuthLoading !== AuthState.idle ? (
         <Loader loaderParentSx={{ padding: 0 }} />
       ) : (
         <Box sx={{ fontWeight: 'bold', textAlign: 'left', lineHeight: 1 }}>

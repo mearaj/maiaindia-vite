@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 import { Message } from '@mui/icons-material';
 import createStyles from '@/pages/ContactUs/styles';
 import { appAbsoluteRoutes } from '@/Router';
-import CommonAuthPage from '@/components/Layouts/CommonAuthPage';
+import CommonPageLayout from '@/components/Layouts/CommonPage';
 
 export default function ContactUsPage() {
   const theme = useTheme();
@@ -12,7 +12,7 @@ export default function ContactUsPage() {
   const styles = createStyles(theme);
 
   return (
-    <CommonAuthPage showHeader>
+    <CommonPageLayout showHeader>
       <Box sx={{ padding: '16px' }}>
         <Link
           component={NavLink}
@@ -43,6 +43,6 @@ export default function ContactUsPage() {
           </Button>
         </Link>
       </Box>
-    </CommonAuthPage>
+    </CommonPageLayout>
   );
 }
