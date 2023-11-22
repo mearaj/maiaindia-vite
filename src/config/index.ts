@@ -1,7 +1,8 @@
-export interface ChatUser {
-  email: string;
+export interface UserProfile {
+  email?: string | null;
   uid: string;
-  displayName: string;
+  displayName?: string | null;
+  photoURL?: string | null;
 }
 
 export const adminEmails = import.meta.env.VITE_ADMIN_EMAILS.split(
@@ -17,8 +18,8 @@ export const isAdminEmail = (email: string | null): boolean => {
   return adminEmails.findIndex((eachEmail: string) => eachEmail === email) >= 0;
 };
 
-const generateAdminUsersFromEnv = (): ChatUser[] => {
-  const validAdminUsers: ChatUser[] = [];
+const generateAdminUsersFromEnv = (): UserProfile[] => {
+  const validAdminUsers: UserProfile[] = [];
   if (adminEmails.length < 1) {
     return validAdminUsers;
   }

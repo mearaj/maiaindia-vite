@@ -47,10 +47,10 @@ export default function RecoilManager({ children }: PropsWithChildren) {
           }
         }
         let displayName = 'No Name';
-        if (user.displayName !== null) {
+        if (user.displayName) {
           displayName = user.displayName;
         }
-        const profile = { displayName, photoURL };
+        const profile = { displayName, photoURL, email: user.email };
         const docRef = doc(appFirestore, 'users', user.uid);
         try {
           const docSnapshot = await getDoc(docRef);

@@ -1,19 +1,27 @@
 import { Box, Card, InputAdornment, TextField } from '@mui/material';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { Header } from '@/components';
 import { Attachment, Send } from '@mui/icons-material';
 import { useRef, useState } from 'react';
 import Button from '@mui/material/Button';
-import { selectedChatSession } from '@/recoil/atoms/chatSession';
+import {
+  selectedSupportChatSessionAtom,
+  selectedSupportChatUserAtom,
+} from '@/recoil/atoms/supportChat';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
 import SelectChatUserComponent from '@/components/SelectChatUser';
+import SelectChatSession from '@/components/SelectChatSession';
 
 export default function LiveChatPage() {
   const [textValue, setTextValue] = useState('');
   const ref = useRef<HTMLElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const [activeChatSession, setActiveChatUser] =
-    useRecoilState(selectedChatSession);
+  const [activeSupportChatUser, setActiveChatUser] = useRecoilState(
+    selectedSupportChatUserAtom
+  );
+  const activeSupportChatSession = useRecoilValue(
+    selectedSupportChatSessionAtom
+  );
 
   const handleSubmit = () => {
     setTextValue('');
@@ -27,7 +35,7 @@ export default function LiveChatPage() {
     }
   };
 
-  if (!activeChatSession) {
+  if (!activeSupportChatUser) {
     return (
       <CommonPageLayout
         sxBodyProps={{
@@ -39,6 +47,9 @@ export default function LiveChatPage() {
         <SelectChatUserComponent />
       </CommonPageLayout>
     );
+  }
+  if (!activeSupportChatSession) {
+    return <SelectChatSession supportUser={activeSupportChatUser} />;
   }
 
   return (
