@@ -1,26 +1,21 @@
 import { Box, Card, InputAdornment, TextField } from '@mui/material';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { userAtom } from '@/recoil/atoms';
+import { useRecoilState } from 'recoil';
 import { Header } from '@/components';
 import { Attachment, Send } from '@mui/icons-material';
 import { useRef, useState } from 'react';
 import Button from '@mui/material/Button';
-import { selectedChatUserAtom } from '@/recoil/atoms/user';
+import { selectedChatSession } from '@/recoil/atoms/chatSession';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
-import SignInButton from '@/components/Buttons/SignIn';
 import SelectChatUserComponent from '@/components/SelectChatUser';
 
 export default function LiveChatPage() {
-  const user = useRecoilValue(userAtom);
   const [textValue, setTextValue] = useState('');
-  const [items, setItems] = useState<string[]>([]);
   const ref = useRef<HTMLElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const [selectedChatUser, setActiveChatUser] =
-    useRecoilState(selectedChatUserAtom);
+  const [activeChatSession, setActiveChatUser] =
+    useRecoilState(selectedChatSession);
 
   const handleSubmit = () => {
-    setItems([...items, textValue]);
     setTextValue('');
     setTimeout(() => {
       if (ref && ref.current) {
@@ -32,16 +27,7 @@ export default function LiveChatPage() {
     }
   };
 
-  if (!user) {
-    return (
-      <CommonPageLayout>
-        <Box>Sign in required</Box>
-        <SignInButton />
-      </CommonPageLayout>
-    );
-  }
-
-  if (!selectedChatUser) {
+  if (!activeChatSession) {
     return (
       <CommonPageLayout
         sxBodyProps={{
@@ -85,7 +71,7 @@ export default function LiveChatPage() {
         }}
       >
         <Box sx={{ marginTop: 'auto', padding: '0 8px' }}>
-          {items.map((eachItem) => (
+          {[].map((eachItem) => (
             <Card
               sx={{
                 maxWidth: '50%',

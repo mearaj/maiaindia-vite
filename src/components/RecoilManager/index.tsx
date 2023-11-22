@@ -9,6 +9,7 @@ import { userAtom } from '@/recoil/atoms';
 import { AuthState, authStateAtom } from '@/recoil/atoms/authState';
 
 const userPlaceholderUrl = `https://firebasestorage.googleapis.com/v0/b/maiaindia.appspot.com/o/images%2Fuser-placeholder.svg?alt=media`;
+
 export default function RecoilManager({ children }: PropsWithChildren) {
   const setUser = useSetRecoilState(userAtom);
   const setAuthState = useSetRecoilState(authStateAtom);
@@ -85,7 +86,6 @@ export default function RecoilManager({ children }: PropsWithChildren) {
   );
 
   useEffect(() => {
-    // let cartSubscription = () => {};
     const subscription = onAuthStateChanged(
       appFirebaseAuth,
       async (authUser) => {

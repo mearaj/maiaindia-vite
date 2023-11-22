@@ -40,6 +40,7 @@ module.exports = {
     "react/jsx-props-no-spreading": 0,
     "no-underscore-dangle": 0,
     "import/prefer-default-export": 0,
+    "no-restricted-syntax": 0,
     "@typescript-eslint/no-unused-vars": [
       "warn",
       {
