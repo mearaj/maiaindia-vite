@@ -13,65 +13,12 @@ function ChatSessionButton({
 }: {
   chatSessionsItem: SupportChatUser;
 }) {
-  // const [loadingSession, setLoadingSession] = useState(false);
-  // const user = useRecoilValue(userAtom);
   const setSelectedSupportChatUser = useSetRecoilState(
     selectedSupportChatUserAtom
   );
 
   const onClickHandler = () => {
     setSelectedSupportChatUser(chatSessionsItem);
-    // if (user) {
-    //   const sessions = [...chatSessionsItem.sessions].sort(
-    //     (prevSession, nextSession) => {
-    //       return (
-    //         prevSession.createdAt.nanoseconds -
-    //         nextSession.createdAt.nanoseconds
-    //       );
-    //     }
-    //   );
-    //   if (sessions.length === 0) {
-    //     setLoadingSession(true);
-    //     try {
-    //       const collectionReference = collection(appFirestore, 'supportChats');
-    //       await setDoc(doc(collectionReference), {
-    //         members: {
-    //           [chatSessionsItem.user.uid]: true,
-    //           [user.user.uid]: true,
-    //         },
-    //         createdAt: serverTimestamp(),
-    //         updatedAt: serverTimestamp(),
-    //       });
-    //       const supportChatsQuery = query(
-    //         collectionReference,
-    //         where(`members.${chatSessionsItem.user.uid}`, '==', true),
-    //         where(`members.${user.user.uid}`, '==', true),
-    //         orderBy('updatedAt', 'desc'),
-    //         limit(1)
-    //       );
-    //       const chatSessions = await getDocs(supportChatsQuery);
-    //       if (!chatSessions.empty) {
-    //         const snapShot = chatSessions.docs[0];
-    //         setSelectedSupportChatUser({
-    //           user: chatSessionsItem.user,
-    //           id: snapShot.id,
-    //           createdAt: (snapShot.data() as SupportChat).createdAt,
-    //           updatedAt: (snapShot.data() as SupportChat).updatedAt,
-    //           messages: [],
-    //         });
-    //       }
-    //     } catch (e) {
-    //       // Todo: Disallow further clicks and show AlertError here
-    //       console.log(e);
-    //     } finally {
-    //       setLoadingSession(false);
-    //     }
-    //   } else {
-    //     setSelectedSupportChatUser({
-    //       ...sessions[0],
-    //     });
-    //   }
-    // }
   };
 
   return (

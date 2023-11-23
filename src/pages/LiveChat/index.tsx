@@ -16,12 +16,9 @@ export default function LiveChatPage() {
   const [textValue, setTextValue] = useState('');
   const ref = useRef<HTMLElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const [activeSupportChatUser, setActiveChatUser] = useRecoilState(
-    selectedSupportChatUserAtom
-  );
-  const activeSupportChatSession = useRecoilValue(
-    selectedSupportChatSessionAtom
-  );
+  const activeSupportChatUser = useRecoilValue(selectedSupportChatUserAtom);
+  const [activeSupportChatSession, setActiveSupportChatSession] =
+    useRecoilState(selectedSupportChatSessionAtom);
 
   const handleSubmit = () => {
     setTextValue('');
@@ -65,7 +62,7 @@ export default function LiveChatPage() {
       <Header
         showBackIcon
         onBackIconClick={() => {
-          setActiveChatUser(null);
+          setActiveSupportChatSession(null);
         }}
       />
       <Box

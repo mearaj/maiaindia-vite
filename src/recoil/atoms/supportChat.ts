@@ -4,6 +4,7 @@ import { appFirebaseAuth, appFirestore } from '@/firebase';
 import {
   collection,
   doc,
+  FieldValue,
   getDoc,
   onSnapshot,
   query,
@@ -28,12 +29,14 @@ export interface SupportChatNoID {
   members: {
     [memberUID: string]: boolean;
   };
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
+  createdAt: Timestamp | FieldValue;
+  updatedAt: Timestamp | FieldValue;
 }
 
 export interface SupportChat extends SupportChatNoID {
   id: string;
+  createdAt: Timestamp | FieldValue;
+  updatedAt: Timestamp | FieldValue;
 }
 
 export interface SupportChatSession {
@@ -83,11 +86,11 @@ const querySupportChatsSideEffects: AtomEffect<SupportChatUsers> = ({
               }
               if (foundUser) {
                 const sessions =
-                  currentChatSessions[foundUser.uid].sessions ?? {};
+                  { ...currentChatSessions[foundUser.uid].sessions } ?? {};
                 currentChatSessions = {
                   ...currentChatSessions,
                   [foundUser.uid]: {
-                    user,
+                    user: foundUser,
                     sessions: {
                       ...sessions,
                       [chatSession.id]: {
@@ -109,7 +112,7 @@ const querySupportChatsSideEffects: AtomEffect<SupportChatUsers> = ({
                     ...(userDocRef.data()?.profile ?? {}),
                   };
                   const sessions =
-                    currentChatSessions[userProfile.uid].sessions ?? {};
+                    { ...currentChatSessions[userProfile.uid].sessions } ?? {};
                   currentChatSessions = {
                     ...currentChatSessions,
                     [userProfile.uid]: {
