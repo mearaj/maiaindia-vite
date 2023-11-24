@@ -1,5 +1,4 @@
 import { Box, Card, InputAdornment, TextField } from '@mui/material';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import { Header } from '@/components';
 import { Attachment, Send } from '@mui/icons-material';
 import { useRef, useState } from 'react';
@@ -8,8 +7,9 @@ import {
   selectedSupportChatSessionAtom,
   selectedSupportChatUserAtom,
 } from '@/recoil/atoms/supportChat';
-import CommonPageLayout from '@/components/Layouts/CommonPage';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import SelectChatUserComponent from '@/components/SelectChatUser';
+import CommonPageLayout from '@/components/Layouts/CommonPage';
 import SelectChatSession from '@/components/SelectChatSession';
 
 export default function LiveChatPage() {
@@ -17,6 +17,7 @@ export default function LiveChatPage() {
   const ref = useRef<HTMLElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const activeSupportChatUser = useRecoilValue(selectedSupportChatUserAtom);
+
   const [activeSupportChatSession, setActiveSupportChatSession] =
     useRecoilState(selectedSupportChatSessionAtom);
 

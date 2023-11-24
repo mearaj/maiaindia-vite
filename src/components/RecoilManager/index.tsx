@@ -1,12 +1,12 @@
 import { PropsWithChildren, useCallback, useEffect } from 'react';
 import { appFirebaseAuth, appFirebaseStorage, appFirestore } from '@/firebase';
-import { UserProfile } from '@/firebase/user';
 import { onAuthStateChanged, User } from '@firebase/auth';
 import { getDownloadURL, ref, uploadBytes } from '@firebase/storage';
 import { collection, doc, getDoc, setDoc } from '@firebase/firestore';
 import { useSetRecoilState } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import { AuthState, authStateAtom } from '@/recoil/atoms/authState';
+import { UserProfile } from '@/config';
 
 const userPlaceholderUrl = `https://firebasestorage.googleapis.com/v0/b/maiaindia.appspot.com/o/images%2Fuser-placeholder.svg?alt=media`;
 
@@ -50,7 +50,12 @@ export default function RecoilManager({ children }: PropsWithChildren) {
         if (user.displayName) {
           displayName = user.displayName;
         }
-        const profile = { displayName, photoURL, email: user.email };
+        const profile = {
+          displayName,
+          photoURL,
+          email: user.email,
+          uid: user.uid,
+        };
         const docRef = doc(appFirestore, 'users', user.uid);
         try {
           const docSnapshot = await getDoc(docRef);

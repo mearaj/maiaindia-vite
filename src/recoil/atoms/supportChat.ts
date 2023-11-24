@@ -3,40 +3,38 @@ import { recoilKeys } from '@/recoil/data/recoilKeys';
 import { appFirebaseAuth, appFirestore } from '@/firebase';
 import {
   collection,
-  doc,
   FieldValue,
-  getDoc,
   onSnapshot,
   query,
   Timestamp,
   where,
 } from '@firebase/firestore';
 import { onAuthStateChanged } from '@firebase/auth';
-import { adminUsers, UserProfile } from '@/config';
+import { UserProfile } from '@/config';
 
 export interface SupportChatUsers {
-  [toUserUID: string]: SupportChatUser;
-}
-
-export interface SupportChatUser {
-  user: UserProfile;
-  sessions: {
-    [sessionID: string]: SupportChat;
-  };
+  [toUserUID: string]: UserProfile;
 }
 
 export interface SupportChatNoID {
   members: {
     [memberUID: string]: boolean;
   };
-  createdAt: Timestamp | FieldValue;
-  updatedAt: Timestamp | FieldValue;
+  createdAt: FieldValue;
+  updatedAt: FieldValue;
 }
 
 export interface SupportChat extends SupportChatNoID {
+  members: {
+    [memberUID: string]: boolean;
+  };
   id: string;
-  createdAt: Timestamp | FieldValue;
-  updatedAt: Timestamp | FieldValue;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+}
+
+export interface SupportChats {
+  [supportChatID: string]: SupportChat;
 }
 
 export interface SupportChatSession {
@@ -44,17 +42,7 @@ export interface SupportChatSession {
   chat: SupportChat;
 }
 
-const defaultChatSessions = adminUsers.reduce((prev, curr) => {
-  return {
-    ...prev,
-    [curr.uid]: {
-      user: curr,
-      sessions: [],
-    },
-  };
-}, {}) as SupportChatUsers;
-
-const querySupportChatsSideEffects: AtomEffect<SupportChatUsers> = ({
+const querySupportChatsSideEffects: AtomEffect<SupportChats> = ({
   setSelf,
   getPromise,
   node,
@@ -62,7 +50,7 @@ const querySupportChatsSideEffects: AtomEffect<SupportChatUsers> = ({
   let supportChatsSubscription = () => {};
   const authSubscription = onAuthStateChanged(appFirebaseAuth, async (user) => {
     if (user === null) {
-      setSelf(defaultChatSessions);
+      setSelf({});
       return;
     }
     const collectionReference = collection(appFirestore, 'supportChats');
@@ -70,84 +58,38 @@ const querySupportChatsSideEffects: AtomEffect<SupportChatUsers> = ({
       collectionReference,
       where(`members.${user.uid}`, '==', true)
     );
-    supportChatsSubscription = onSnapshot(supportChatsQuery, async (val) => {
-      if (!val.empty) {
-        let currentChatSessions = { ...(await getPromise(node)) };
-        for await (const result of val.docs) {
-          if (result.exists()) {
-            const chatSession = {
-              ...result.data(),
-              id: result.id,
-            } as SupportChat;
-            for await (const eachMember of Object.keys(chatSession.members)) {
-              let foundUser: UserProfile | null = null;
-              if (currentChatSessions[eachMember]) {
-                foundUser = currentChatSessions[eachMember].user;
-              }
-              if (foundUser) {
-                const sessions =
-                  { ...currentChatSessions[foundUser.uid].sessions } ?? {};
-                currentChatSessions = {
-                  ...currentChatSessions,
-                  [foundUser.uid]: {
-                    user: foundUser,
-                    sessions: {
-                      ...sessions,
-                      [chatSession.id]: {
-                        id: chatSession.id,
-                        createdAt: chatSession.createdAt,
-                        updatedAt: chatSession.updatedAt,
-                        members: chatSession.members,
-                      },
-                    },
-                  },
-                };
-              } else {
-                const userDocQuery = doc(appFirestore, 'users', eachMember);
-                const userDocRef = await getDoc(userDocQuery);
-                let userProfile: UserProfile = { uid: eachMember };
-                if (userDocRef.exists()) {
-                  userProfile = {
-                    ...userProfile,
-                    ...(userDocRef.data()?.profile ?? {}),
-                  };
-                  const sessions =
-                    { ...currentChatSessions[userProfile.uid].sessions } ?? {};
-                  currentChatSessions = {
-                    ...currentChatSessions,
-                    [userProfile.uid]: {
-                      user,
-                      sessions: {
-                        ...sessions,
-                        [chatSession.id]: {
-                          id: chatSession.id,
-                          createdAt: chatSession.createdAt,
-                          updatedAt: chatSession.updatedAt,
-                          members: chatSession.members,
-                        },
-                      },
-                    },
-                  };
-                }
-              }
-            }
+    supportChatsSubscription = onSnapshot(
+      supportChatsQuery,
+      async (snapshot) => {
+        let supportChats: SupportChats = { ...(await getPromise(node)) };
+        snapshot.docChanges().forEach((change) => {
+          const { id } = change.doc;
+          if (change.type === 'added' || change.type === 'modified') {
+            const supportChat: SupportChat = {
+              ...(change.doc.data() as SupportChat),
+              id,
+            };
+            supportChats = { ...supportChats, [id]: supportChat };
+          } else if (change.type === 'removed') {
+            delete supportChats[id];
           }
-        }
-        setSelf(currentChatSessions);
+        });
+        setSelf(supportChats);
       }
-    });
+    );
   });
   return () => {
     supportChatsSubscription();
     authSubscription();
   };
 };
-export const supportChatUsersAtom = atom<SupportChatUsers>({
-  key: recoilKeys.supportChatUsersAtom,
-  default: defaultChatSessions,
+
+export const supportChatsAtom = atom<SupportChats>({
+  key: recoilKeys.supportChatsAtom,
+  default: {},
   effects: [querySupportChatsSideEffects],
 });
-export const selectedSupportChatUserAtom = atom<SupportChatUser | null>({
+export const selectedSupportChatUserAtom = atom<UserProfile | null>({
   key: recoilKeys.selectedSupportChatUserAtom,
   default: null,
 });
@@ -155,4 +97,16 @@ export const selectedSupportChatUserAtom = atom<SupportChatUser | null>({
 export const selectedSupportChatSessionAtom = atom<SupportChatSession | null>({
   key: recoilKeys.selectedSupportChatSessionAtom,
   default: null,
+});
+
+export interface SupportChatsQueries {
+  [sessionID: string]: {
+    limit: number;
+  };
+}
+
+export const supportChatsQueriesAtom = atom<SupportChatsQueries>({
+  dangerouslyAllowMutability: false,
+  key: recoilKeys.supportChatsQueriesAtom,
+  default: {},
 });

@@ -1,36 +1,30 @@
 import { Box } from '@mui/material';
-import { Comment } from '@mui/icons-material';
-import Button from '@mui/material/Button';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import {
-  selectedSupportChatUserAtom,
-  SupportChatUser,
-  supportChatUsersAtom,
-} from '@/recoil/atoms/supportChat';
-
-function ChatSessionButton({
-  chatSessionsItem,
-}: {
-  chatSessionsItem: SupportChatUser;
-}) {
-  const setSelectedSupportChatUser = useSetRecoilState(
-    selectedSupportChatUserAtom
-  );
-
-  const onClickHandler = () => {
-    setSelectedSupportChatUser(chatSessionsItem);
-  };
-
-  return (
-    <Button sx={{ justifyContent: 'space-between' }} onClick={onClickHandler}>
-      <Box>{chatSessionsItem.user.displayName}</Box>
-      <Comment />
-    </Button>
-  );
-}
+import { useRecoilValueLoadable } from 'recoil';
+import { supportChatUsersSelector } from '@/recoil/selectors/supportChat';
+import { Loader } from '@/components';
+import SelectChatUserButton from '@/components/Buttons/SelectChatUser';
 
 export default function SelectChatUserComponent() {
-  const supportChatUsers = useRecoilValue(supportChatUsersAtom);
+  const { contents, state } = useRecoilValueLoadable(supportChatUsersSelector);
+
+  if (state === 'hasError') {
+    return (
+      <>
+        <Box>An error occurred</Box>
+        <Box>{contents.toString()}</Box>
+      </>
+    );
+  }
+  if (state === 'loading') {
+    return (
+      <>
+        <Box>Loading...</Box>
+        <Loader />
+      </>
+    );
+  }
+
+  const supportChatUsers = contents;
 
   return (
     <Box
@@ -57,7 +51,7 @@ export default function SelectChatUserComponent() {
       </Box>
       {Object.keys(supportChatUsers).map((eachUser) => {
         return (
-          <ChatSessionButton
+          <SelectChatUserButton
             key={eachUser}
             chatSessionsItem={supportChatUsers[eachUser]}
           />

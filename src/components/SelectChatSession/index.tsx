@@ -3,7 +3,6 @@ import {
   selectedSupportChatUserAtom,
   SupportChat,
   SupportChatNoID,
-  SupportChatUser,
 } from '@/recoil/atoms/supportChat';
 import Button from '@mui/material/Button';
 import { useState } from 'react';
@@ -18,10 +17,12 @@ import { appFirestore } from '@/firebase';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import { Box } from '@mui/material';
+import { supportChatsFilteredByUserID } from '@/recoil/selectors/supportChat';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
+import { UserProfile } from '@/config';
 
 interface SelectChatSessionProps {
-  supportUser: SupportChatUser;
+  supportUser: UserProfile;
 }
 
 export default function SelectChatSession({
@@ -32,21 +33,26 @@ export default function SelectChatSession({
   );
   const [error, setError] = useState<unknown>(null);
   const user = useRecoilValue(userAtom);
+  const supportChats = useRecoilValue(
+    supportChatsFilteredByUserID(supportUser.uid)
+  );
   const setActiveChatSession = useSetRecoilState(
     selectedSupportChatSessionAtom
   );
+
   const setActiveChatUser = useSetRecoilState(selectedSupportChatUserAtom);
 
   const createNewSessionHandler = async () => {
     if (user) {
       setLoadingState('creatingSession');
       const collectionRef = collection(appFirestore, 'supportChats');
+
       try {
         const data: SupportChatNoID = {
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
           members: {
-            [supportUser.user.uid]: true,
+            [supportUser.uid]: true,
             [user.user.uid]: true,
           },
         };
@@ -58,7 +64,7 @@ export default function SelectChatSession({
             ...(afterSetRes.data() as SupportChat),
             id: afterSetRes.id,
           };
-          setActiveChatSession({ chat: supportChat, user: supportUser.user });
+          setActiveChatSession({ chat: supportChat, user: supportUser });
         } else {
           setError('Unknown error');
         }
@@ -105,19 +111,19 @@ export default function SelectChatSession({
         },
       }}
     >
-      {Object.keys(supportUser.sessions).map((eachSession) => {
+      {Object.keys(supportChats).map((eachChatID) => {
         return (
           <Button
             disabled={loadingState !== 'idle'}
-            key={eachSession}
+            key={eachChatID}
             onClick={() => {
               setActiveChatSession({
-                chat: supportUser.sessions[eachSession],
-                user: supportUser.user,
+                chat: supportChats[eachChatID],
+                user: supportUser,
               });
             }}
           >
-            {supportUser.sessions[eachSession].id}
+            {supportChats[eachChatID].id}
           </Button>
         );
       })}
