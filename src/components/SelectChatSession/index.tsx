@@ -32,7 +32,7 @@ export default function SelectChatSession({
     'idle'
   );
   const [error, setError] = useState<unknown>(null);
-  const user = useRecoilValue(userAtom);
+  const { userState } = useRecoilValue(userAtom);
   const supportChats = useRecoilValue(
     supportChatsFilteredByUserID(supportUser.uid)
   );
@@ -43,7 +43,7 @@ export default function SelectChatSession({
   const setActiveChatUser = useSetRecoilState(selectedSupportChatUserAtom);
 
   const createNewSessionHandler = async () => {
-    if (user) {
+    if (userState) {
       setLoadingState('creatingSession');
       const collectionRef = collection(appFirestore, 'supportChats');
 
@@ -53,7 +53,7 @@ export default function SelectChatSession({
           updatedAt: serverTimestamp(),
           members: {
             [supportUser.uid]: true,
-            [user.user.uid]: true,
+            [userState.user.uid]: true,
           },
         };
         const res = await addDoc(collectionRef, data);

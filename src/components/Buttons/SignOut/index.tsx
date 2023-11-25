@@ -1,14 +1,13 @@
 import { Button } from '@mui/material';
 import React from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import { signOut } from '@/firebase/signOut';
-import { AuthState, authStateAtom } from '@/recoil/atoms/authState';
+import { AuthState } from '@/recoil/atoms/user';
 import Loader from '@/components/Loader';
 
 export default function SignOutButton() {
-  const user = useRecoilValue(userAtom);
-  const [authState, setAuthState] = useRecoilState(authStateAtom);
+  const [{ authState, userState }, setAuthState] = useRecoilState(userAtom);
   const buttonStyle = {
     display: 'flex',
     alignItems: 'center',
@@ -26,11 +25,11 @@ export default function SignOutButton() {
   ) => {
     e.preventDefault();
     e.stopPropagation();
-    setAuthState(AuthState.signingOut);
+    setAuthState({ authState: AuthState.signingOut, userState });
     await signOut();
   };
 
-  if (!user) {
+  if (!userState) {
     return null;
   }
 

@@ -2,11 +2,12 @@ import { appFirebaseAuth } from '@/firebase';
 import { GoogleAuthProvider, signInWithPopup } from '@firebase/auth';
 import { useCallback, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { AuthState, authStateAtom } from '@/recoil/atoms/authState';
+import { userAtom } from '@/recoil/atoms';
+import { AuthState } from '@/recoil/atoms/user';
 
 export default function useSignInWithGooglePopup() {
   const [error, setError] = useState<string | null>(null);
-  const [isAuthLoading, setIsAuthLoading] = useRecoilState(authStateAtom);
+  const [{ authState, userState }, setAppUser] = useRecoilState(userAtom);
 
   const clearError = useCallback(() => {
     if (error) {
@@ -15,8 +16,8 @@ export default function useSignInWithGooglePopup() {
   }, [error]);
 
   const signInWithGooglePopUp = useCallback(async (): Promise<void> => {
-    if (isAuthLoading === AuthState.idle) {
-      setIsAuthLoading(AuthState.signingIn);
+    if (authState === AuthState.idle) {
+      setAppUser({ authState: AuthState.signingIn, userState });
       clearError();
       try {
         const provider = new GoogleAuthProvider();
@@ -31,9 +32,8 @@ export default function useSignInWithGooglePopup() {
         /* empty */
       }
     }
-  }, [clearError, isAuthLoading, setIsAuthLoading]);
+  }, [authState, clearError, setAppUser, userState]);
   return {
-    isAuthLoading,
     error,
     clearError,
     signInWithGooglePopUp,

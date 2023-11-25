@@ -39,12 +39,12 @@ export const cartAtom = atom<Cart>({
     },
     ({ onSet, getPromise, setSelf }) => {
       onSet(async (localCart) => {
-        const user = await getPromise(userAtom);
-        if (!user) {
+        const { userState } = await getPromise(userAtom);
+        if (!userState) {
           setSelf(defaultPlaceholderCart);
           return;
         }
-        const userDocRef = doc(appFirestore, 'users', user.user.uid);
+        const userDocRef = doc(appFirestore, 'users', userState.user.uid);
         await setDoc(
           userDocRef,
           { cart: localCart },

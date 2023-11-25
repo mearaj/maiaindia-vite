@@ -1,15 +1,14 @@
 import { useRecoilValue } from 'recoil';
-import { AuthState, authStateAtom } from '@/recoil/atoms/authState';
 import { userAtom } from '@/recoil/atoms';
 import { Box } from '@mui/material';
 import { Loader } from '@/components';
 import { Outlet } from 'react-router-dom';
+import { AuthState } from '@/recoil/atoms/user';
 import SignInButton from '@/components/Buttons/SignIn';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
 
 export default function AuthRoutes() {
-  const authState = useRecoilValue(authStateAtom);
-  const user = useRecoilValue(userAtom);
+  const { authState, userState } = useRecoilValue(userAtom);
   let text: string | null;
   if (authState !== AuthState.idle) {
     switch (authState) {
@@ -35,7 +34,7 @@ export default function AuthRoutes() {
       </CommonPageLayout>
     );
   }
-  if (!user) {
+  if (!userState) {
     return (
       <CommonPageLayout>
         <Box>Sign In required</Box>

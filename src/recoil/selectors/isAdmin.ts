@@ -6,10 +6,10 @@ import { isAdminEmail } from '@/config';
 export const isAdminSelector = selector<boolean>({
   key: recoilKeys.isAdminSelector,
   get: ({ get }) => {
-    const user = get(userAtom);
-    if (!user || !user.user || !user.user.email) {
+    const { userState } = get(userAtom);
+    if (!userState || !userState.user || !userState.user.email) {
       return false;
     }
-    return isAdminEmail(user.user.email);
+    return isAdminEmail(userState.user.email);
   },
 });

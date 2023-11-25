@@ -6,7 +6,7 @@ import SignInButton from '@/components/Buttons/SignIn';
 import SignOutButton from '@/components/Buttons/SignOut';
 
 export default function UserComponent() {
-  const user = useRecoilValue(userAtom);
+  const { userState } = useRecoilValue(userAtom);
 
   return (
     <Box
@@ -17,17 +17,17 @@ export default function UserComponent() {
       }}
     >
       <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-        {user && (
+        {userState && (
           <Box
             component="img"
-            src={user.user.photoURL ?? imagePlaceholder}
+            src={userState.user.photoURL ?? imagePlaceholder}
             alt="user"
             sx={{ width: '60px', borderRadius: '50%', marginRight: '16px' }}
           />
         )}
         <Box>
-          {user && <Box>{user.user.displayName}</Box>}
-          {user ? <SignOutButton /> : <SignInButton />}
+          {userState && <Box>{userState.user.displayName}</Box>}
+          {userState ? <SignOutButton /> : <SignInButton />}
         </Box>
       </Box>
     </Box>
