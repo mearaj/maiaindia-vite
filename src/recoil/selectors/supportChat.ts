@@ -38,38 +38,6 @@ import { SupportChat, supportChatsAtom } from '@/recoil/atoms/supportChat';
 //   },
 // });
 
-// export const supportChatUsersSelector = selector<SupportChatUsers>({
-//   key: recoilKeys.supportChatUsersSelector,
-//   get: async ({ get }) => {
-//     const supportChats = get(supportChatsAtom);
-//     return supportChats;
-//     let chatUsers = { ...defaultChatUsers };
-//     for await (const eachSupportChatID of Object.keys(supportChats)) {
-//       for await (const eachMemberID of Object.keys(
-//         supportChats[eachSupportChatID].members
-//       )) {
-//         const foundUser = chatUsers[eachMemberID];
-//         if (!foundUser) {
-//           const userDocQuery = doc(appFirestore, 'users', eachMemberID);
-//           const userDocRef = await getDoc(userDocQuery);
-//           let userProfile: UserProfile = { uid: eachMemberID };
-//           if (userDocRef.exists()) {
-//             userProfile = {
-//               ...userProfile,
-//               ...(userDocRef.data()?.profile ?? {}),
-//             };
-//             chatUsers = {
-//               ...chatUsers,
-//               [userProfile.uid]: userProfile,
-//             };
-//           }
-//         }
-//       }
-//     }
-//     return chatUsers;
-//   },
-// });
-
 export const supportChatsFilteredByUserID = selectorFamily<
   SupportChat[],
   string

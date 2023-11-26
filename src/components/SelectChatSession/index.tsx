@@ -2,7 +2,9 @@ import {
   selectedSupportChatSessionAtom,
   selectedSupportChatUserAtom,
   SupportChat,
+  SupportChatMessage,
   SupportChatNoID,
+  supportChatSessionsAtom,
   SupportChatUser,
 } from '@/recoil/atoms/supportChat';
 import Button from '@mui/material/Button';
@@ -35,6 +37,7 @@ export default function SelectChatSession({
   const setActiveChatSession = useSetRecoilState(
     selectedSupportChatSessionAtom
   );
+  const supportChatSessions = useRecoilValue(supportChatSessionsAtom);
 
   const setActiveChatUser = useSetRecoilState(selectedSupportChatUserAtom);
 
@@ -111,22 +114,29 @@ export default function SelectChatSession({
         },
       }}
     >
-      {supportUser.chats.map((eachSupportChat) => {
-        return (
-          <Button
-            disabled={loadingState !== 'idle'}
-            key={eachSupportChat.id}
-            onClick={() => {
-              // setActiveChatSession({
-              //   chat: supportChats[eachChatID],
-              //   user: supportUser,
-              // });
-            }}
-          >
-            {eachSupportChat.id}
-          </Button>
-        );
-      })}
+      {supportUser.chats
+        .filter((eachChat) => supportChatSessions[eachChat.id])
+        .map((eachSupportChat) => {
+          let messages: SupportChatMessage[] = [];
+          if (supportChatSessions[eachSupportChat.id]) {
+            messages = supportChatSessions[eachSupportChat.id].messages;
+          }
+          return (
+            <Button
+              disabled={loadingState !== 'idle'}
+              key={eachSupportChat.id}
+              onClick={() => {
+                setActiveChatSession({
+                  chat: eachSupportChat,
+                  user: supportUser.profile,
+                  messages,
+                });
+              }}
+            >
+              {eachSupportChat.id}
+            </Button>
+          );
+        })}
       <Button
         disabled={loadingState !== 'idle'}
         onClick={createNewSessionHandler}

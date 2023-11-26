@@ -5,6 +5,7 @@ import {
   collection,
   FieldValue,
   onSnapshot,
+  orderBy,
   query,
   Timestamp,
   where,
@@ -56,7 +57,8 @@ const querySupportChatsSideEffects: AtomEffect<SupportChat[]> = ({
     const collectionReference = collection(appFirestore, 'supportChats');
     const supportChatsQuery = query(
       collectionReference,
-      where(`members.${user.uid}`, '==', true)
+      where(`members.${user.uid}`, '==', true),
+      orderBy('updatedAt', 'desc')
     );
     supportChatsSubscription = onSnapshot(
       supportChatsQuery,
@@ -123,12 +125,19 @@ export interface MessageAttachment extends MessageAttachmentNoID {
   id: string;
 }
 
-export interface SupportChatMessage {
+export interface SupportChatMessageNoID {
   from: string;
   to: string;
   text: string;
   attachments: MessageAttachment[] | MessageAttachmentNoID | null;
-  type: string;
+  createdAt: FieldValue | Timestamp;
+  updatedAt: FieldValue | Timestamp;
+}
+
+export interface SupportChatMessage extends SupportChatMessageNoID {
+  id: string;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
 }
 
 export interface SupportChatSessions {

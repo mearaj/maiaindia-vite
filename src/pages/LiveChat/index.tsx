@@ -6,8 +6,12 @@ import Button from '@mui/material/Button';
 import {
   selectedSupportChatSessionAtom,
   selectedSupportChatUserAtom,
+  SupportChatMessageNoID,
 } from '@/recoil/atoms/supportChat';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { appFirestore } from '@/firebase';
+import { addDoc, collection, serverTimestamp } from '@firebase/firestore';
+import { userAtom } from '@/recoil/atoms';
 import SelectChatUserComponent from '@/components/SelectChatUser';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
 import SelectChatSession from '@/components/SelectChatSession';
@@ -17,11 +21,13 @@ export default function LiveChatPage() {
   const ref = useRef<HTMLElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const activeSupportChatUser = useRecoilValue(selectedSupportChatUserAtom);
+  const appUser = useRecoilValue(userAtom);
 
   const [activeSupportChatSession, setActiveSupportChatSession] =
     useRecoilState(selectedSupportChatSessionAtom);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    const textValueCurr = textValue;
     setTextValue('');
     setTimeout(() => {
       if (ref && ref.current) {
@@ -31,6 +37,21 @@ export default function LiveChatPage() {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
     }
+    const collectionRef = collection(
+      appFirestore,
+      'supportChats',
+      activeSupportChatSession!.chat.id,
+      'supportChatMessages'
+    );
+    const newMessage: SupportChatMessageNoID = {
+      from: appUser.userState!.user!.uid,
+      to: activeSupportChatSession!.user!.uid,
+      attachments: null,
+      updatedAt: serverTimestamp(),
+      createdAt: serverTimestamp(),
+      text: textValueCurr,
+    };
+    await addDoc(collectionRef, newMessage);
   };
 
   if (!activeSupportChatUser) {
@@ -70,7 +91,7 @@ export default function LiveChatPage() {
         ref={ref}
         sx={{
           display: 'flex',
-          flexDirection: 'column',
+          flexDirection: 'column-reverse',
           flexShrink: 1,
           flexGrow: 1,
           padding: '8px 16px',
@@ -79,39 +100,39 @@ export default function LiveChatPage() {
           wordBreak: 'break-word',
         }}
       >
-        <Box sx={{ marginTop: 'auto', padding: '0 8px' }}>
-          {[].map((eachItem) => (
-            <Card
-              sx={{
-                maxWidth: '50%',
-                backgroundColor: `white`,
-                padding: '8px 16px',
-                margin: '10px 0',
-                borderRadius: '10px',
-                borderTopLeftRadius: '0',
-                borderTopRightRadius: '0',
-                position: 'relative',
-                overflow: 'visible',
-                marginLeft: 'auto',
-                '&::after': {
-                  content: '""',
-                  position: 'absolute',
-                  width: 0,
-                  height: 0,
-                  opacity: '1',
-                  borderBottom: `15px solid white`,
-                  borderLeft: '15px solid transparent',
-                  top: '0px',
-                  right: '-14px',
-                  rotate: '180deg',
-                },
-              }}
-              key={eachItem}
-            >
-              {eachItem}
-            </Card>
-          ))}
-        </Box>
+        {/* <Box sx={{ marginTop: 'auto', padding: '0 8px' }}> */}
+        {activeSupportChatSession.messages.map((eachItem) => (
+          <Card
+            sx={{
+              maxWidth: '50%',
+              backgroundColor: `white`,
+              padding: '8px 16px',
+              margin: '10px 0',
+              borderRadius: '10px',
+              borderTopLeftRadius: '0',
+              borderTopRightRadius: '0',
+              position: 'relative',
+              overflow: 'visible',
+              marginLeft: 'auto',
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                width: 0,
+                height: 0,
+                opacity: '1',
+                borderBottom: `15px solid white`,
+                borderLeft: '15px solid transparent',
+                top: '0px',
+                right: '-14px',
+                rotate: '180deg',
+              },
+            }}
+            key={eachItem.id}
+          >
+            {eachItem.text}
+          </Card>
+        ))}
+        {/* </Box> */}
       </Box>
 
       <Box sx={{ display: 'flex', padding: '8px', alignItems: 'stretch' }}>
