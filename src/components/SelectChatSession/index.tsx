@@ -19,7 +19,7 @@ import {
 import { appFirestore } from '@/firebase';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
-import { Box } from '@mui/material';
+import { Box, Card } from '@mui/material';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
 
 interface SelectChatSessionProps {
@@ -102,7 +102,7 @@ export default function SelectChatSession({
   return (
     <CommonPageLayout
       sxBodyProps={{
-        alignItems: 'start',
+        alignItems: 'stretch',
         justifyContent: 'start',
         flexGrow: 0,
         padding: '16px',
@@ -117,24 +117,34 @@ export default function SelectChatSession({
       {supportUser.chats
         .filter((eachChat) => supportChatSessions[eachChat.id])
         .map((eachSupportChat) => {
+          console.log(eachSupportChat);
           let messages: SupportChatMessage[] = [];
           if (supportChatSessions[eachSupportChat.id]) {
             messages = supportChatSessions[eachSupportChat.id].messages;
           }
           return (
-            <Button
-              disabled={loadingState !== 'idle'}
-              key={eachSupportChat.id}
-              onClick={() => {
-                setActiveChatSession({
-                  chat: eachSupportChat,
-                  user: supportUser.profile,
-                  messages,
-                });
-              }}
-            >
-              {eachSupportChat.id}
-            </Button>
+            <Card key={eachSupportChat.id} sx={{ marginBottom: '16px' }}>
+              <Button
+                disabled={loadingState !== 'idle'}
+                onClick={() => {
+                  setActiveChatSession({
+                    chat: eachSupportChat,
+                    user: supportUser.profile,
+                    messages,
+                  });
+                }}
+              >
+                {eachSupportChat.id}
+              </Button>
+              <Box
+                sx={{ display: 'flex', padding: '0 8px', alignItems: 'center' }}
+              >
+                <Box sx={{ fontSize: '14px' }}>Last updated at:&nbsp;</Box>
+                <Box sx={{ fontSize: '12px' }}>
+                  {eachSupportChat.updatedAt.toDate().toDateString()}
+                </Box>
+              </Box>
+            </Card>
           );
         })}
       <Button

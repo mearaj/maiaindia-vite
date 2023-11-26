@@ -148,7 +148,7 @@ export default function RecoilManager({ children }: PropsWithChildren) {
         );
         const supportChatQuery = query(
           collectionRef,
-          limit(10),
+          limit(eachChat.queryLimit ?? 10),
           orderBy('createdAt', 'desc')
         );
         const subscription = onSnapshot(supportChatQuery, async (snapshot) => {

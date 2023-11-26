@@ -28,6 +28,7 @@ export interface SupportChatNoID {
   };
   createdAt: FieldValue;
   updatedAt: FieldValue;
+  queryLimit?: number; // to be used only by frontend
 }
 
 export interface SupportChat extends SupportChatNoID {
@@ -47,6 +48,8 @@ export interface SupportChatSession {
 
 const querySupportChatsSideEffects: AtomEffect<SupportChat[]> = ({
   setSelf,
+  getPromise,
+  node,
 }) => {
   let supportChatsSubscription = () => {};
   const authSubscription = onAuthStateChanged(appFirebaseAuth, async (user) => {
@@ -63,29 +66,29 @@ const querySupportChatsSideEffects: AtomEffect<SupportChat[]> = ({
     supportChatsSubscription = onSnapshot(
       supportChatsQuery,
       async (snapshot) => {
-        const supportChats: SupportChat[] = [];
-        snapshot.docs.forEach((supportChat) => {
-          if (supportChat.exists()) {
-            supportChats.push({
-              ...(supportChat.data() as SupportChat),
-              id: supportChat.id,
-            });
-          }
-        });
-        // snapshot.docChanges().forEach((change) => {
-        //   const { id } = change.doc;
-        //   if (change.type === 'added') {
-        //     const supportChat: SupportChat = {
-        //       ...(change.doc.data() as SupportChat),
-        //       id,
-        //     };
-        //     supportChats.push(supportChat);
-        //   } else if (change.type === 'modified') {
-        //     console.log('modified');
-        //   } else if (change.type === 'removed') {
-        //     console.log('removed');
+        const supportChats: SupportChat[] = [...(await getPromise(node))];
+        // snapshot.docs.forEach((supportChat) => {
+        //   if (supportChat.exists()) {
+        //     supportChats.push({
+        //       ...(supportChat.data() as SupportChat),
+        //       id: supportChat.id,
+        //     });
         //   }
         // });
+        snapshot.docChanges().forEach((change) => {
+          const { id } = change.doc;
+          if (change.type === 'added') {
+            const supportChat: SupportChat = {
+              ...(change.doc.data() as SupportChat),
+              id,
+            };
+            supportChats.push(supportChat);
+          } else if (change.type === 'modified') {
+            console.log('support chat modified, needed to be updated');
+          } else if (change.type === 'removed') {
+            console.log('support chat removed, needed to be updated');
+          }
+        });
         setSelf(supportChats);
       }
     );
