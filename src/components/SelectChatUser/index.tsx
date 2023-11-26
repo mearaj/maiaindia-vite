@@ -1,30 +1,10 @@
 import { Box } from '@mui/material';
-import { useRecoilValueLoadable } from 'recoil';
-import { supportChatUsersSelector } from '@/recoil/selectors/supportChat';
-import { Loader } from '@/components';
+import { useRecoilValue } from 'recoil';
+import { supportChatUsersAtom } from '@/recoil/atoms/supportChat';
 import SelectChatUserButton from '@/components/Buttons/SelectChatUser';
 
 export default function SelectChatUserComponent() {
-  const { contents, state } = useRecoilValueLoadable(supportChatUsersSelector);
-
-  if (state === 'hasError') {
-    return (
-      <>
-        <Box>An error occurred</Box>
-        <Box>{contents.toString()}</Box>
-      </>
-    );
-  }
-  if (state === 'loading') {
-    return (
-      <>
-        <Box>Loading...</Box>
-        <Loader />
-      </>
-    );
-  }
-
-  const supportChatUsers = contents;
+  const supportChatUsers = useRecoilValue(supportChatUsersAtom);
 
   return (
     <Box
@@ -49,11 +29,11 @@ export default function SelectChatUserComponent() {
       >
         Please select executive.
       </Box>
-      {Object.keys(supportChatUsers).map((eachUser) => {
+      {supportChatUsers.map((eachUser) => {
         return (
           <SelectChatUserButton
-            key={eachUser}
-            chatSessionsItem={supportChatUsers[eachUser]}
+            key={eachUser.profile.uid}
+            supportChatUser={eachUser}
           />
         );
       })}

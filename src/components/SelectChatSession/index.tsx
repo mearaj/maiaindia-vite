@@ -3,6 +3,7 @@ import {
   selectedSupportChatUserAtom,
   SupportChat,
   SupportChatNoID,
+  SupportChatUser,
 } from '@/recoil/atoms/supportChat';
 import Button from '@mui/material/Button';
 import { useState } from 'react';
@@ -17,12 +18,10 @@ import { appFirestore } from '@/firebase';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import { Box } from '@mui/material';
-import { supportChatsFilteredByUserID } from '@/recoil/selectors/supportChat';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
-import { UserProfile } from '@/config';
 
 interface SelectChatSessionProps {
-  supportUser: UserProfile;
+  supportUser: SupportChatUser;
 }
 
 export default function SelectChatSession({
@@ -33,9 +32,6 @@ export default function SelectChatSession({
   );
   const [error, setError] = useState<unknown>(null);
   const { userState } = useRecoilValue(userAtom);
-  const supportChats = useRecoilValue(
-    supportChatsFilteredByUserID(supportUser.uid)
-  );
   const setActiveChatSession = useSetRecoilState(
     selectedSupportChatSessionAtom
   );
@@ -52,7 +48,7 @@ export default function SelectChatSession({
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
           members: {
-            [supportUser.uid]: true,
+            [supportUser.profile.uid]: true,
             [userState.user.uid]: true,
           },
         };
@@ -64,7 +60,11 @@ export default function SelectChatSession({
             ...(afterSetRes.data() as SupportChat),
             id: afterSetRes.id,
           };
-          setActiveChatSession({ chat: supportChat, user: supportUser });
+          setActiveChatSession({
+            chat: supportChat,
+            user: supportUser.profile,
+            messages: [],
+          });
         } else {
           setError('Unknown error');
         }
@@ -111,19 +111,19 @@ export default function SelectChatSession({
         },
       }}
     >
-      {Object.keys(supportChats).map((eachChatID) => {
+      {supportUser.chats.map((eachSupportChat) => {
         return (
           <Button
             disabled={loadingState !== 'idle'}
-            key={eachChatID}
+            key={eachSupportChat.id}
             onClick={() => {
-              setActiveChatSession({
-                chat: supportChats[eachChatID],
-                user: supportUser,
-              });
+              // setActiveChatSession({
+              //   chat: supportChats[eachChatID],
+              //   user: supportUser,
+              // });
             }}
           >
-            {supportChats[eachChatID].id}
+            {eachSupportChat.id}
           </Button>
         );
       })}

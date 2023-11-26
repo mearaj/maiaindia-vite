@@ -10,11 +10,16 @@ import {
   where,
 } from '@firebase/firestore';
 import { onAuthStateChanged } from '@firebase/auth';
-import { UserProfile } from '@/config';
+import { adminUsers, UserProfile } from '@/config';
 
-export interface SupportChatUsers {
-  [toUserUID: string]: UserProfile;
+export interface SupportChatUser {
+  profile: UserProfile;
+  chats: SupportChat[];
 }
+
+export const defaultChatUsers: SupportChatUser[] = adminUsers.map(
+  (eachUser) => ({ profile: eachUser, chats: [] })
+);
 
 export interface SupportChatNoID {
   members: {
@@ -33,24 +38,19 @@ export interface SupportChat extends SupportChatNoID {
   updatedAt: Timestamp;
 }
 
-export interface SupportChats {
-  [supportChatID: string]: SupportChat;
-}
-
 export interface SupportChatSession {
   user: UserProfile;
   chat: SupportChat;
+  messages: SupportChatMessage[];
 }
 
-const querySupportChatsSideEffects: AtomEffect<SupportChats> = ({
+const querySupportChatsSideEffects: AtomEffect<SupportChat[]> = ({
   setSelf,
-  getPromise,
-  node,
 }) => {
   let supportChatsSubscription = () => {};
   const authSubscription = onAuthStateChanged(appFirebaseAuth, async (user) => {
     if (user === null) {
-      setSelf({});
+      setSelf([]);
       return;
     }
     const collectionReference = collection(appFirestore, 'supportChats');
@@ -61,19 +61,29 @@ const querySupportChatsSideEffects: AtomEffect<SupportChats> = ({
     supportChatsSubscription = onSnapshot(
       supportChatsQuery,
       async (snapshot) => {
-        let supportChats: SupportChats = { ...(await getPromise(node)) };
-        snapshot.docChanges().forEach((change) => {
-          const { id } = change.doc;
-          if (change.type === 'added' || change.type === 'modified') {
-            const supportChat: SupportChat = {
-              ...(change.doc.data() as SupportChat),
-              id,
-            };
-            supportChats = { ...supportChats, [id]: supportChat };
-          } else if (change.type === 'removed') {
-            delete supportChats[id];
+        const supportChats: SupportChat[] = [];
+        snapshot.docs.forEach((supportChat) => {
+          if (supportChat.exists()) {
+            supportChats.push({
+              ...(supportChat.data() as SupportChat),
+              id: supportChat.id,
+            });
           }
         });
+        // snapshot.docChanges().forEach((change) => {
+        //   const { id } = change.doc;
+        //   if (change.type === 'added') {
+        //     const supportChat: SupportChat = {
+        //       ...(change.doc.data() as SupportChat),
+        //       id,
+        //     };
+        //     supportChats.push(supportChat);
+        //   } else if (change.type === 'modified') {
+        //     console.log('modified');
+        //   } else if (change.type === 'removed') {
+        //     console.log('removed');
+        //   }
+        // });
         setSelf(supportChats);
       }
     );
@@ -84,12 +94,17 @@ const querySupportChatsSideEffects: AtomEffect<SupportChats> = ({
   };
 };
 
-export const supportChatsAtom = atom<SupportChats>({
+export const supportChatsAtom = atom<SupportChat[]>({
   key: recoilKeys.supportChatsAtom,
-  default: {},
+  default: [],
   effects: [querySupportChatsSideEffects],
 });
-export const selectedSupportChatUserAtom = atom<UserProfile | null>({
+
+export const supportChatUsersAtom = atom<SupportChatUser[]>({
+  key: recoilKeys.supportChatUsersAtom,
+  default: defaultChatUsers,
+});
+export const selectedSupportChatUserAtom = atom<SupportChatUser | null>({
   key: recoilKeys.selectedSupportChatUserAtom,
   default: null,
 });
@@ -99,14 +114,29 @@ export const selectedSupportChatSessionAtom = atom<SupportChatSession | null>({
   default: null,
 });
 
-export interface SupportChatsQueries {
-  [sessionID: string]: {
-    limit: number;
-  };
+export interface MessageAttachmentNoID {
+  url: string;
+  mimeType: string;
 }
 
-export const supportChatsQueriesAtom = atom<SupportChatsQueries>({
+export interface MessageAttachment extends MessageAttachmentNoID {
+  id: string;
+}
+
+export interface SupportChatMessage {
+  from: string;
+  to: string;
+  text: string;
+  attachments: MessageAttachment[] | MessageAttachmentNoID | null;
+  type: string;
+}
+
+export interface SupportChatSessions {
+  [supportChatID: string]: SupportChatSession;
+}
+
+export const supportChatSessionsAtom = atom<SupportChatSessions>({
   dangerouslyAllowMutability: false,
-  key: recoilKeys.supportChatsQueriesAtom,
+  key: recoilKeys.supportChatSessionsAtom,
   default: {},
 });

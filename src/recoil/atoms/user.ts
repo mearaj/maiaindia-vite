@@ -22,7 +22,7 @@ export interface AppUser {
   } | null;
 }
 
-const userPlaceholderUrl = `https://firebasestorage.googleapis.com/v0/b/maiaindia.appspot.com/o/images%2Fuser-placeholder.svg?alt=media`;
+export const userPlaceholderUrl = `https://firebasestorage.googleapis.com/v0/b/maiaindia.appspot.com/o/images%2Fuser-placeholder.svg?alt=media`;
 export const userAtom = atom<AppUser>({
   key: recoilKeys.userAtom,
   dangerouslyAllowMutability: true,
