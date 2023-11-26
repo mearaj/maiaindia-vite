@@ -2,20 +2,20 @@ import { selectorFamily } from 'recoil';
 import { recoilKeys } from '@/recoil/data/recoilKeys';
 import { SupportChat, supportChatsAtom } from '@/recoil/atoms/supportChat';
 
-// export const supportChatSessionsSelector = selector<SupportChatSessions>({
+// export const supportChatMessagesSelector = selector<SupportChatMessages>({
 //   dangerouslyAllowMutability: false,
-//   key: recoilKeys.supportChatSessionsSelector,
+//   key: recoilKeys.supportChatMessagesSelector,
 //   get: async ({ get }) => {
 //     const supportChats = get(supportChatsAtom);
-//     const supportChatSessions: SupportChatSessions = get(
-//       supportChatSessionsAtom
+//     const supportChatSessions: SupportChatMessages = get(
+//       supportChatsMessagesAtom
 //     );
 //     const allSessionIDs = Object.keys(supportChats)
 //       .concat(Object.keys(supportChatSessions))
 //       .filter((eachSessionID, index, sessionIDsArr) => {
 //         return index === sessionIDsArr.indexOf(eachSessionID);
 //       });
-//     let selectedSupportChatQueries: SupportChatSessions = {};
+//     let selectedSupportChatQueries: SupportChatMessages = {};
 //     allSessionIDs.forEach((supportChatID) => {
 //       if (supportChats[supportChatID] && !supportChatSessions[supportChatID]) {
 //         selectedSupportChatQueries = {

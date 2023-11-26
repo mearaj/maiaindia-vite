@@ -4,17 +4,18 @@ import { Attachment, Send } from '@mui/icons-material';
 import { useRef, useState } from 'react';
 import Button from '@mui/material/Button';
 import {
-  selectedSupportChatSessionAtom,
+  selectedSupportChat,
   selectedSupportChatUserAtom,
   SupportChatMessageNoID,
+  supportChatsMessagesAtom,
 } from '@/recoil/atoms/supportChat';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { appFirestore } from '@/firebase';
 import { addDoc, collection, serverTimestamp } from '@firebase/firestore';
 import { userAtom } from '@/recoil/atoms';
+import SelectSupportChatComponent from '@/components/SelectSupportChat';
 import SelectChatUserComponent from '@/components/SelectChatUser';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
-import SelectChatSession from '@/components/SelectChatSession';
 
 export default function LiveChatPage() {
   const [textValue, setTextValue] = useState('');
@@ -23,8 +24,9 @@ export default function LiveChatPage() {
   const activeSupportChatUser = useRecoilValue(selectedSupportChatUserAtom);
   const appUser = useRecoilValue(userAtom);
 
-  const [activeSupportChatSession, setActiveSupportChatSession] =
-    useRecoilState(selectedSupportChatSessionAtom);
+  const [activeSupportChat, setActiveSupportChat] =
+    useRecoilState(selectedSupportChat);
+  const supportChatMessages = useRecoilValue(supportChatsMessagesAtom);
 
   const handleSubmit = async () => {
     const textValueCurr = textValue;
@@ -37,21 +39,23 @@ export default function LiveChatPage() {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
     }
-    const collectionRef = collection(
-      appFirestore,
-      'supportChats',
-      activeSupportChatSession!.chat.id,
-      'supportChatMessages'
-    );
-    const newMessage: SupportChatMessageNoID = {
-      from: appUser.userState!.user!.uid,
-      to: activeSupportChatSession!.user!.uid,
-      attachments: null,
-      updatedAt: serverTimestamp(),
-      createdAt: serverTimestamp(),
-      text: textValueCurr,
-    };
-    await addDoc(collectionRef, newMessage);
+    if (activeSupportChat) {
+      const collectionRef = collection(
+        appFirestore,
+        'supportChats',
+        activeSupportChat.id,
+        'supportChatMessages'
+      );
+      const newMessage: SupportChatMessageNoID = {
+        from: appUser.userState!.user!.uid,
+        to: activeSupportChatUser!.uid,
+        attachments: null,
+        updatedAt: serverTimestamp(),
+        createdAt: serverTimestamp(),
+        text: textValueCurr,
+      };
+      await addDoc(collectionRef, newMessage);
+    }
   };
 
   if (!activeSupportChatUser) {
@@ -67,8 +71,8 @@ export default function LiveChatPage() {
       </CommonPageLayout>
     );
   }
-  if (!activeSupportChatSession) {
-    return <SelectChatSession supportUser={activeSupportChatUser} />;
+  if (!activeSupportChat) {
+    return <SelectSupportChatComponent supportUser={activeSupportChatUser} />;
   }
 
   return (
@@ -84,7 +88,7 @@ export default function LiveChatPage() {
       <Header
         showBackIcon
         onBackIconClick={() => {
-          setActiveSupportChatSession(null);
+          setActiveSupportChat(null);
         }}
       />
       <Box
@@ -101,37 +105,38 @@ export default function LiveChatPage() {
         }}
       >
         {/* <Box sx={{ marginTop: 'auto', padding: '0 8px' }}> */}
-        {activeSupportChatSession.messages.map((eachItem) => (
-          <Card
-            sx={{
-              maxWidth: '50%',
-              backgroundColor: `white`,
-              padding: '8px 16px',
-              margin: '10px 0',
-              borderRadius: '10px',
-              borderTopLeftRadius: '0',
-              borderTopRightRadius: '0',
-              position: 'relative',
-              overflow: 'visible',
-              marginLeft: 'auto',
-              '&::after': {
-                content: '""',
-                position: 'absolute',
-                width: 0,
-                height: 0,
-                opacity: '1',
-                borderBottom: `15px solid white`,
-                borderLeft: '15px solid transparent',
-                top: '0px',
-                right: '-14px',
-                rotate: '180deg',
-              },
-            }}
-            key={eachItem.id}
-          >
-            {eachItem.text}
-          </Card>
-        ))}
+        {supportChatMessages[activeSupportChat.id] &&
+          supportChatMessages[activeSupportChat.id].map((eachItem) => (
+            <Card
+              sx={{
+                maxWidth: '50%',
+                backgroundColor: `white`,
+                padding: '8px 16px',
+                margin: '10px 0',
+                borderRadius: '10px',
+                borderTopLeftRadius: '0',
+                borderTopRightRadius: '0',
+                position: 'relative',
+                overflow: 'visible',
+                marginLeft: 'auto',
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  width: 0,
+                  height: 0,
+                  opacity: '1',
+                  borderBottom: `15px solid white`,
+                  borderLeft: '15px solid transparent',
+                  top: '0px',
+                  right: '-14px',
+                  rotate: '180deg',
+                },
+              }}
+              key={eachItem.id}
+            >
+              {eachItem.text}
+            </Card>
+          ))}
         {/* </Box> */}
       </Box>
 

@@ -12,8 +12,8 @@ export const recoilKeys = {
   supportChatsFilteredByUserID: 'supportChatsFilteredByUserID',
   supportChatsAtom: 'supportChatsAtom',
   supportChatUsersAtom: 'supportChatUsersAtom',
-  supportChatSessionsSelector: 'supportChatSessionsSelector',
-  supportChatSessionsAtom: 'supportChatSessionsAtom',
+  supportChatMessagesSelector: 'supportChatMessagesSelector',
+  supportChatsMessagesAtom: 'supportChatsMessagesAtom',
   selectedSupportChatUserAtom: 'selectedSupportChatUserAtom',
-  selectedSupportChatSessionAtom: 'selectedSupportChatSessionAtom',
+  selectedSupportChat: 'selectedSupportChat',
 };

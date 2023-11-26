@@ -31,10 +31,7 @@ export default function SelectChatUserComponent() {
       </Box>
       {supportChatUsers.map((eachUser) => {
         return (
-          <SelectChatUserButton
-            key={eachUser.profile.uid}
-            supportChatUser={eachUser}
-          />
+          <SelectChatUserButton key={eachUser.uid} supportChatUser={eachUser} />
         );
       })}
     </Box>

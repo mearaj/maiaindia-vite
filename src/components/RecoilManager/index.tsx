@@ -1,13 +1,10 @@
 import { PropsWithChildren, useEffect } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import {
-  selectedSupportChatSessionAtom,
-  selectedSupportChatUserAtom,
   SupportChat,
   SupportChatMessage,
   supportChatsAtom,
-  supportChatSessionsAtom,
-  SupportChatUser,
+  supportChatsMessagesAtom,
   supportChatUsersAtom,
 } from '@/recoil/atoms/supportChat';
 import { appFirestore } from '@/firebase';
@@ -34,27 +31,22 @@ export default function RecoilManager({ children }: PropsWithChildren) {
         const prevChatUsersMap = prevChatUsersArr.reduce(
           (prev, curr) => ({
             ...prev,
-            [curr.profile.uid]: curr.profile,
+            [curr.uid]: curr,
           }),
           {} as {
             [userID: string]: UserProfile;
           }
         );
-        const currentChatUsers: SupportChatUser[] = adminUsers.map(
-          (eachUser) => ({ profile: eachUser, chats: [] })
-        );
+        const currentChatUsers: UserProfile[] = [...adminUsers];
         for await (const supportChat of supportChats) {
           for await (const eachMemberUID of Object.keys(supportChat.members)) {
             const foundChatUserIndex = currentChatUsers.findIndex(
-              (eachUser) => eachUser.profile.uid === eachMemberUID
+              (eachUser) => eachUser.uid === eachMemberUID
             );
             if (foundChatUserIndex < 0) {
               const foundChatUser = prevChatUsersMap[eachMemberUID];
               if (foundChatUser) {
-                currentChatUsers.push({
-                  chats: [supportChat],
-                  profile: foundChatUser,
-                });
+                currentChatUsers.push(foundChatUser);
               } else {
                 const userDocQuery = doc(appFirestore, 'users', eachMemberUID);
                 const userDocRef = await getDoc(userDocQuery);
@@ -65,26 +57,9 @@ export default function RecoilManager({ children }: PropsWithChildren) {
                     uid: eachMemberUID,
                   };
                 }
-                currentChatUsers.push({
-                  chats: [supportChat],
-                  profile: userProfile,
-                });
+                currentChatUsers.push(userProfile);
               }
-            } else {
-              currentChatUsers[foundChatUserIndex].chats.push(supportChat);
             }
-          }
-        }
-        const activeSupportChatUser = await snapshot.getPromise(
-          selectedSupportChatUserAtom
-        );
-        if (activeSupportChatUser) {
-          const foundChatUser = currentChatUsers.find(
-            (eachUser) =>
-              eachUser.profile.uid === activeSupportChatUser.profile.uid
-          );
-          if (foundChatUser) {
-            set(selectedSupportChatUserAtom, foundChatUser);
           }
         }
         set(supportChatUsersAtom, currentChatUsers);
@@ -94,82 +69,58 @@ export default function RecoilManager({ children }: PropsWithChildren) {
 
   const updateSupportChatSessions = useRecoilCallback(
     ({ snapshot, set }) =>
-      async (
-        chatUser: SupportChatUser,
-        supportChat: SupportChat,
-        messages: SupportChatMessage[]
-      ) => {
+      async (supportChat: SupportChat, messages: SupportChatMessage[]) => {
         let supportChatSessions = {
-          ...(await snapshot.getPromise(supportChatSessionsAtom)),
+          ...(await snapshot.getPromise(supportChatsMessagesAtom)),
         };
         if (supportChatSessions[supportChat.id]) {
           supportChatSessions = {
             ...supportChatSessions,
-            [supportChat.id]: {
-              user: chatUser.profile,
-              chat: supportChat,
-              messages,
-            },
+            [supportChat.id]: messages,
           };
         } else {
           supportChatSessions = {
             ...supportChatSessions,
-            [supportChat.id]: {
-              user: chatUser.profile,
-              chat: supportChat,
-              messages,
-            },
+            [supportChat.id]: messages,
           };
         }
-        const activeChatSession = await snapshot.getPromise(
-          selectedSupportChatSessionAtom
-        );
-        if (activeChatSession && activeChatSession.chat.id === supportChat.id) {
-          set(selectedSupportChatSessionAtom, {
-            user: chatUser.profile,
-            chat: supportChat,
-            messages,
-          });
-        }
-        set(supportChatSessionsAtom, supportChatSessions);
+        set(supportChatsMessagesAtom, supportChatSessions);
       },
     []
   );
 
   useEffect(() => {
     const subscriptions: Function[] = [];
-    for (const supportChatUser of supportChatUsers) {
-      for (const eachChat of supportChatUser.chats) {
-        const collectionRef = collection(
-          appFirestore,
-          'supportChats',
-          eachChat.id,
-          'supportChatMessages'
-        );
-        const supportChatQuery = query(
-          collectionRef,
-          limit(eachChat.queryLimit ?? 10),
-          orderBy('createdAt', 'desc')
-        );
-        const subscription = onSnapshot(supportChatQuery, async (snapshot) => {
-          const messages: SupportChatMessage[] = [];
-          snapshot.docs.forEach((eachDoc) => {
-            if (eachDoc.exists()) {
-              messages.push({
-                ...(eachDoc.data() as SupportChatMessage),
-                id: eachDoc.id,
-              });
-            }
-          });
-          await updateSupportChatSessions(supportChatUser, eachChat, messages);
+    for (const eachChat of supportChats) {
+      const collectionRef = collection(
+        appFirestore,
+        'supportChats',
+        eachChat.id,
+        'supportChatMessages'
+      );
+      const supportChatQuery = query(
+        collectionRef,
+        limit(eachChat.queryLimit ?? 10),
+        orderBy('updatedAt', 'desc')
+      );
+      const subscription = onSnapshot(supportChatQuery, async (snapshot) => {
+        const messages: SupportChatMessage[] = [];
+        snapshot.docs.forEach((eachDoc) => {
+          if (eachDoc.exists()) {
+            messages.push({
+              ...(eachDoc.data() as SupportChatMessage),
+              id: eachDoc.id,
+            });
+          }
         });
-        subscriptions.push(subscription);
-      }
+        await updateSupportChatSessions(eachChat, messages);
+      });
+      subscriptions.push(subscription);
     }
     return () => {
       return subscriptions.forEach((subscription) => subscription());
     };
-  }, [supportChatUsers, updateSupportChatSessions]);
+  }, [supportChatUsers, supportChats, updateSupportChatSessions]);
 
   useEffect(() => {
     updateSupportChatUsers();

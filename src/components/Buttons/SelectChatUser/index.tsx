@@ -1,33 +1,31 @@
 import { useSetRecoilState } from 'recoil';
 import {
-  selectedSupportChatSessionAtom,
+  selectedSupportChat,
   selectedSupportChatUserAtom,
-  SupportChatUser,
 } from '@/recoil/atoms/supportChat';
 import Button from '@mui/material/Button';
 import { Box } from '@mui/material';
 import { Comment } from '@mui/icons-material';
+import { UserProfile } from '@/config';
 
 export default function SelectChatUserButton({
   supportChatUser,
 }: {
-  supportChatUser: SupportChatUser;
+  supportChatUser: UserProfile;
 }) {
   const setSelectedSupportChatUser = useSetRecoilState(
     selectedSupportChatUserAtom
   );
-  const setSelectedActiveChatSession = useSetRecoilState(
-    selectedSupportChatSessionAtom
-  );
+  const setSelectedSupportChat = useSetRecoilState(selectedSupportChat);
 
   const onClickHandler = () => {
     setSelectedSupportChatUser(supportChatUser);
-    setSelectedActiveChatSession(null);
+    setSelectedSupportChat(null);
   };
 
   return (
     <Button sx={{ justifyContent: 'space-between' }} onClick={onClickHandler}>
-      <Box>{supportChatUser.profile.displayName ?? 'No Name'}</Box>
+      <Box>{supportChatUser.displayName ?? 'No Name'}</Box>
       <Comment />
     </Button>
   );

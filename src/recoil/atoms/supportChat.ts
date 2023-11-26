@@ -13,15 +13,6 @@ import {
 import { onAuthStateChanged } from '@firebase/auth';
 import { adminUsers, UserProfile } from '@/config';
 
-export interface SupportChatUser {
-  profile: UserProfile;
-  chats: SupportChat[];
-}
-
-export const defaultChatUsers: SupportChatUser[] = adminUsers.map(
-  (eachUser) => ({ profile: eachUser, chats: [] })
-);
-
 export interface SupportChatNoID {
   members: {
     [memberUID: string]: boolean;
@@ -38,12 +29,6 @@ export interface SupportChat extends SupportChatNoID {
   id: string;
   createdAt: Timestamp;
   updatedAt: Timestamp;
-}
-
-export interface SupportChatSession {
-  user: UserProfile;
-  chat: SupportChat;
-  messages: SupportChatMessage[];
 }
 
 const querySupportChatsSideEffects: AtomEffect<SupportChat[]> = ({
@@ -84,9 +69,22 @@ const querySupportChatsSideEffects: AtomEffect<SupportChat[]> = ({
             };
             supportChats.push(supportChat);
           } else if (change.type === 'modified') {
-            console.log('support chat modified, needed to be updated');
+            const foundIndex = supportChats.findIndex(
+              (supportChat) => supportChat.id === id
+            );
+            if (foundIndex >= 0) {
+              supportChats[foundIndex] = {
+                ...change.doc.data(),
+                id,
+              } as SupportChat;
+            }
           } else if (change.type === 'removed') {
-            console.log('support chat removed, needed to be updated');
+            const foundIndex = supportChats.findIndex(
+              (supportChat) => supportChat.id === id
+            );
+            if (foundIndex >= 0) {
+              supportChats.splice(foundIndex, 1);
+            }
           }
         });
         setSelf(supportChats);
@@ -105,17 +103,17 @@ export const supportChatsAtom = atom<SupportChat[]>({
   effects: [querySupportChatsSideEffects],
 });
 
-export const supportChatUsersAtom = atom<SupportChatUser[]>({
+export const supportChatUsersAtom = atom<UserProfile[]>({
   key: recoilKeys.supportChatUsersAtom,
-  default: defaultChatUsers,
+  default: adminUsers,
 });
-export const selectedSupportChatUserAtom = atom<SupportChatUser | null>({
+export const selectedSupportChatUserAtom = atom<UserProfile | null>({
   key: recoilKeys.selectedSupportChatUserAtom,
   default: null,
 });
 
-export const selectedSupportChatSessionAtom = atom<SupportChatSession | null>({
-  key: recoilKeys.selectedSupportChatSessionAtom,
+export const selectedSupportChat = atom<SupportChat | null>({
+  key: recoilKeys.selectedSupportChat,
   default: null,
 });
 
@@ -143,12 +141,12 @@ export interface SupportChatMessage extends SupportChatMessageNoID {
   updatedAt: Timestamp;
 }
 
-export interface SupportChatSessions {
-  [supportChatID: string]: SupportChatSession;
+export interface SupportChatMessages {
+  [supportChatID: string]: SupportChatMessage[];
 }
 
-export const supportChatSessionsAtom = atom<SupportChatSessions>({
+export const supportChatsMessagesAtom = atom<SupportChatMessages>({
   dangerouslyAllowMutability: false,
-  key: recoilKeys.supportChatSessionsAtom,
+  key: recoilKeys.supportChatsMessagesAtom,
   default: {},
 });

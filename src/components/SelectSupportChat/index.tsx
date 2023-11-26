@@ -1,11 +1,8 @@
 import {
-  selectedSupportChatSessionAtom,
+  selectedSupportChat,
   selectedSupportChatUserAtom,
   SupportChat,
-  SupportChatMessage,
   SupportChatNoID,
-  supportChatSessionsAtom,
-  SupportChatUser,
 } from '@/recoil/atoms/supportChat';
 import Button from '@mui/material/Button';
 import { useState } from 'react';
@@ -20,13 +17,15 @@ import { appFirestore } from '@/firebase';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import { Box, Card } from '@mui/material';
+import { supportChatsFilteredByUserID } from '@/recoil/selectors/supportChat';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
+import { UserProfile } from '@/config';
 
 interface SelectChatSessionProps {
-  supportUser: SupportChatUser;
+  supportUser: UserProfile;
 }
 
-export default function SelectChatSession({
+export default function SelectSupportChatComponent({
   supportUser,
 }: SelectChatSessionProps) {
   const [loadingState, setLoadingState] = useState<'idle' | 'creatingSession'>(
@@ -34,10 +33,10 @@ export default function SelectChatSession({
   );
   const [error, setError] = useState<unknown>(null);
   const { userState } = useRecoilValue(userAtom);
-  const setActiveChatSession = useSetRecoilState(
-    selectedSupportChatSessionAtom
+  const setActiveChatID = useSetRecoilState(selectedSupportChat);
+  const supportChatsForUser = useRecoilValue(
+    supportChatsFilteredByUserID(supportUser.uid)
   );
-  const supportChatSessions = useRecoilValue(supportChatSessionsAtom);
 
   const setActiveChatUser = useSetRecoilState(selectedSupportChatUserAtom);
 
@@ -51,7 +50,7 @@ export default function SelectChatSession({
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
           members: {
-            [supportUser.profile.uid]: true,
+            [supportUser.uid]: true,
             [userState.user.uid]: true,
           },
         };
@@ -63,11 +62,7 @@ export default function SelectChatSession({
             ...(afterSetRes.data() as SupportChat),
             id: afterSetRes.id,
           };
-          setActiveChatSession({
-            chat: supportChat,
-            user: supportUser.profile,
-            messages: [],
-          });
+          setActiveChatID(supportChat);
         } else {
           setError('Unknown error');
         }
@@ -114,39 +109,28 @@ export default function SelectChatSession({
         },
       }}
     >
-      {supportUser.chats
-        .filter((eachChat) => supportChatSessions[eachChat.id])
-        .map((eachSupportChat) => {
-          console.log(eachSupportChat);
-          let messages: SupportChatMessage[] = [];
-          if (supportChatSessions[eachSupportChat.id]) {
-            messages = supportChatSessions[eachSupportChat.id].messages;
-          }
-          return (
-            <Card key={eachSupportChat.id} sx={{ marginBottom: '16px' }}>
-              <Button
-                disabled={loadingState !== 'idle'}
-                onClick={() => {
-                  setActiveChatSession({
-                    chat: eachSupportChat,
-                    user: supportUser.profile,
-                    messages,
-                  });
-                }}
-              >
-                {eachSupportChat.id}
-              </Button>
-              <Box
-                sx={{ display: 'flex', padding: '0 8px', alignItems: 'center' }}
-              >
-                <Box sx={{ fontSize: '14px' }}>Last updated at:&nbsp;</Box>
-                <Box sx={{ fontSize: '12px' }}>
-                  {eachSupportChat.updatedAt.toDate().toDateString()}
-                </Box>
+      {supportChatsForUser.map((eachSupportChat) => {
+        return (
+          <Card key={eachSupportChat.id} sx={{ marginBottom: '16px' }}>
+            <Button
+              disabled={loadingState !== 'idle'}
+              onClick={() => {
+                setActiveChatID(eachSupportChat);
+              }}
+            >
+              {eachSupportChat.id}
+            </Button>
+            <Box
+              sx={{ display: 'flex', padding: '0 8px', alignItems: 'center' }}
+            >
+              <Box sx={{ fontSize: '14px' }}>Last updated at:&nbsp;</Box>
+              <Box sx={{ fontSize: '12px' }}>
+                {eachSupportChat.updatedAt?.toDate().toDateString()}
               </Box>
-            </Card>
-          );
-        })}
+            </Box>
+          </Card>
+        );
+      })}
       <Button
         disabled={loadingState !== 'idle'}
         onClick={createNewSessionHandler}
