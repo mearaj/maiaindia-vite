@@ -18,16 +18,16 @@ export default function CartItemComponent({
   const productIDLoadable = useRecoilValueLoadable(
     productIdSelector(productId)
   );
-  const { data, error, state } = productIDLoadable.contents;
+  const { contents, state } = productIDLoadable;
 
-  if (state === 'hasError' || error) {
-    return <Box>{error}</Box>;
+  if (state === 'hasError') {
+    return <Box>{contents?.message ?? 'Unknown error'}</Box>;
   }
 
   if (state === 'loading') {
     return <Loader />;
   }
-  const product = data as Product;
+  const product = contents as Product;
   if (!product) {
     return <Box>Product couldn&apos;t be fetched</Box>;
   }
