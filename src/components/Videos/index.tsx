@@ -7,6 +7,10 @@ export default function Videos({ className }: { className?: string }) {
   const [swiper, setSwiper] = useState<SwiperClass | null>(null);
   const [muted, setMuted] = useState(true);
   const videos = [
+    '/videos/7.mp4',
+    '/videos/8.mp4',
+    '/videos/9.mp4',
+    '/videos/10.mp4',
     '/videos/6.mp4',
     '/videos/1.mp4',
     '/videos/2.mp4',
