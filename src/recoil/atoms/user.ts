@@ -3,7 +3,7 @@ import { recoilKeys } from '@/recoil/data/recoilKeys';
 import { onAuthStateChanged, User } from '@firebase/auth';
 import { appFirebaseAuth, appFirebaseStorage, appFirestore } from '@/firebase';
 import { getDownloadURL, ref, uploadBytes } from '@firebase/storage';
-import { collection, doc, getDoc, setDoc } from '@firebase/firestore';
+import { doc, getDoc, setDoc } from '@firebase/firestore';
 import { UserProfile } from '@/config';
 
 export enum AuthState {
@@ -31,66 +31,47 @@ export const userAtom = atom<AppUser>({
     ({ setSelf }) => {
       return onAuthStateChanged(appFirebaseAuth, async (user: User | null) => {
         if (user) {
-          let photoURL;
-          if (user.photoURL) {
-            const firebaseImageRef = ref(
-              appFirebaseStorage,
-              `users/${user.uid}/profile`
-            );
-            // try to fetch the image URL, if image is not available, then we upload it to
-            //  firebase storage
-            let isError = false;
-            try {
-              photoURL = await getDownloadURL(firebaseImageRef);
-            } catch (_e) {
-              /* empty */
-              isError = true;
-            }
-            if (isError || !photoURL) {
-              try {
-                const response = await fetch(user.photoURL);
-                const blob = await response.blob();
-                const file = new File([blob], 'profile', {
-                  type: blob.type,
-                });
-                await uploadBytes(firebaseImageRef, file);
-                photoURL = await getDownloadURL(firebaseImageRef);
-              } catch (e) {
-                /* empty */
-              }
-            }
-          }
-          const profile = {
-            displayName: user.displayName,
-            photoURL,
-            email: user.email,
-            uid: user.uid,
-          };
+          let profile: UserProfile = { uid: user.uid };
+          // Check if user's profile exists in firestore database
           const docRef = doc(appFirestore, 'users', user.uid);
-          try {
-            const docSnapshot = await getDoc(docRef);
-            if (!docSnapshot.exists()) {
-              const usersRef = collection(appFirestore, 'users');
-              await setDoc(
-                doc(usersRef, user.uid),
-                { profile },
-                { mergeFields: ['profile'] }
-              );
-            } else {
-              const obtainedProfile = docSnapshot.data().profile as UserProfile;
-              if (obtainedProfile.displayName) {
-                profile.displayName = obtainedProfile.displayName;
-              }
-              if (obtainedProfile.photoURL) {
-                profile.photoURL = obtainedProfile.photoURL;
-              }
-            }
-          } catch (e) {
-            /* empty */
+          const docSnapshot = await getDoc(docRef);
+          const userDocExists = docSnapshot.exists();
+          if (userDocExists) {
+            profile = {
+              ...profile,
+              ...docSnapshot.data()?.profile,
+            };
           }
+          // If profile picture doesn't exist, then fetch image from google profile
+          // and upload to firebase storage
+          if (!profile.photoURL && user.photoURL) {
+            try {
+              const response = await fetch(user.photoURL);
+              const blob = await response.blob();
+              const file = new File([blob], 'profile', {
+                type: blob.type,
+              });
+              const firebaseImageRef = ref(
+                appFirebaseStorage,
+                `users/${user.uid}/profile`
+              );
+              await uploadBytes(firebaseImageRef, file);
+              profile.photoURL = await getDownloadURL(firebaseImageRef);
+            } catch (e) {
+              /* empty */
+              console.log(e);
+            }
+          }
+          if (!profile.displayName && user.displayName) {
+            profile.displayName = user.displayName;
+          }
+          await setDoc(docRef, { profile }, { mergeFields: ['profile'] });
+          // Note: We don't save google photo url in firebase database but we download
+          // photo and upload it to firebase storage and then save the photoURL in database
           if (!profile.photoURL && user.photoURL) {
             profile.photoURL = user.photoURL;
           }
+
           setSelf({
             authState: AuthState.idle,
             userState: {

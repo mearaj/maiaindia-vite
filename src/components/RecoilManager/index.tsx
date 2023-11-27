@@ -18,7 +18,7 @@ import {
   query,
 } from '@firebase/firestore';
 import { userAtom } from '@/recoil/atoms';
-import { adminUsers, isAdminUID, UserProfile } from '@/config';
+import { adminUsers, UserProfile } from '@/config';
 
 export default function RecoilManager({ children }: PropsWithChildren) {
   const supportChats = useRecoilValue(supportChatsAtom);
@@ -73,16 +73,20 @@ export default function RecoilManager({ children }: PropsWithChildren) {
             index ===
             arr.findIndex((eachElement) => eachElement.uid === eachUser.uid)
         );
-        // Allow self chat only for admin
-        if (appUser.userState && !isAdminUID(appUser.userState.user.uid)) {
-          const foundIndex = currentChatUsers.findIndex(
-            (eachUser) => eachUser.uid === appUser.userState?.user.uid
-          );
-          if (foundIndex >= 0) {
-            currentChatUsers.splice(foundIndex, 1);
-          }
-        }
-        console.log(currentChatUsers);
+        // Allow self chat only for admin (Disallow for non admins)
+        // if (appUser.userState && !isAdminUID(appUser.userState.user.uid)) {
+        //   const foundIndex = currentChatUsers.findIndex(
+        //     (eachUser) => eachUser.uid === appUser.userState?.user.uid
+        //   );
+        //   if (foundIndex >= 0) {
+        //     currentChatUsers.splice(foundIndex, 1);
+        //   }
+        // }
+
+        // Disallow Self Chat
+        currentChatUsers = currentChatUsers.filter(
+          (eachUser) => eachUser.uid !== appUser.userState?.user.uid
+        );
         set(supportChatUsersAtom, currentChatUsers);
       },
     [appUser.userState, supportChats]
