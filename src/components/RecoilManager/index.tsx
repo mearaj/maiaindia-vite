@@ -18,6 +18,8 @@ import {
   query,
 } from '@firebase/firestore';
 import { userAtom } from '@/recoil/atoms';
+import { defaultPlaceholderCart } from '@/firebase/cart';
+import { cartAtom } from '@/recoil/atoms/cart';
 import { adminUsers, UserProfile } from '@/config';
 
 export default function RecoilManager({ children }: PropsWithChildren) {
@@ -113,6 +115,32 @@ export default function RecoilManager({ children }: PropsWithChildren) {
       },
     []
   );
+
+  const updateCartOnAuthStateChange = useRecoilCallback(
+    ({ snapshot, set }) =>
+      async () => {
+        const currentUser = await snapshot.getPromise(userAtom);
+        if (!currentUser.userState) {
+          set(cartAtom, defaultPlaceholderCart);
+          return;
+        }
+        const docRef = doc(
+          appFirestore,
+          'users',
+          currentUser.userState.user.uid
+        );
+        const docSnapshot = await getDoc(docRef);
+        if (docSnapshot.exists()) {
+          const apiCart = docSnapshot.data().cart ?? defaultPlaceholderCart;
+          set(cartAtom, apiCart);
+        }
+      },
+    []
+  );
+
+  useEffect(() => {
+    updateCartOnAuthStateChange();
+  }, [appUser, updateCartOnAuthStateChange]);
 
   useEffect(() => {
     const subscriptions: Function[] = [];

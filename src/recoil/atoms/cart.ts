@@ -15,8 +15,8 @@ export const cartAtom = atom<Cart>({
       const authSubscription = onAuthStateChanged(
         appFirebaseAuth,
         async (user: User | null) => {
-          cartSubscription();
           if (user === null) {
+            setSelf(defaultPlaceholderCart);
             return;
           }
           const docRef = doc(appFirestore, 'users', user.uid);
