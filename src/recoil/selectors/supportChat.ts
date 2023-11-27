@@ -49,7 +49,10 @@ export const supportChatsFilteredByUserID = selectorFamily<
       const supportChats = get(supportChatsAtom);
       let filteredSupportChats: SupportChat[] = [];
       supportChats.forEach((supportChat) => {
-        if (supportChat.members[userUID]) {
+        if (
+          supportChat.createdBy === userUID ||
+          supportChat.createdFor === userUID
+        ) {
           filteredSupportChats = [...filteredSupportChats, supportChat];
         }
       });

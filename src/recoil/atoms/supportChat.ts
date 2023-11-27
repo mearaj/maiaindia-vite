@@ -5,6 +5,7 @@ import {
   collection,
   FieldValue,
   onSnapshot,
+  or,
   orderBy,
   query,
   Timestamp,
@@ -14,18 +15,14 @@ import { onAuthStateChanged } from '@firebase/auth';
 import { adminUsers, UserProfile } from '@/config';
 
 export interface SupportChatNoID {
-  members: {
-    [memberUID: string]: boolean;
-  };
   createdAt: FieldValue;
+  createdBy: string;
+  createdFor: string;
   updatedAt: FieldValue;
   queryLimit?: number; // to be used only by frontend
 }
 
 export interface SupportChat extends SupportChatNoID {
-  members: {
-    [memberUID: string]: boolean;
-  };
   id: string;
   createdAt: Timestamp;
   updatedAt: Timestamp;
@@ -45,7 +42,10 @@ const querySupportChatsSideEffects: AtomEffect<SupportChat[]> = ({
     const collectionReference = collection(appFirestore, 'supportChats');
     const supportChatsQuery = query(
       collectionReference,
-      where(`members.${user.uid}`, '==', true),
+      or(
+        where(`createdBy`, '==', user.uid),
+        where('createdFor', '==', user.uid)
+      ),
       orderBy('updatedAt', 'desc')
     );
     supportChatsSubscription = onSnapshot(

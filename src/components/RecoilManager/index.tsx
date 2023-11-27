@@ -17,11 +17,13 @@ import {
   orderBy,
   query,
 } from '@firebase/firestore';
-import { adminUsers, UserProfile } from '@/config';
+import { userAtom } from '@/recoil/atoms';
+import { adminUsers, isAdminEmail, UserProfile } from '@/config';
 
 export default function RecoilManager({ children }: PropsWithChildren) {
   const supportChats = useRecoilValue(supportChatsAtom);
   const supportChatUsers = useRecoilValue(supportChatUsersAtom);
+  const appUser = useRecoilValue(userAtom);
 
   const updateSupportChatUsers = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -37,9 +39,12 @@ export default function RecoilManager({ children }: PropsWithChildren) {
             [userID: string]: UserProfile;
           }
         );
-        const currentChatUsers: UserProfile[] = [...adminUsers];
+        let currentChatUsers: UserProfile[] = [...adminUsers];
         for await (const supportChat of supportChats) {
-          for await (const eachMemberUID of Object.keys(supportChat.members)) {
+          for await (const eachMemberUID of [
+            supportChat.createdBy,
+            supportChat.createdFor,
+          ]) {
             const foundChatUserIndex = currentChatUsers.findIndex(
               (eachUser) => eachUser.uid === eachMemberUID
             );
@@ -62,9 +67,24 @@ export default function RecoilManager({ children }: PropsWithChildren) {
             }
           }
         }
+        // make each element unique in array
+        currentChatUsers = currentChatUsers.filter(
+          (eachUser, index, arr) =>
+            index ===
+            arr.findIndex((eachElement) => eachElement.uid === eachUser.uid)
+        );
+        // Allow self chat only for admin
+        if (appUser.userState && !isAdminEmail(appUser.userState.user.email)) {
+          const foundIndex = currentChatUsers.findIndex(
+            (eachUser) => eachUser.email === appUser.userState?.user.email
+          );
+          if (foundIndex >= 0) {
+            currentChatUsers.splice(foundIndex, 1);
+          }
+        }
         set(supportChatUsersAtom, currentChatUsers);
       },
-    [supportChats]
+    [appUser.userState, supportChats]
   );
 
   const updateSupportChatSessions = useRecoilCallback(

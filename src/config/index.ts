@@ -18,6 +18,13 @@ export const isAdminEmail = (email: string | null): boolean => {
   return adminEmails.findIndex((eachEmail: string) => eachEmail === email) >= 0;
 };
 
+export const isAdminUID = (uidStr: string | null): boolean => {
+  if (!uidStr) {
+    return false;
+  }
+  return adminUids.findIndex((eachUID: string) => eachUID === uidStr) >= 0;
+};
+
 const generateAdminUsersFromEnv = (): UserProfile[] => {
   const validAdminUsers: UserProfile[] = [];
   if (adminEmails.length < 1) {

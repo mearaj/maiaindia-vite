@@ -49,10 +49,8 @@ export default function SelectSupportChatComponent({
         const data: SupportChatNoID = {
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
-          members: {
-            [supportUser.uid]: true,
-            [userState.user.uid]: true,
-          },
+          createdBy: userState.user.uid,
+          createdFor: supportUser.uid,
         };
         const res = await addDoc(collectionRef, data);
         const docRef = doc(collectionRef, res.id);
