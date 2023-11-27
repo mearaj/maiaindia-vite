@@ -6,6 +6,7 @@ import Button from '@mui/material/Button';
 import {
   selectedSupportChat,
   selectedSupportChatUserAtom,
+  SupportChatMessage,
   SupportChatMessageNoID,
   supportChatsMessagesAtom,
 } from '@/recoil/atoms/supportChat';
@@ -13,6 +14,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { appFirestore } from '@/firebase';
 import { addDoc, collection, serverTimestamp } from '@firebase/firestore';
 import { userAtom } from '@/recoil/atoms';
+import { userPlaceholderUrl } from '@/recoil/atoms/user';
 import SelectSupportChatComponent from '@/components/SelectSupportChat';
 import SelectChatUserComponent from '@/components/SelectChatUser';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
@@ -75,6 +77,58 @@ export default function LiveChatPage() {
     return <SelectSupportChatComponent supportUser={activeSupportChatUser} />;
   }
 
+  const isMe = (supportChatMsg: SupportChatMessage) =>
+    appUser &&
+    appUser.userState &&
+    appUser.userState.user.uid === supportChatMsg.from;
+
+  const myCardStyle = {
+    maxWidth: '70%',
+    backgroundColor: `white`,
+    padding: '8px 16px',
+    margin: '10px 0',
+    borderRadius: '10px',
+    borderTopLeftRadius: '0',
+    borderTopRightRadius: '0',
+    position: 'relative',
+    overflow: 'visible',
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      width: 0,
+      height: 0,
+      opacity: '1',
+      borderBottom: `15px solid white`,
+      borderLeft: '15px solid transparent',
+      top: '0px',
+      right: '-14px',
+      rotate: '180deg',
+    },
+  };
+  const youTriangleStyle = {
+    maxWidth: '70%',
+    backgroundColor: `white`,
+    padding: '8px 16px',
+    margin: '10px 0',
+    borderRadius: '10px',
+    borderTopLeftRadius: '0',
+    borderTopRightRadius: '0',
+    position: 'relative',
+    overflow: 'visible',
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      width: 0,
+      height: 0,
+      opacity: '1',
+      borderBottom: `15px solid white`,
+      borderLeft: '15px solid transparent',
+      top: '0px',
+      left: '-14px',
+      rotate: '-90deg',
+    },
+  };
+
   return (
     <Box
       sx={{
@@ -106,37 +160,51 @@ export default function LiveChatPage() {
       >
         {/* <Box sx={{ marginTop: 'auto', padding: '0 8px' }}> */}
         {supportChatMessages[activeSupportChat.id] &&
-          supportChatMessages[activeSupportChat.id].map((eachItem) => (
-            <Card
-              sx={{
-                maxWidth: '50%',
-                backgroundColor: `white`,
-                padding: '8px 16px',
-                margin: '10px 0',
-                borderRadius: '10px',
-                borderTopLeftRadius: '0',
-                borderTopRightRadius: '0',
-                position: 'relative',
-                overflow: 'visible',
-                marginLeft: 'auto',
-                '&::after': {
-                  content: '""',
-                  position: 'absolute',
-                  width: 0,
-                  height: 0,
-                  opacity: '1',
-                  borderBottom: `15px solid white`,
-                  borderLeft: '15px solid transparent',
-                  top: '0px',
-                  right: '-14px',
-                  rotate: '180deg',
-                },
-              }}
-              key={eachItem.id}
-            >
-              {eachItem.text}
-            </Card>
-          ))}
+          supportChatMessages[activeSupportChat.id].map((eachItem) => {
+            const isMyMessage = isMe(eachItem);
+            return (
+              <Box
+                key={eachItem.id}
+                sx={{
+                  display: 'flex',
+                  width: '100%',
+                  justifyContent: isMyMessage ? 'flex-end' : 'flex-start',
+                }}
+              >
+                {!isMyMessage && (
+                  <img
+                    src={activeSupportChatUser.photoURL ?? userPlaceholderUrl}
+                    alt="profile"
+                    style={{
+                      height: '32px',
+                      width: '32px',
+                      borderRadius: '50%',
+                      marginTop: '18px',
+                      marginRight: '12px',
+                    }}
+                  />
+                )}
+                <Card sx={isMyMessage ? myCardStyle : youTriangleStyle}>
+                  {eachItem.text}
+                </Card>
+                {isMyMessage && appUser.userState && (
+                  <img
+                    src={
+                      appUser.userState.profile.photoURL ?? userPlaceholderUrl
+                    }
+                    alt="profile"
+                    style={{
+                      height: '32px',
+                      width: '32px',
+                      borderRadius: '50%',
+                      marginTop: '18px',
+                      marginLeft: '12px',
+                    }}
+                  />
+                )}
+              </Box>
+            );
+          })}
         {/* </Box> */}
       </Box>
 

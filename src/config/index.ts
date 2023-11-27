@@ -5,18 +5,8 @@ export interface UserProfile {
   photoURL?: string | null;
 }
 
-export const adminEmails = import.meta.env.VITE_ADMIN_EMAILS.split(
-  ','
-) as string[];
 export const adminUids = import.meta.env.VITE_ADMIN_UIDS.split(',');
 export const adminNames = import.meta.env.VITE_ADMIN_NAMES.split(',');
-
-export const isAdminEmail = (email: string | null): boolean => {
-  if (!email) {
-    return false;
-  }
-  return adminEmails.findIndex((eachEmail: string) => eachEmail === email) >= 0;
-};
 
 export const isAdminUID = (uidStr: string | null): boolean => {
   if (!uidStr) {
@@ -27,20 +17,16 @@ export const isAdminUID = (uidStr: string | null): boolean => {
 
 const generateAdminUsersFromEnv = (): UserProfile[] => {
   const validAdminUsers: UserProfile[] = [];
-  if (adminEmails.length < 1) {
+  if (adminUids.length < 1) {
     return validAdminUsers;
   }
-  if (
-    adminEmails.length !== adminUids.length ||
-    adminEmails.length !== adminNames.length
-  ) {
+  if (adminNames.length !== adminUids.length) {
     return validAdminUsers;
   }
-  for (let i = 0; i < adminEmails.length; i += 1) {
+  for (let i = 0; i < adminUids.length; i += 1) {
     validAdminUsers.push({
       uid: adminUids[i],
       displayName: adminNames[i],
-      email: adminEmails[i],
     });
   }
   return validAdminUsers;

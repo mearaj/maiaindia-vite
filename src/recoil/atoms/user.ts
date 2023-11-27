@@ -30,9 +30,9 @@ export const userAtom = atom<AppUser>({
   effects: [
     ({ setSelf }) => {
       return onAuthStateChanged(appFirebaseAuth, async (user: User | null) => {
-        if (user != null) {
-          let photoURL = userPlaceholderUrl;
-          if (user.photoURL != null) {
+        if (user) {
+          let photoURL;
+          if (user.photoURL) {
             const firebaseImageRef = ref(
               appFirebaseStorage,
               `users/${user.uid}/profile`
@@ -46,7 +46,7 @@ export const userAtom = atom<AppUser>({
               /* empty */
               isError = true;
             }
-            if (isError) {
+            if (isError || !photoURL) {
               try {
                 const response = await fetch(user.photoURL);
                 const blob = await response.blob();
@@ -60,12 +60,8 @@ export const userAtom = atom<AppUser>({
               }
             }
           }
-          let displayName = 'No Name';
-          if (user.displayName) {
-            displayName = user.displayName;
-          }
           const profile = {
-            displayName,
+            displayName: user.displayName,
             photoURL,
             email: user.email,
             uid: user.uid,
@@ -82,15 +78,18 @@ export const userAtom = atom<AppUser>({
               );
             } else {
               const obtainedProfile = docSnapshot.data().profile as UserProfile;
-              if (obtainedProfile.displayName != null) {
+              if (obtainedProfile.displayName) {
                 profile.displayName = obtainedProfile.displayName;
               }
-              if (obtainedProfile.photoURL != null) {
+              if (obtainedProfile.photoURL) {
                 profile.photoURL = obtainedProfile.photoURL;
               }
             }
           } catch (e) {
             /* empty */
+          }
+          if (!profile.photoURL && user.photoURL) {
+            profile.photoURL = user.photoURL;
           }
           setSelf({
             authState: AuthState.idle,
