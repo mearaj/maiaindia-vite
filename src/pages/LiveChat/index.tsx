@@ -4,8 +4,7 @@ import { Attachment, Send } from '@mui/icons-material';
 import { useRef, useState } from 'react';
 import Button from '@mui/material/Button';
 import {
-  selectedSupportChat,
-  selectedSupportChatUserAtom,
+  selectedSupportChatAtom,
   SupportChatMessage,
   SupportChatMessageNoID,
   supportChatsMessagesAtom,
@@ -15,6 +14,7 @@ import { appFirestore } from '@/firebase';
 import { addDoc, collection, serverTimestamp } from '@firebase/firestore';
 import { userAtom } from '@/recoil/atoms';
 import { userPlaceholderUrl } from '@/recoil/atoms/user';
+import { selectedSupportChatUserSelector } from '@/recoil/selectors/supportChat';
 import SelectSupportChatComponent from '@/components/SelectSupportChat';
 import SelectChatUserComponent from '@/components/SelectChatUser';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
@@ -23,11 +23,12 @@ export default function LiveChatPage() {
   const [textValue, setTextValue] = useState('');
   const ref = useRef<HTMLElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const activeSupportChatUser = useRecoilValue(selectedSupportChatUserAtom);
+  const activeSupportChatUser = useRecoilValue(selectedSupportChatUserSelector);
   const appUser = useRecoilValue(userAtom);
 
-  const [activeSupportChat, setActiveSupportChat] =
-    useRecoilState(selectedSupportChat);
+  const [activeSupportChat, setActiveSupportChat] = useRecoilState(
+    selectedSupportChatAtom
+  );
   const supportChatMessages = useRecoilValue(supportChatsMessagesAtom);
 
   const handleSubmit = async () => {

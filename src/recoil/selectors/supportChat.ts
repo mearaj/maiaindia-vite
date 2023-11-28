@@ -1,6 +1,12 @@
-import { selectorFamily } from 'recoil';
+import { selector, selectorFamily } from 'recoil';
 import { recoilKeys } from '@/recoil/data/recoilKeys';
-import { SupportChat, supportChatsAtom } from '@/recoil/atoms/supportChat';
+import {
+  selectedSupportChatAtom,
+  selectedSupportChatUserAtom,
+  SupportChat,
+  supportChatsAtom,
+} from '@/recoil/atoms/supportChat';
+import { UserProfile } from '@/config';
 
 export const supportChatsFilteredByUserID = selectorFamily<
   SupportChat[],
@@ -22,4 +28,15 @@ export const supportChatsFilteredByUserID = selectorFamily<
       });
       return filteredSupportChats;
     },
+});
+
+export const selectedSupportChatUserSelector = selector<UserProfile | null>({
+  key: recoilKeys.selectedSupportChatUserSelector,
+  get: ({ get }) => {
+    return get(selectedSupportChatUserAtom);
+  },
+  set: ({ set }, newValue) => {
+    set(selectedSupportChatAtom, null);
+    set(selectedSupportChatUserAtom, newValue);
+  },
 });

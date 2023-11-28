@@ -12,7 +12,7 @@ import {
   where,
 } from '@firebase/firestore';
 import { onAuthStateChanged } from '@firebase/auth';
-import { adminUsers, UserProfile } from '@/config';
+import { UserProfile } from '@/config';
 
 export interface SupportChatNoID {
   createdAt: FieldValue;
@@ -67,7 +67,7 @@ const querySupportChatsSideEffects: AtomEffect<SupportChat[]> = ({
               ...(change.doc.data() as SupportChat),
               id,
             };
-            supportChats.push(supportChat);
+            supportChats.unshift(supportChat);
           } else if (change.type === 'modified') {
             const foundIndex = supportChats.findIndex(
               (supportChat) => supportChat.id === id
@@ -105,15 +105,15 @@ export const supportChatsAtom = atom<SupportChat[]>({
 
 export const supportChatUsersAtom = atom<UserProfile[]>({
   key: recoilKeys.supportChatUsersAtom,
-  default: adminUsers,
+  default: [],
 });
 export const selectedSupportChatUserAtom = atom<UserProfile | null>({
   key: recoilKeys.selectedSupportChatUserAtom,
   default: null,
 });
 
-export const selectedSupportChat = atom<SupportChat | null>({
-  key: recoilKeys.selectedSupportChat,
+export const selectedSupportChatAtom = atom<SupportChat | null>({
+  key: recoilKeys.selectedSupportChatAtom,
   default: null,
 });
 

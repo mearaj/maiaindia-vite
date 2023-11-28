@@ -1,11 +1,8 @@
 import { useSetRecoilState } from 'recoil';
-import {
-  selectedSupportChat,
-  selectedSupportChatUserAtom,
-} from '@/recoil/atoms/supportChat';
 import Button from '@mui/material/Button';
 import { Box } from '@mui/material';
 import { Comment } from '@mui/icons-material';
+import { selectedSupportChatUserSelector } from '@/recoil/selectors/supportChat';
 import { UserProfile } from '@/config';
 
 export default function SelectChatUserButton({
@@ -14,13 +11,11 @@ export default function SelectChatUserButton({
   supportChatUser: UserProfile;
 }) {
   const setSelectedSupportChatUser = useSetRecoilState(
-    selectedSupportChatUserAtom
+    selectedSupportChatUserSelector
   );
-  const setSelectedSupportChat = useSetRecoilState(selectedSupportChat);
 
   const onClickHandler = () => {
     setSelectedSupportChatUser(supportChatUser);
-    setSelectedSupportChat(null);
   };
 
   return (

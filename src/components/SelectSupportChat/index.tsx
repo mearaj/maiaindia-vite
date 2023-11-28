@@ -1,6 +1,5 @@
 import {
-  selectedSupportChat,
-  selectedSupportChatUserAtom,
+  selectedSupportChatAtom,
   SupportChat,
   SupportChatNoID,
 } from '@/recoil/atoms/supportChat';
@@ -17,7 +16,10 @@ import { appFirestore } from '@/firebase';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import { Box, Card } from '@mui/material';
-import { supportChatsFilteredByUserID } from '@/recoil/selectors/supportChat';
+import {
+  selectedSupportChatUserSelector,
+  supportChatsFilteredByUserID,
+} from '@/recoil/selectors/supportChat';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
 import { UserProfile } from '@/config';
 
@@ -33,12 +35,12 @@ export default function SelectSupportChatComponent({
   );
   const [error, setError] = useState<unknown>(null);
   const { userState } = useRecoilValue(userAtom);
-  const setActiveChatID = useSetRecoilState(selectedSupportChat);
+  const setSelectedSupportChat = useSetRecoilState(selectedSupportChatAtom);
   const supportChatsForUser = useRecoilValue(
     supportChatsFilteredByUserID(supportUser.uid)
   );
 
-  const setActiveChatUser = useSetRecoilState(selectedSupportChatUserAtom);
+  const setActiveChatUser = useSetRecoilState(selectedSupportChatUserSelector);
 
   const createNewSessionHandler = async () => {
     if (userState) {
@@ -60,7 +62,7 @@ export default function SelectSupportChatComponent({
             ...(afterSetRes.data() as SupportChat),
             id: afterSetRes.id,
           };
-          setActiveChatID(supportChat);
+          setSelectedSupportChat(supportChat);
         } else {
           setError('Unknown error');
         }
@@ -113,7 +115,7 @@ export default function SelectSupportChatComponent({
             <Button
               disabled={loadingState !== 'idle'}
               onClick={() => {
-                setActiveChatID(eachSupportChat);
+                setSelectedSupportChat(eachSupportChat);
               }}
             >
               {eachSupportChat.id}

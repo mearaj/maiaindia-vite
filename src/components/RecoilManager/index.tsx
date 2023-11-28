@@ -69,11 +69,15 @@ export default function RecoilManager({ children }: PropsWithChildren) {
             }
           }
         }
-        // make each element unique in array
+        // make each element unique in array and remove self to disallow Self Chat
         currentChatUsers = currentChatUsers.filter(
           (eachUser, index, arr) =>
             index ===
-            arr.findIndex((eachElement) => eachElement.uid === eachUser.uid)
+            arr.findIndex(
+              (eachElement) =>
+                eachElement.uid === eachUser.uid &&
+                eachUser.uid !== appUser.userState?.user.uid
+            )
         );
         // Allow self chat only for admin (Disallow for non admins)
         // if (appUser.userState && !isAdminUID(appUser.userState.user.uid)) {
@@ -84,11 +88,6 @@ export default function RecoilManager({ children }: PropsWithChildren) {
         //     currentChatUsers.splice(foundIndex, 1);
         //   }
         // }
-
-        // Disallow Self Chat
-        currentChatUsers = currentChatUsers.filter(
-          (eachUser) => eachUser.uid !== appUser.userState?.user.uid
-        );
         set(supportChatUsersAtom, currentChatUsers);
       },
     [appUser.userState, supportChats]
