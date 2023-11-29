@@ -1,20 +1,13 @@
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogTitle,
-  SxProps,
-  Theme,
-} from '@mui/material';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { Box, Button, SxProps, Theme } from '@mui/material';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { cartAtom } from '@/recoil/atoms/cart';
 import AddToCartIcon from '@mui/icons-material/AddShoppingCart';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { userAtom } from '@/recoil/atoms';
 import { Product } from '@/firebase/product';
-import SignInButton from '@/components/Buttons/SignIn';
+import { selectedDialogAtom } from '@/recoil/atoms/dialog';
 import IncDecButton from '@/components/Buttons/IncDec';
+import SignInRequiredDialog from '@/components/Dialogs/SignInRequired';
 
 interface AddUpdateButtonProps {
   product: Product;
@@ -29,7 +22,7 @@ export default function AddUpdateButton({
 }: AddUpdateButtonProps) {
   const [cart, setCart] = useRecoilState(cartAtom);
   const user = useRecoilValue(userAtom);
-  const [showDialog, setShowDialog] = useState(false);
+  const setActiveDialog = useSetRecoilState(selectedDialogAtom);
 
   const updateQuantity = (quantity: number) => {
     let { items } = cart;
@@ -47,56 +40,36 @@ export default function AddUpdateButton({
     }
     setCart({ items, updatedAt: Date.now() });
   };
-
-  const handleClose = (_e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    setShowDialog(false);
-  };
   const handleCartIncrement = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!user) {
-      setShowDialog(true);
+    if (!user.userState) {
+      setActiveDialog(<SignInRequiredDialog />);
       return;
     }
     updateQuantity(1);
   };
 
-  useEffect(() => {
-    if (user && showDialog) {
-      setShowDialog(false);
-    }
-  }, [showDialog, user]);
-
   const cartItems = cart.items;
   if (!cartItems[product.id] || cartItems[product.id].quantity < 1 || !user) {
     return (
-      <>
-        <Button
-          sx={sxAddButton}
-          variant="outlined"
-          fullWidth
-          onClick={handleCartIncrement}
-        >
-          <AddToCartIcon
-            sx={{
-              height: '32px',
-              width: 'auto',
-              marginRight: '4px',
-            }}
-          />
-          <Box sx={{ fontSize: '16px' }}>Add</Box>
-        </Button>
-        <Dialog open={showDialog && !user} onClose={handleClose}>
-          <DialogTitle sx={{ textAlign: 'center' }}>
-            Sign In required
-          </DialogTitle>
-          <DialogActions>
-            <SignInButton sx={{ fontSize: '16px', justifyContent: 'center' }} />
-          </DialogActions>
-        </Dialog>
-      </>
+      <Button
+        sx={sxAddButton}
+        variant="outlined"
+        fullWidth
+        onClick={handleCartIncrement}
+      >
+        <AddToCartIcon
+          sx={{
+            height: '32px',
+            width: 'auto',
+            marginRight: '4px',
+          }}
+        />
+        <Box sx={{ fontSize: '16px' }}>Add</Box>
+      </Button>
     );
   }
   return <IncDecButton sx={sxIncDecButtonContainer} product={product} />;

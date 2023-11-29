@@ -1,20 +1,14 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import { useCallback, useEffect } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { menuAtom } from '@/recoil/atoms/menu';
+import { selectedDialogAtom } from '@/recoil/atoms/dialog';
 import NavDrawer from '@/components/NavDrawer';
-
-// function AdminRoute() {
-//   const isAdmin = useRecoilValue(isAdminSelector);
-//   if (!isAdmin) {
-//     return <Navigate to="/products" />;
-//   }
-//   return <Outlet />;
-// }
 
 function App() {
   const location = useLocation();
   const [, setShowMenu] = useRecoilState(menuAtom);
+  const selectedDialog = useRecoilValue(selectedDialogAtom);
 
   const closeDrawer = useCallback(() => {
     setShowMenu(false);
@@ -28,6 +22,7 @@ function App() {
     <>
       <Outlet />
       <NavDrawer />
+      {selectedDialog}
     </>
   );
 }

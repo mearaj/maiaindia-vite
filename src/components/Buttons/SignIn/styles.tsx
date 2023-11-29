@@ -7,7 +7,7 @@ const buttonStyles = (_theme: Theme): SxProps<Theme> => {
     justifyContent: 'center',
     padding: '8px 16px 8px 8px',
     width: 'calc(320px - 48px)',
-    margin: '8px 8px 0 0',
+    margin: '0px',
     textTransform: 'uppercase',
     fontWeight: 'bold',
     fontSize: '18px',

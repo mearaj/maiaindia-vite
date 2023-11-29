@@ -2,6 +2,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Box,
   Button,
   Link,
   SxProps,
@@ -11,6 +12,9 @@ import {
 import { useState } from 'react';
 import { ContactPhone, Home, Message } from '@mui/icons-material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import InfoIcon from '@mui/icons-material/Info';
+import PolicyIcon from '@mui/icons-material/Policy';
+import TermsConditions from '@mui/icons-material/Article';
 import { NavLink, useLocation } from 'react-router-dom';
 import ShoppingCart from '@mui/icons-material/ShoppingCart';
 import { isActiveByEqual, isActiveByStartsWith } from '@/misc';
@@ -25,6 +29,7 @@ export default function NavLinksAccordion() {
     justifyContent: 'flex-start',
     marginBottom: '8px',
     textTransform: 'none',
+    maxHeight: '100%',
   };
 
   return (
@@ -101,6 +106,75 @@ export default function NavLinksAccordion() {
             sx={linkButtonStyle}
           >
             Live Chat
+          </Button>
+        </Link>
+        <Link component={NavLink} to={appAbsoluteRoutes.aboutUs}>
+          <Button
+            fullWidth
+            variant={
+              isActiveByEqual([appAbsoluteRoutes.aboutUs], location)
+                ? 'contained'
+                : 'outlined'
+            }
+            size="large"
+            startIcon={<InfoIcon />}
+            sx={linkButtonStyle}
+          >
+            About Us
+          </Button>
+        </Link>
+        <Link
+          component={NavLink}
+          to={appAbsoluteRoutes.cancellationRefundPolicies}
+        >
+          <Button
+            fullWidth
+            variant={
+              isActiveByEqual(
+                [appAbsoluteRoutes.cancellationRefundPolicies],
+                location
+              )
+                ? 'contained'
+                : 'outlined'
+            }
+            size="large"
+            startIcon={<PolicyIcon />}
+            sx={linkButtonStyle}
+          >
+            <Box
+              component="span"
+              sx={{
+                whiteSpace: 'nowrap',
+                overflowX: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              Cancellation And Refund Policies
+            </Box>
+          </Button>
+        </Link>
+        <Link component={NavLink} to={appAbsoluteRoutes.termsConditions}>
+          <Button
+            fullWidth
+            variant={
+              isActiveByEqual([appAbsoluteRoutes.termsConditions], location)
+                ? 'contained'
+                : 'outlined'
+            }
+            size="large"
+            startIcon={<TermsConditions />}
+            sx={linkButtonStyle}
+          >
+            <Box
+              component="span"
+              sx={{
+                whiteSpace: 'nowrap',
+                overflowX: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              Terms And Conditions
+            </Box>
           </Button>
         </Link>
       </AccordionDetails>

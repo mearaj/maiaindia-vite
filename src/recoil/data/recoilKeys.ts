@@ -16,4 +16,5 @@ export const recoilKeys = {
   selectedSupportChatUserAtom: 'selectedSupportChatUserAtom',
   selectedSupportChatUserSelector: 'selectedSupportChatUserSelector',
   selectedSupportChatAtom: 'selectedSupportChatAtom',
+  selectedDialogAtom: 'selectedDialogAtom',
 };

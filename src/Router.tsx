@@ -9,6 +9,9 @@ import { AdminHomePage } from '@/pages/Admin';
 import AdminOrdersPage from '@/pages/Admin/Orders';
 import AdminAddProductPage from '@/pages/Admin/AddProduct';
 import AuthRoutes from '@/Auth';
+import AboutUsPage from '@/pages/AboutUs';
+import CancellationRefundPolicies from '@/pages/CancellationRefundPolicies';
+import TermsConditionsPage from '@/pages/TermsConditions';
 // Abs implies absolute
 
 const homeAbs = '/products';
@@ -22,6 +25,10 @@ export const appAbsoluteRoutes = {
   cart: '/cart',
   admin: '/admin',
   contactUs: '/contactUs',
+  privacyPolicy: '/privacyPolicy',
+  termsConditions: '/termsConditions',
+  cancellationRefundPolicies: '/cancellationRefundPolicies',
+  aboutUs: '/aboutUs',
   liveChat: '/liveChat',
   adminHome: '/admin/home',
   adminOrders: '/admin/orders',
@@ -36,6 +43,10 @@ export const appRelativeRoutes = {
   cart: 'cart',
   admin: 'admin',
   contactUs: 'contactUs',
+  aboutUs: 'aboutUs',
+  privacyPolicy: 'privacyPolicy',
+  termsConditions: 'termsConditions',
+  cancellationRefundPolicies: 'cancellationRefundPolicies',
   liveChat: 'liveChat',
   adminHome: 'home', // relative to admin
   adminOrders: 'orders', // relative to admin
@@ -64,16 +75,28 @@ export const router = createBrowserRouter([
         element: <ProductDetailsPage />,
       },
       {
+        path: appRelativeRoutes.contactUs,
+        element: <ContactUsPage />,
+      },
+      {
+        path: appRelativeRoutes.cancellationRefundPolicies,
+        element: <CancellationRefundPolicies />,
+      },
+      {
+        path: appRelativeRoutes.aboutUs,
+        element: <AboutUsPage />,
+      },
+      {
+        path: appRelativeRoutes.termsConditions,
+        element: <TermsConditionsPage />,
+      },
+      {
         path: '',
         element: <AuthRoutes />,
         children: [
           {
             path: appRelativeRoutes.liveChat,
             element: <LiveChatPage />,
-          },
-          {
-            path: appRelativeRoutes.contactUs,
-            element: <ContactUsPage />,
           },
           {
             path: appRelativeRoutes.cart,
