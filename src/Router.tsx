@@ -1,4 +1,5 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
+import CancellationRefundPolicy from '@/pages/CancellationRefundPolicy';
 import App from '@/App';
 import ProductsPage from '@/pages/Products';
 import ProductDetailsPage from '@/pages/ProductDetails';
@@ -10,7 +11,6 @@ import AdminOrdersPage from '@/pages/Admin/Orders';
 import AdminAddProductPage from '@/pages/Admin/AddProduct';
 import AuthRoutes from '@/Auth';
 import AboutUsPage from '@/pages/AboutUs';
-import CancellationRefundPolicies from '@/pages/CancellationRefundPolicies';
 import TermsConditionsPage from '@/pages/TermsConditions';
 import PrivacyPolicyPage from '@/pages/PrivacyPolicy';
 // Abs implies absolute
@@ -28,7 +28,7 @@ export const appAbsoluteRoutes = {
   contactUs: '/contactUs',
   privacyPolicy: '/privacyPolicy',
   termsConditions: '/termsConditions',
-  cancellationRefundPolicies: '/cancellationRefundPolicies',
+  cancellationRefundPolicies: '/cancellationRefundPolicy',
   aboutUs: '/aboutUs',
   liveChat: '/liveChat',
   adminHome: '/admin/home',
@@ -47,7 +47,7 @@ export const appRelativeRoutes = {
   aboutUs: 'aboutUs',
   privacyPolicy: 'privacyPolicy',
   termsConditions: 'termsConditions',
-  cancellationRefundPolicies: 'cancellationRefundPolicies',
+  cancellationRefundPolicy: 'cancellationRefundPolicy',
   liveChat: 'liveChat',
   adminHome: 'home', // relative to admin
   adminOrders: 'orders', // relative to admin
@@ -80,8 +80,8 @@ export const router = createBrowserRouter([
         element: <ContactUsPage />,
       },
       {
-        path: appRelativeRoutes.cancellationRefundPolicies,
-        element: <CancellationRefundPolicies />,
+        path: appRelativeRoutes.cancellationRefundPolicy,
+        element: <CancellationRefundPolicy />,
       },
       {
         path: appRelativeRoutes.aboutUs,

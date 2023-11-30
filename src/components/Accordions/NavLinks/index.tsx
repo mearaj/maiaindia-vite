@@ -17,7 +17,7 @@ export default function NavLinksAccordion() {
 
   const linkButtonStyle: SxProps<Theme> = {
     justifyContent: 'flex-start',
-    marginBottom: '8px',
+    marginBottom: '4px',
     textTransform: 'none',
     maxHeight: '100%',
   };
