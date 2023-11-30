@@ -65,15 +65,17 @@ export default function TermsConditionsPage() {
       text:
         'Maia Jewellery assures the quality of its products and stands behind ' +
         'their craftsmanship. If you have concerns about the received product, ' +
-        'please contact our customer support within [number of days] days of delivery.',
+        'please contact our customer support within 7 days of delivery.',
       id: '8',
     },
     {
       title: '',
       text:
         'By placing an order with Maia Jewellery, you agree to these terms and conditions.' +
-        ' We reserve the right to update or modify these terms at any time, and it is the' +
-        " customer's responsibility to stay informed about any changes.",
+        'We may update our Privacy Policy from time to time. Thus, we advise you to review this' +
+        ' page periodically for any changes. We will notify you of any changes by ' +
+        'posting the new Privacy Policy on this page. These changes are effective immediately,' +
+        ' after they are posted on this page.',
       id: '9',
     },
   ];

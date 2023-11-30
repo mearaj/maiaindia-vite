@@ -12,6 +12,7 @@ import AuthRoutes from '@/Auth';
 import AboutUsPage from '@/pages/AboutUs';
 import CancellationRefundPolicies from '@/pages/CancellationRefundPolicies';
 import TermsConditionsPage from '@/pages/TermsConditions';
+import PrivacyPolicyPage from '@/pages/PrivacyPolicy';
 // Abs implies absolute
 
 const homeAbs = '/products';
@@ -89,6 +90,10 @@ export const router = createBrowserRouter([
       {
         path: appRelativeRoutes.termsConditions,
         element: <TermsConditionsPage />,
+      },
+      {
+        path: appRelativeRoutes.privacyPolicy,
+        element: <PrivacyPolicyPage />,
       },
       {
         path: '',

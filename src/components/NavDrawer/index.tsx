@@ -5,7 +5,6 @@ import Close from '@mui/icons-material/Close';
 import logoDarkGreen from '@/assets/images/logo-dark-green.png';
 import { useRecoilState } from 'recoil';
 import { menuAtom } from '@/recoil/atoms/menu';
-import AdminAccordion from '@/components/Accordions/Admin';
 import CategoriesAccordion from '@/components/Accordions/Categories';
 import NavLinksAccordion from '@/components/Accordions/NavLinks';
 import useDimensions from '@/hooks/useDimensions';
@@ -172,7 +171,6 @@ export default function NavDrawer(_: DrawerProps) {
       </Box>
       <Box sx={styles.main}>
         <UserComponent />
-        <AdminAccordion />
         <NavLinksAccordion />
         <CategoriesAccordion />
       </Box>
