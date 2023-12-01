@@ -2,7 +2,7 @@ import { FormControlLabel, Radio, RadioGroup, Typography } from '@mui/material';
 import { useRecoilState } from 'recoil';
 import { menuAtom } from '@/recoil/atoms/menu';
 import { categoryAtom } from '@/recoil/atoms/category';
-import { categories, defaultSelectedCategory } from '@/misc/category';
+import { categories, defaultSelectedCategory } from '@/recoil/data/category';
 
 const availableCategories = [defaultSelectedCategory, ...categories];
 

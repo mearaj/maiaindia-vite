@@ -14,6 +14,11 @@ export interface ProductImage {
   src?: string;
 }
 
+export interface ProductImages {
+  // value corresponds to img element's src attribute val
+  [productID: string]: string;
+}
+
 export interface ProductWithoutID {
   categoryID: string;
   images?: ProductImage[];

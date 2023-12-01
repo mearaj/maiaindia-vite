@@ -1,7 +1,7 @@
 import { Button, Link, SxProps, Theme } from '@mui/material';
 import { NavLink, useNavigate } from 'react-router-dom';
 
-import { Product } from '@/misc/product';
+import { Product } from '@/recoil/data/product';
 
 interface ProductActionProps {
   product: Product;

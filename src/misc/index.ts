@@ -1,7 +1,8 @@
 import imagePlaceholder from '@/assets/images/placeholder.svg';
 import { Location } from 'react-router-dom';
-import { Product, ProductImage } from '@/misc/product';
-import { Cart, defaultPlaceholderCart } from '@/misc/cart';
+import { Product, ProductImage } from '@/recoil/data/product';
+import { Cart, defaultPlaceholderCart } from '@/recoil/data/cart';
+import { DocumentData, QuerySnapshot } from '@firebase/firestore';
 
 const defaultProductImage: ProductImage = {
   width: 680,
@@ -74,4 +75,36 @@ export const mergeCartItems = (localCart: Cart, apiCart: Cart): Cart => {
     }
   });
   return cart;
+};
+
+export const updateDocsSnapshots = <T extends { id: string }>(
+  snapshot: QuerySnapshot<DocumentData, DocumentData>,
+  snapDocs: T[]
+) => {
+  snapshot
+    .docChanges()
+    .forEach((change: { doc: { data?: any; id?: any }; type: string }) => {
+      const { id } = change.doc;
+      if (change.type === 'added') {
+        const docItem = {
+          ...change.doc.data(),
+          id,
+        };
+        snapDocs.unshift(docItem);
+      } else if (change.type === 'modified') {
+        const foundIndex = snapDocs.findIndex((docItem) => docItem.id === id);
+        if (foundIndex >= 0) {
+          snapDocs[foundIndex] = {
+            ...change.doc.data(),
+            id,
+          };
+        }
+      } else if (change.type === 'removed') {
+        const foundIndex = snapDocs.findIndex((docItem) => docItem.id === id);
+        if (foundIndex >= 0) {
+          snapDocs.splice(foundIndex, 1);
+        }
+      }
+    });
+  return snapDocs;
 };

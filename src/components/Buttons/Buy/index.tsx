@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import React from 'react';
-import { Product } from '@/misc/product';
+import { Product } from '@/recoil/data/product';
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
 import SignInRequiredDialog from '@/components/Dialogs/SignInRequired';
 

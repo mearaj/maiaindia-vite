@@ -1,7 +1,7 @@
 import { selector } from 'recoil';
 import { recoilKeys } from '@/recoil/data/recoilKeys';
 import { categoryAtom } from '@/recoil/atoms';
-import { defaultSelectedCategory } from '@/misc/category';
+import { defaultSelectedCategory } from '@/recoil/data/category';
 import { allProductsAtom } from '@/recoil/atoms/allProducts';
 
 export const productsSelector = selector({

@@ -1,26 +1,19 @@
 import { atom } from 'recoil';
 import { recoilKeys } from '@/recoil/data/recoilKeys';
-import { Product } from '@/misc/product';
+import { Product } from '@/recoil/data/product';
 import { collection, onSnapshot, query } from '@firebase/firestore';
 import { appFirestore } from '@/firebase';
+import { updateDocsSnapshots } from '@/misc';
 
 export const allProductsAtom = atom<Product[]>({
   key: recoilKeys.allProductsAtom,
   default: [],
   effects: [
-    ({ setSelf }) => {
+    ({ setSelf, getPromise, node }) => {
       const allProductsQuery = query(collection(appFirestore, 'products'));
-      return onSnapshot(allProductsQuery, (productsSnapShot) => {
-        const products: Product[] = [];
-        productsSnapShot.forEach((product) => {
-          products.push({
-            id: product.id,
-            name: (product.data() as unknown as Product).name,
-            images: (product.data() as unknown as Product).images,
-            categoryID: (product.data() as unknown as Product).categoryID,
-            price: (product.data() as unknown as Product).price,
-          });
-        });
+      return onSnapshot(allProductsQuery, async (productsSnapShot) => {
+        let products: Product[] = [...(await getPromise(node))];
+        products = updateDocsSnapshots(productsSnapShot, products);
         setSelf(products);
       });
     },

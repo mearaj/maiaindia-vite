@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 import { recoilKeys } from '@/recoil/data/recoilKeys';
-import { Category, defaultSelectedCategory } from '@/misc/category';
+import { Category, defaultSelectedCategory } from '@/recoil/data/category';
 
 export const categoryAtom = atom<Category>({
   key: recoilKeys.categoryAtom,

@@ -12,6 +12,7 @@ import {
   where,
 } from '@firebase/firestore';
 import { onAuthStateChanged } from '@firebase/auth';
+import { updateDocsSnapshots } from '@/misc';
 import { UserProfile } from '@/config';
 
 export interface SupportChatNoID {
@@ -51,42 +52,8 @@ const querySupportChatsSideEffects: AtomEffect<SupportChat[]> = ({
     supportChatsSubscription = onSnapshot(
       supportChatsQuery,
       async (snapshot) => {
-        const supportChats: SupportChat[] = [...(await getPromise(node))];
-        // snapshot.docs.forEach((supportChat) => {
-        //   if (supportChat.exists()) {
-        //     supportChats.push({
-        //       ...(supportChat.data() as SupportChat),
-        //       id: supportChat.id,
-        //     });
-        //   }
-        // });
-        snapshot.docChanges().forEach((change) => {
-          const { id } = change.doc;
-          if (change.type === 'added') {
-            const supportChat: SupportChat = {
-              ...(change.doc.data() as SupportChat),
-              id,
-            };
-            supportChats.unshift(supportChat);
-          } else if (change.type === 'modified') {
-            const foundIndex = supportChats.findIndex(
-              (supportChat) => supportChat.id === id
-            );
-            if (foundIndex >= 0) {
-              supportChats[foundIndex] = {
-                ...change.doc.data(),
-                id,
-              } as SupportChat;
-            }
-          } else if (change.type === 'removed') {
-            const foundIndex = supportChats.findIndex(
-              (supportChat) => supportChat.id === id
-            );
-            if (foundIndex >= 0) {
-              supportChats.splice(foundIndex, 1);
-            }
-          }
-        });
+        let supportChats: SupportChat[] = [...(await getPromise(node))];
+        supportChats = updateDocsSnapshots(snapshot, supportChats);
         setSelf(supportChats);
       }
     );

@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 import { recoilKeys } from '@/recoil/data/recoilKeys';
-import { Cart, defaultPlaceholderCart } from '@/misc/cart';
+import { Cart, defaultPlaceholderCart } from '@/recoil/data/cart';
 import { userAtom } from '@/recoil/atoms/user';
 import { doc, onSnapshot, setDoc } from '@firebase/firestore';
 import { appFirebaseAuth, appFirestore } from '@/firebase';
