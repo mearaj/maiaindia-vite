@@ -33,29 +33,6 @@ const appFirebaseRealtime = getDatabase(appFirebase);
 
 export default appFirebase;
 
-// Do not uncomment this, only used for uploading docs during development by admin
-// const uploadDocs = async () => {
-//   for (let i = 0; i < mockProducts.length; i += 1) {
-//     setDoc(doc(appFirestore, 'products', mockProducts[i].id), {
-//       price: mockProducts[i].price,
-//       name: mockProducts[i].name,
-//       images: mockProducts[i].images ?? [],
-//       categoryID: mockProducts[i].categoryID,
-//       priceHistory: mockProducts[i].priceHistory ?? [],
-//     });
-//   }
-// };
-// uploadDocs();
-
-// remove id property from product
-// const deleteIDProp = async () => {
-//   for (let i = 0; i < mockProducts.length; i += 1) {
-//     updateDoc(doc(appFirestore, 'products', mockProducts[i].id), {
-//       id: deleteField(),
-//     });
-//   }
-// };
-// deleteIDProp();
 export {
   appFirestore,
   appFirebaseAuth,

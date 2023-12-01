@@ -21,7 +21,7 @@ import {
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import Button from '@mui/material/Button';
-import { categories, Category } from '@/firebase/category';
+import { categories, Category } from '@/misc/category';
 import { CloseOutlined, KeyboardArrowDown } from '@mui/icons-material';
 import {
   addDoc,
@@ -35,7 +35,7 @@ import { appFirebaseStorage, appFirestore } from '@/firebase';
 import { useNavigate } from 'react-router-dom';
 import { AddProductForm } from '@/pages/Admin/AddProduct/helper';
 
-import { ProductWithoutID } from '@/firebase/product';
+import { ProductWithoutID } from '@/misc/product';
 
 export default function AdminAddProductPage() {
   const initialValue: AddProductForm = {

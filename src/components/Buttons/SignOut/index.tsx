@@ -2,8 +2,9 @@ import { Button } from '@mui/material';
 import React from 'react';
 import { useRecoilState } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
-import { signOut } from '@/firebase/signOut';
 import { AuthState } from '@/recoil/atoms/user';
+import { appFirebaseAuth } from '@/firebase';
+import { signOut } from '@firebase/auth';
 import Loader from '@/components/Loader';
 
 export default function SignOutButton() {
@@ -26,7 +27,7 @@ export default function SignOutButton() {
     e.preventDefault();
     e.stopPropagation();
     setAuthState({ authState: AuthState.signingOut, userState });
-    await signOut();
+    await signOut(appFirebaseAuth);
   };
 
   if (!userState) {

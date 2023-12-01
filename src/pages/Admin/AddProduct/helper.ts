@@ -1,4 +1,4 @@
-import { Category } from '@/firebase/category';
+import { Category } from '@/misc/category';
 
 export interface AddProductForm {
   name: string;

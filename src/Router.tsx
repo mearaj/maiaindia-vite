@@ -1,4 +1,5 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
+import ProfilePage from '@/pages/Profile';
 import CancellationRefundPolicy from '@/pages/CancellationRefundPolicy';
 import App from '@/App';
 import ProductsPage from '@/pages/Products';
@@ -34,6 +35,7 @@ export const appAbsoluteRoutes = {
   adminHome: '/admin/home',
   adminOrders: '/admin/orders',
   adminProductsAdd: '/admin/products/add',
+  profile: '/profile',
 };
 
 export const appRelativeRoutes = {
@@ -49,6 +51,7 @@ export const appRelativeRoutes = {
   termsConditions: 'termsConditions',
   cancellationRefundPolicy: 'cancellationRefundPolicy',
   liveChat: 'liveChat',
+  profile: 'profile',
   adminHome: 'home', // relative to admin
   adminOrders: 'orders', // relative to admin
   adminProductsAdd: 'products/add', // relative to admin,
@@ -106,6 +109,10 @@ export const router = createBrowserRouter([
           {
             path: appRelativeRoutes.cart,
             element: <CartPage />,
+          },
+          {
+            path: appRelativeRoutes.profile,
+            element: <ProfilePage />,
           },
           {
             path: appRelativeRoutes.admin,

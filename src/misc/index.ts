@@ -1,7 +1,7 @@
 import imagePlaceholder from '@/assets/images/placeholder.svg';
 import { Location } from 'react-router-dom';
-import { Product, ProductImage } from '@/firebase/product';
-import { Cart, defaultPlaceholderCart } from '@/firebase/cart';
+import { Product, ProductImage } from '@/misc/product';
+import { Cart, defaultPlaceholderCart } from '@/misc/cart';
 
 const defaultProductImage: ProductImage = {
   width: 680,

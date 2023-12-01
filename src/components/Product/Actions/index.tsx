@@ -1,5 +1,5 @@
 import { Box, SxProps, Theme } from '@mui/material';
-import { Product } from '@/firebase/product';
+import { Product } from '@/misc/product';
 import AddUpdateButton from '@/components/Buttons/AddUpdate';
 import BuyButton from '@/components/Buttons/Buy';
 import DetailsButton from '@/components/Buttons/Details';

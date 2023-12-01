@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { Product } from '@/firebase/product';
+import { Product } from '@/misc/product';
 import ProductComponent from '@/components/Product';
 
 function Products({ products }: { products: Product[] }) {

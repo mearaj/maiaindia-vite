@@ -3,7 +3,7 @@ import { useRecoilValueLoadable } from 'recoil';
 import { productIdSelector } from '@/recoil/selectors/productId';
 import { Loader } from '@/components';
 import getPreferredImageSrc from '@/misc';
-import { Product } from '@/firebase/product';
+import { Product } from '@/misc/product';
 import ProductPrice from '@/components/Product/Price';
 import AddUpdateButton from '@/components/Buttons/AddUpdate';
 import RemoveButton from '@/components/Buttons/Remove';

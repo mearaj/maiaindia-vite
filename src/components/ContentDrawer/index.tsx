@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react';
 import { Card } from '@mui/material';
-import { Product } from '@/firebase/product';
+import { Product } from '@/misc/product';
 import useDimensions from '@/hooks/useDimensions';
 
 export interface ContentDrawerProps extends PropsWithChildren {

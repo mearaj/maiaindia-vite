@@ -4,7 +4,7 @@ import { cartAtom } from '@/recoil/atoms/cart';
 import { useEffect, useState } from 'react';
 import { userAtom } from '@/recoil/atoms';
 import { Delete } from '@mui/icons-material';
-import { Product } from '@/firebase/product';
+import { Product } from '@/misc/product';
 
 interface RemoveButtonProps extends ButtonProps {
   product: Product;

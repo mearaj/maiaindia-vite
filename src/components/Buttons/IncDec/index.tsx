@@ -4,7 +4,7 @@ import { cartAtom } from '@/recoil/atoms/cart';
 import React, { useEffect, useState } from 'react';
 import { userAtom } from '@/recoil/atoms';
 import { Add, Remove } from '@mui/icons-material';
-import { Product } from '@/firebase/product';
+import { Product } from '@/misc/product';
 
 interface DecIncButtonProps {
   product: Product;

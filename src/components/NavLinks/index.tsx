@@ -1,7 +1,8 @@
-import { Box, Button, Link, SxProps, Theme } from '@mui/material';
+import { Box, Button, Divider, Link, SxProps, Theme } from '@mui/material';
 import { Add, AddTask, ContactPhone, Home, Message } from '@mui/icons-material';
 import InfoIcon from '@mui/icons-material/Info';
 import PolicyIcon from '@mui/icons-material/Policy';
+import ProfileIcon from '@mui/icons-material/AccountCircle';
 import TermsConditions from '@mui/icons-material/Article';
 import { NavLink, useLocation } from 'react-router-dom';
 import ShoppingCart from '@mui/icons-material/ShoppingCart';
@@ -11,7 +12,7 @@ import { useRecoilValue } from 'recoil';
 import { isAdminSelector } from '@/recoil/selectors/isAdmin';
 import { appAbsoluteRoutes } from '@/Router';
 
-export default function NavLinksAccordion() {
+export default function NavLinks() {
   const isAdmin = useRecoilValue(isAdminSelector);
   const location = useLocation();
 
@@ -24,6 +25,68 @@ export default function NavLinksAccordion() {
 
   return (
     <>
+      {isAdmin && (
+        <>
+          <Link component={NavLink} to={appAbsoluteRoutes.adminHome}>
+            <Button
+              fullWidth
+              variant={
+                isActiveByEqual(
+                  [appAbsoluteRoutes.adminHome, appAbsoluteRoutes.admin],
+                  location
+                )
+                  ? 'contained'
+                  : 'text'
+              }
+              size="large"
+              startIcon={<Home />}
+              sx={linkButtonStyle}
+            >
+              Admin Home
+            </Button>
+          </Link>
+          <Link component={NavLink} to={appAbsoluteRoutes.adminOrders}>
+            <Button
+              fullWidth
+              variant={
+                isActiveByEqual([appAbsoluteRoutes.adminOrders], location)
+                  ? 'contained'
+                  : 'text'
+              }
+              size="large"
+              startIcon={<AddTask />}
+              sx={linkButtonStyle}
+            >
+              Admin Orders
+            </Button>
+          </Link>
+          <Link component={NavLink} to={appAbsoluteRoutes.adminProductsAdd}>
+            <Button
+              fullWidth
+              variant={
+                isActiveByEqual([appAbsoluteRoutes.adminProductsAdd], location)
+                  ? 'contained'
+                  : 'text'
+              }
+              size="large"
+              startIcon={<Add />}
+              sx={{
+                ...linkButtonStyle,
+                marginBottom: isAdmin ? '0px' : '4px',
+              }}
+            >
+              Admin Add Product
+            </Button>
+          </Link>
+        </>
+      )}
+      {isAdmin && (
+        <Divider
+          sx={{
+            margin: '16px 0px',
+          }}
+        />
+      )}
       <Link component={NavLink} to={appAbsoluteRoutes.home}>
         <Button
           fullWidth
@@ -55,6 +118,30 @@ export default function NavLinksAccordion() {
           sx={linkButtonStyle}
         >
           Cart
+        </Button>
+      </Link>
+      <Link component={NavLink} to={appAbsoluteRoutes.profile}>
+        <Button
+          fullWidth
+          variant={
+            isActiveByEqual([appAbsoluteRoutes.profile], location)
+              ? 'contained'
+              : 'text'
+          }
+          size="large"
+          startIcon={<ProfileIcon />}
+          sx={linkButtonStyle}
+        >
+          <Box
+            component="span"
+            sx={{
+              whiteSpace: 'nowrap',
+              overflowX: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            Profile
+          </Box>
         </Button>
       </Link>
       <Link component={NavLink} to={appAbsoluteRoutes.contactUs}>
@@ -166,7 +253,7 @@ export default function NavLinksAccordion() {
           }
           size="large"
           startIcon={<PolicyIcon />}
-          sx={linkButtonStyle}
+          sx={{ ...linkButtonStyle, marginBottom: '0px' }}
         >
           <Box
             component="span"
@@ -180,58 +267,6 @@ export default function NavLinksAccordion() {
           </Box>
         </Button>
       </Link>
-      {isAdmin && (
-        <>
-          <Link component={NavLink} to={appAbsoluteRoutes.adminHome}>
-            <Button
-              fullWidth
-              variant={
-                isActiveByEqual(
-                  [appAbsoluteRoutes.adminHome, appAbsoluteRoutes.admin],
-                  location
-                )
-                  ? 'contained'
-                  : 'text'
-              }
-              size="large"
-              startIcon={<Home />}
-              sx={linkButtonStyle}
-            >
-              Admin Home
-            </Button>
-          </Link>
-          <Link component={NavLink} to={appAbsoluteRoutes.adminOrders}>
-            <Button
-              fullWidth
-              variant={
-                isActiveByEqual([appAbsoluteRoutes.adminOrders], location)
-                  ? 'contained'
-                  : 'text'
-              }
-              size="large"
-              startIcon={<AddTask />}
-              sx={linkButtonStyle}
-            >
-              Admin Orders
-            </Button>
-          </Link>
-          <Link component={NavLink} to={appAbsoluteRoutes.adminProductsAdd}>
-            <Button
-              fullWidth
-              variant={
-                isActiveByEqual([appAbsoluteRoutes.adminProductsAdd], location)
-                  ? 'contained'
-                  : 'text'
-              }
-              size="large"
-              startIcon={<Add />}
-              sx={linkButtonStyle}
-            >
-              Admin Add Product
-            </Button>
-          </Link>
-        </>
-      )}
     </>
   );
 }

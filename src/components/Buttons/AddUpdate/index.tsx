@@ -4,7 +4,7 @@ import { cartAtom } from '@/recoil/atoms/cart';
 import AddToCartIcon from '@mui/icons-material/AddShoppingCart';
 import React from 'react';
 import { userAtom } from '@/recoil/atoms';
-import { Product } from '@/firebase/product';
+import { Product } from '@/misc/product';
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
 import IncDecButton from '@/components/Buttons/IncDec';
 import SignInRequiredDialog from '@/components/Dialogs/SignInRequired';

@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 import { recoilKeys } from '@/recoil/data/recoilKeys';
-import { Product } from '@/firebase/product';
+import { Product } from '@/misc/product';
 import { collection, onSnapshot, query } from '@firebase/firestore';
 import { appFirestore } from '@/firebase';
 

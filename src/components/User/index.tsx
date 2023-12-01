@@ -13,7 +13,6 @@ export default function UserComponent() {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        marginBottom: '32px',
       }}
     >
       <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>

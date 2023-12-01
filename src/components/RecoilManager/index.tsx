@@ -18,7 +18,7 @@ import {
   query,
 } from '@firebase/firestore';
 import { userAtom } from '@/recoil/atoms';
-import { defaultPlaceholderCart } from '@/firebase/cart';
+import { defaultPlaceholderCart } from '@/misc/cart';
 import { cartAtom } from '@/recoil/atoms/cart';
 import { adminUsers, UserProfile } from '@/config';
 

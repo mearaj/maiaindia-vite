@@ -1,6 +1,6 @@
 import { Box, SxProps, Theme } from '@mui/material';
 
-import { Product } from '@/firebase/product';
+import { Product } from '@/misc/product';
 
 export default function ProductPrice({
   sx,

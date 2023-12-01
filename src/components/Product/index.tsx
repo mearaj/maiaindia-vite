@@ -3,7 +3,7 @@ import { Box, Paper, useTheme } from '@mui/material';
 import getPreferredImageSrc from '@/misc';
 import { useRecoilValue } from 'recoil';
 import { cartAtom } from '@/recoil/atoms/cart';
-import { Product } from '@/firebase/product';
+import { Product } from '@/misc/product';
 import ProductActions from '@/components/Product/Actions';
 import ProductPrice from '@/components/Product/Price';
 import ContentDrawer from '@/components/ContentDrawer';
