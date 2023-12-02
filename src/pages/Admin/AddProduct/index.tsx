@@ -176,15 +176,6 @@ export default function AdminAddProductPage() {
 
     const uploadData: ProductWithoutID = {
       name: data.name,
-      images: [
-        {
-          name: `${data.image!.width}x${data.image!.height}.${
-            data.image!.extension
-          }`,
-          height: data.image!.height,
-          width: data.image!.width,
-        },
-      ],
       categoryID: data.category.id,
       price: {
         timestamp: serverTimestamp(),
@@ -205,7 +196,7 @@ export default function AdminAddProductPage() {
       });
       const imageRef = ref(
         appFirebaseStorage,
-        `images/${res.id}/${uploadData.images![0].name}`
+        `images/${res.id}/${uploadData.name}`
       );
       if (data.image && data.image.file != null) {
         uploadBytes(imageRef, data.image!.file).then((_: any) => {

@@ -2,8 +2,9 @@ import { Box, Card } from '@mui/material';
 import { useRecoilValueLoadable } from 'recoil';
 import { productIdSelector } from '@/recoil/selectors/productId';
 import { Loader } from '@/components';
-import getPreferredImageSrc from '@/misc';
 import { Product } from '@/recoil/data/product';
+import { imagesByProductIDSelector } from '@/recoil/selectors/products';
+import { ReactNode } from 'react';
 import ProductPrice from '@/components/Product/Price';
 import AddUpdateButton from '@/components/Buttons/AddUpdate';
 import RemoveButton from '@/components/Buttons/Remove';
@@ -19,6 +20,8 @@ export default function CartItemComponent({
     productIdSelector(productId)
   );
   const { contents, state } = productIDLoadable;
+  const { contents: preferredImgSrc, state: imagesState } =
+    useRecoilValueLoadable(imagesByProductIDSelector(productId));
 
   if (state === 'hasError') {
     return <Box>{contents?.message ?? 'Unknown error'}</Box>;
@@ -31,7 +34,36 @@ export default function CartItemComponent({
   if (!product) {
     return <Box>Product couldn&apos;t be fetched</Box>;
   }
-  const preferredImgSrc = getPreferredImageSrc(product);
+
+  let imageComponent: ReactNode;
+  if (imagesState === 'loading') {
+    imageComponent = (
+      <Box
+        sx={{
+          height: 'auto',
+          width: '100%',
+          marginBottom: '16px',
+        }}
+      >
+        <Loader />
+      </Box>
+    );
+  } else {
+    imageComponent = (
+      <Box
+        component="img"
+        src={preferredImgSrc[0]}
+        alt={product.name}
+        sx={{
+          height: 'auto',
+          width: '100%',
+          objectFit: 'fill',
+          objectPosition: 'center',
+          marginBottom: '16px',
+        }}
+      />
+    );
+  }
 
   return (
     <Card
@@ -51,20 +83,7 @@ export default function CartItemComponent({
           justifyContent: 'space-between',
         }}
       >
-        <Box
-          component="img"
-          src={preferredImgSrc[0].src}
-          height={preferredImgSrc[0].height}
-          width={preferredImgSrc[0].width}
-          alt={product.name}
-          sx={{
-            height: 'auto',
-            width: '100%',
-            objectFit: 'fill',
-            objectPosition: 'center',
-            marginBottom: '16px',
-          }}
-        />
+        {imageComponent}
         <AddUpdateButton
           sxIncDecButtonContainer={{ marginBottom: '8px' }}
           product={product}

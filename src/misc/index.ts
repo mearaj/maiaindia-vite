@@ -1,26 +1,6 @@
-import imagePlaceholder from '@/assets/images/placeholder.svg';
 import { Location } from 'react-router-dom';
-import { Product, ProductImage } from '@/recoil/data/product';
 import { Cart, defaultPlaceholderCart } from '@/recoil/data/cart';
 import { DocumentData, QuerySnapshot } from '@firebase/firestore';
-
-const defaultProductImage: ProductImage = {
-  width: 680,
-  height: 528,
-  name: 'Placeholder',
-  src: imagePlaceholder,
-};
-const getPreferredImageSrc = (product: Product): ProductImage[] => {
-  if (!product.images || product.images.length < 1) {
-    return [defaultProductImage];
-  }
-  return product.images.map((eachImage) => {
-    return {
-      ...eachImage,
-      src: `https://firebasestorage.googleapis.com/v0/b/maiaindia.appspot.com/o/images%2F${product.id}%2F${eachImage.name}?alt=media`,
-    };
-  });
-};
 
 export const isActiveByEqual = (currentPaths: string[], location: Location) => {
   for (let i = 0; i < currentPaths.length; i += 1) {
@@ -42,8 +22,6 @@ export const isActiveByStartsWith = (
   }
   return false;
 };
-
-export default getPreferredImageSrc;
 
 export const mergeCartItems = (localCart: Cart, apiCart: Cart): Cart => {
   const localCartKeys = Object.keys(localCart.items ?? {});

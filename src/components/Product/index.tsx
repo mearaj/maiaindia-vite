@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { Box, Paper, useTheme } from '@mui/material';
-import getPreferredImageSrc from '@/misc';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil';
 import { cartAtom } from '@/recoil/atoms/cart';
 import { Product } from '@/recoil/data/product';
+import { imagesByProductIDSelector } from '@/recoil/selectors/products';
+import { Loader } from '@/components';
 import ProductActions from '@/components/Product/Actions';
 import ProductPrice from '@/components/Product/Price';
 import ContentDrawer from '@/components/ContentDrawer';
@@ -13,6 +14,8 @@ export default function ProductComponent({ product }: { product: Product }) {
   const [activeProductID, setActiveProductID] = useState('');
   const theme = useTheme();
   const cart = useRecoilValue(cartAtom);
+  const { contents: preferredImgSrc, state: imagesState } =
+    useRecoilValueLoadable(imagesByProductIDSelector(product.id));
 
   const onWindowClicked = useCallback(
     (ev: MouseEvent) => {
@@ -33,7 +36,39 @@ export default function ProductComponent({ product }: { product: Product }) {
     return () => window.removeEventListener('click', onWindowClicked);
   }, [onWindowClicked]);
 
-  const preferredImgSrc = getPreferredImageSrc(product);
+  let imageComponent: ReactNode;
+  if (imagesState === 'loading') {
+    imageComponent = (
+      <Box
+        sx={{
+          height: 'auto',
+          width: '100%',
+          maxHeight: '170px',
+          maxWidth: '100%',
+          marginBottom: '4px',
+        }}
+      >
+        <Loader />
+      </Box>
+    );
+  } else {
+    imageComponent = (
+      <Box
+        component="img"
+        src={preferredImgSrc[0]}
+        alt={product.name}
+        sx={{
+          height: 'auto',
+          width: '100%',
+          maxHeight: '170px',
+          maxWidth: '100%',
+          objectFit: 'fill',
+          objectPosition: 'center',
+          marginBottom: '4px',
+        }}
+      />
+    );
+  }
 
   return (
     <Paper
@@ -70,22 +105,7 @@ export default function ProductComponent({ product }: { product: Product }) {
             padding: '16px',
           }}
         >
-          <Box
-            component="img"
-            src={preferredImgSrc[0].src}
-            alt={product.name}
-            height={preferredImgSrc[0].height}
-            width={preferredImgSrc[0].width}
-            sx={{
-              height: 'auto',
-              width: '100%',
-              maxHeight: '170px',
-              maxWidth: '100%',
-              objectFit: 'fill',
-              objectPosition: 'center',
-              marginBottom: '4px',
-            }}
-          />
+          {imageComponent}
         </Box>
         <Box sx={{ padding: '4px 8px 4px' }}>
           <Box

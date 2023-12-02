@@ -3,6 +3,8 @@ export const recoilKeys = {
   categoryAtom: 'categoryAtom',
   productsSelector: 'productsSelector',
   allProductsAtom: 'allProductsAtom',
+  allProductsImagesAtom: 'allProductsImagesAtom',
+  imagesByProductIDSelector: 'imagesByProductIDSelector',
   activeProductIdAtom: 'activeProductIdAtom',
   productIdSelector: 'productIdSelector',
   userAtom: 'userAtom',
