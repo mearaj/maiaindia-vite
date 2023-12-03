@@ -36,6 +36,7 @@ import { useNavigate } from 'react-router-dom';
 import { AddProductForm } from '@/pages/Admin/AddProduct/helper';
 
 import { ProductWithoutID } from '@/recoil/data/product';
+import createStyles from './styles';
 
 export default function AdminAddProductPage() {
   const initialValue: AddProductForm = {
@@ -52,6 +53,7 @@ export default function AdminAddProductPage() {
   const storageTempProductIDKey = 'tempProductID';
   const navigate = useNavigate();
   const theme = useTheme();
+  const styles = createStyles(theme);
   const [data, setData] = useState<AddProductForm>(initialValue);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
@@ -416,22 +418,13 @@ export default function AdminAddProductPage() {
                 disabled={disableForm}
                 startIcon={<CloudUploadIcon />}
               >
-                <input
+                <Box
+                  component="input"
                   type="file"
                   hidden
                   placeholder="Product Image"
                   onChange={handleImageUpload}
-                  style={{
-                    clip: 'rect(0 0 0 0)',
-                    clipPath: 'inset(50%)',
-                    height: '1px',
-                    overflow: 'hidden',
-                    position: 'absolute',
-                    bottom: '0',
-                    left: '0',
-                    whiteSpace: 'nowrap',
-                    width: '1px',
-                  }}
+                  sx={styles.nativeUploadInput}
                   accept="image/*"
                   disabled={disableForm}
                 />
