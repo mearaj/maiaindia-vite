@@ -253,7 +253,7 @@ export default function ProfilePage() {
               resetProfile();
             },
             async () => {
-              showSnackbar('success', 'Successfully uploaded profile picture');
+              showSnackbar('success', 'Successfully uploaded profile pictures');
               if (uploadPhotoTask.current !== null) {
                 setProcessingState({
                   uploadingState: UploadingState.updatingUserProfile,
@@ -263,18 +263,13 @@ export default function ProfilePage() {
                   const newPhotoURL = await getDownloadURL(
                     uploadPhotoTask.current.snapshot.ref
                   );
-                  await setDoc(
-                    docRef,
-                    { profile: { photoURL: newPhotoURL } },
-                    { mergeFields: ['profile.photoURL'] }
-                  );
-                  const docSnapshot = await getDoc(docRef);
                   currentAppUserState = {
                     ...currentAppUserState,
                     userState: {
                       user: userState!.user,
                       profile: {
-                        ...(docSnapshot.data()?.profile as UserProfile),
+                        ...currentAppUserState.userState!.profile,
+                        photoURL: newPhotoURL,
                       },
                     },
                   };

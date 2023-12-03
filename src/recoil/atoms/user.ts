@@ -81,12 +81,6 @@ export const userAtom = atom<AppUser>({
               ...userProfile,
               ...snapshotProfile,
             };
-          } else {
-            userProfile = {
-              uid: user.uid,
-              displayName: user.displayName,
-              email: user.email,
-            };
           }
           // Check if profile photo exists at storage
           const firebaseImageRef = ref(
@@ -96,21 +90,10 @@ export const userAtom = atom<AppUser>({
           try {
             userProfile.photoURL = await getDownloadURL(firebaseImageRef);
           } catch (e) {
-            console.log(e);
             if (e instanceof FirebaseError) {
-              console.log(e);
               // If photoURL is not found then remove it from profile
               if (e.code === 'storage/object-not-found') {
                 userProfile.photoURL = null;
-                await setDoc(
-                  docRef,
-                  {
-                    profile: {
-                      photoURL: null,
-                    },
-                  },
-                  { mergeFields: ['profile.photoURL'] }
-                );
               }
             }
           }
@@ -130,11 +113,27 @@ export const userAtom = atom<AppUser>({
               console.log(e);
             }
           }
-          if (!userProfile.displayName) {
+          let updateProfileRequired = false;
+          if (!userProfile.displayName && user.displayName) {
             userProfile.displayName = user.displayName;
+            updateProfileRequired = true;
           }
-          if (!userProfile.email) {
+          if (!userProfile.email && userProfile.email) {
             userProfile.email = user.email;
+            updateProfileRequired = true;
+          }
+          if (updateProfileRequired) {
+            await setDoc(
+              docRef,
+              {
+                profile: {
+                  uid: userProfile.uid,
+                  displayName: userProfile.displayName,
+                  email: userProfile.email,
+                },
+              },
+              { mergeFields: ['profile'] }
+            );
           }
           setSelf({
             authState: AuthState.idle,

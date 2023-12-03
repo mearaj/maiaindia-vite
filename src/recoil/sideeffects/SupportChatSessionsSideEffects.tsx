@@ -16,7 +16,7 @@ import {
   query,
 } from '@firebase/firestore';
 
-export default function RecoilManager() {
+export default function SupportChatSessionsSideEffects() {
   const supportChats = useRecoilValue(supportChatsAtom);
   const supportChatUsers = useRecoilValue(supportChatUsersAtom);
   const updateSupportChatSessions = useRecoilCallback(
