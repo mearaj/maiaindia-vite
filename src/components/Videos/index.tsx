@@ -25,7 +25,8 @@ export default function Videos({ className }: { className?: string }) {
         const isPlaying =
           videosArr[0].currentTime > 0 &&
           !videosArr[0].ended &&
-          videosArr[0].readyState > 2;
+          !videosArr[0].paused &&
+          videosArr[0].readyState > videosArr[0].HAVE_CURRENT_DATA;
         if (!isPlaying) {
           await videosArr[0].play();
         }

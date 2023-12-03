@@ -2,6 +2,7 @@ import { atom } from 'recoil';
 import { recoilKeys } from '@/recoil/data/recoilKeys';
 import { onAuthStateChanged, User } from '@firebase/auth';
 import { appFirebaseAuth, appFirebaseStorage, appFirestore } from '@/firebase';
+import { FirebaseError } from '@firebase/util';
 import { getDownloadURL, ref, uploadBytes } from '@firebase/storage';
 import { doc, getDoc, setDoc } from '@firebase/firestore';
 import { UserProfile } from '@/config';
@@ -96,6 +97,22 @@ export const userAtom = atom<AppUser>({
             userProfile.photoURL = await getDownloadURL(firebaseImageRef);
           } catch (e) {
             console.log(e);
+            if (e instanceof FirebaseError) {
+              console.log(e);
+              // If photoURL is not found then remove it from profile
+              if (e.code === 'storage/object-not-found') {
+                userProfile.photoURL = null;
+                await setDoc(
+                  docRef,
+                  {
+                    profile: {
+                      photoURL: null,
+                    },
+                  },
+                  { mergeFields: ['profile.photoURL'] }
+                );
+              }
+            }
           }
           // If profile picture doesn't exist, then fetch image from google profile
           // and upload to firebase storage
@@ -108,7 +125,7 @@ export const userAtom = atom<AppUser>({
               });
               await uploadBytes(firebaseImageRef, file);
               userProfile.photoURL = await getDownloadURL(firebaseImageRef);
-            } catch (e) {
+            } catch (e: unknown) {
               /* empty */
               console.log(e);
             }
@@ -128,43 +145,6 @@ export const userAtom = atom<AppUser>({
           });
         } else {
           setSelf({ authState: AuthState.idle, userState: null });
-        }
-      });
-    },
-    ({ onSet }) => {
-      onSet((newAppUser, _oldAppUser) => {
-        const { userState } = newAppUser;
-        if (userState !== null) {
-          const asyncSet = async () => {
-            let backendProfile: UserProfile = { uid: userState.profile.uid };
-            const { profile: userProfile } = userState;
-            const docRef = doc(appFirestore, 'users', userState.profile.uid);
-            const docSnapshot = await getDoc(docRef);
-            const userProfileExist = docSnapshot.exists();
-            if (userProfileExist) {
-              const snapshotProfile = docSnapshot.data().profile as UserProfile;
-              // if profile doesn't exists or profile displayName doesn't exists but social displayName
-              // exists or profile photoUrl doesn't exists but social photoURL exists or email doesn't exists
-              // but social email exist
-              backendProfile = {
-                ...backendProfile,
-                ...snapshotProfile,
-              };
-            }
-            const updateRequired =
-              userProfile.uid !== backendProfile.uid ||
-              userProfile.email !== backendProfile.email ||
-              userProfile.displayName !== backendProfile.displayName ||
-              userProfile.photoURL !== backendProfile.photoURL;
-            if (updateRequired) {
-              await setDoc(
-                docRef,
-                { profile: userProfile },
-                { mergeFields: ['profile'] }
-              );
-            }
-          };
-          asyncSet();
         }
       });
     },

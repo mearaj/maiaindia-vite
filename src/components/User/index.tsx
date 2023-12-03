@@ -19,13 +19,13 @@ export default function UserComponent() {
         {userState && (
           <Box
             component="img"
-            src={userState.user.photoURL ?? imagePlaceholder}
+            src={userState.profile.photoURL ?? imagePlaceholder}
             alt="user"
             sx={{ width: '60px', borderRadius: '50%', marginRight: '16px' }}
           />
         )}
         <Box>
-          {userState && <Box>{userState.user.displayName}</Box>}
+          {userState && <Box>{userState.profile.displayName}</Box>}
           {userState ? <SignOutButton /> : <SignInButton />}
         </Box>
       </Box>
