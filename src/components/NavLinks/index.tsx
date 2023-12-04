@@ -34,24 +34,24 @@ export default function NavLinks() {
     <>
       {isAdmin && (
         <>
-          <Link component={NavLink} to={appAbsoluteRoutes.adminHomeAbs}>
-            <Button
-              fullWidth
-              variant={
-                isActiveByEqual(
-                  [appAbsoluteRoutes.adminHomeAbs, appAbsoluteRoutes.admin],
-                  location
-                )
-                  ? 'contained'
-                  : 'text'
-              }
-              size="large"
-              startIcon={<Home />}
-              sx={linkButtonStyle}
-            >
-              Admin Home
-            </Button>
-          </Link>
+          {/* <Link component={NavLink} to={appAbsoluteRoutes.adminHomeAbs}> */}
+          {/*  <Button */}
+          {/*    fullWidth */}
+          {/*    variant={ */}
+          {/*      isActiveByEqual( */}
+          {/*        [appAbsoluteRoutes.adminHomeAbs, appAbsoluteRoutes.admin], */}
+          {/*        location */}
+          {/*      ) */}
+          {/*        ? 'contained' */}
+          {/*        : 'text' */}
+          {/*    } */}
+          {/*    size="large" */}
+          {/*    startIcon={<Home />} */}
+          {/*    sx={linkButtonStyle} */}
+          {/*  > */}
+          {/*    Admin Home */}
+          {/*  </Button> */}
+          {/* </Link> */}
           <Link component={NavLink} to={appAbsoluteRoutes.adminOrders}>
             <Button
               fullWidth

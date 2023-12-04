@@ -50,11 +50,13 @@ export const userPlaceholderUrl = `https://firebasestorage.googleapis.com/v0/b/m
 export const userAtom = atom<AppUser>({
   key: recoilKeys.userAtom,
   dangerouslyAllowMutability: true,
-  default: { authState: AuthState.loading, userState: null },
+  default: { authState: AuthState.idle, userState: null },
   effects: [
-    ({ setSelf }) => {
+    ({ setSelf, getPromise, node }) => {
       return onAuthStateChanged(appFirebaseAuth, async (user: User | null) => {
         if (user) {
+          const prevAuthState = await getPromise(node);
+          setSelf({ ...prevAuthState, authState: AuthState.loading });
           /*
            * 1. Check if user profile exist at firebase firestore database.
            * 2. If user profile doesn't exist, then create a new profile from social profile
@@ -118,7 +120,7 @@ export const userAtom = atom<AppUser>({
             userProfile.displayName = user.displayName;
             updateProfileRequired = true;
           }
-          if (!userProfile.email && userProfile.email) {
+          if (!userProfile.email && user.email) {
             userProfile.email = user.email;
             updateProfileRequired = true;
           }

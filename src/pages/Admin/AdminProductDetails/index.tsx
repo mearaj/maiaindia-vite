@@ -2,7 +2,7 @@ import { Header, Loader } from '@/components';
 import { Box } from '@mui/material';
 import { Swiper, SwiperClass, SwiperSlide } from 'swiper/react';
 import { FreeMode, Navigation, Thumbs } from 'swiper/modules';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ReactNode, useState } from 'react';
 import { useRecoilValueLoadable } from 'recoil';
 import { productIdSelector } from '@/recoil/selectors/productId';
@@ -11,6 +11,7 @@ import ProductPrice from '@/components/Product/Price';
 import styles from './index.module.css';
 import AddUpdateButton from '@/components/Buttons/AddUpdate';
 import BuyButton from '@/components/Buttons/Buy';
+import { appAbsoluteRoutes } from '@/Router';
 
 export default function AdminProductDetailsPage() {
   const params = useParams();
@@ -20,6 +21,7 @@ export default function AdminProductDetailsPage() {
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperClass | undefined>();
   const { contents: preferredImgSrc, state: imagesState } =
     useRecoilValueLoadable(imagesByProductIDSelector(params.id as string));
+  const navigate = useNavigate();
 
   if (state === 'hasError' || imagesState === 'hasError') {
     return (
@@ -102,7 +104,12 @@ export default function AdminProductDetailsPage() {
 
   return (
     <Box className={styles.layout}>
-      <Header showBackIcon />
+      <Header
+        showBackIcon
+        onBackIconClick={() => {
+          navigate(appAbsoluteRoutes.adminProducts);
+        }}
+      />
       <Box className={styles.body}>
         {swiperComponent}
         {swiperThumbsComponent}
