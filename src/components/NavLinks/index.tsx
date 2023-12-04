@@ -1,5 +1,12 @@
 import { Box, Button, Divider, Link, SxProps, Theme } from '@mui/material';
-import { Add, AddTask, ContactPhone, Home, Message } from '@mui/icons-material';
+import {
+  Add,
+  AddTask,
+  ContactPhone,
+  Home,
+  Message,
+  ShoppingBag,
+} from '@mui/icons-material';
 import InfoIcon from '@mui/icons-material/Info';
 import PolicyIcon from '@mui/icons-material/Policy';
 import ProfileIcon from '@mui/icons-material/AccountCircle';
@@ -27,12 +34,12 @@ export default function NavLinks() {
     <>
       {isAdmin && (
         <>
-          <Link component={NavLink} to={appAbsoluteRoutes.adminHome}>
+          <Link component={NavLink} to={appAbsoluteRoutes.adminHomeAbs}>
             <Button
               fullWidth
               variant={
                 isActiveByEqual(
-                  [appAbsoluteRoutes.adminHome, appAbsoluteRoutes.admin],
+                  [appAbsoluteRoutes.adminHomeAbs, appAbsoluteRoutes.admin],
                   location
                 )
                   ? 'contained'
@@ -60,6 +67,24 @@ export default function NavLinks() {
               Admin Orders
             </Button>
           </Link>
+          <Link component={NavLink} to={appAbsoluteRoutes.adminProducts}>
+            <Button
+              fullWidth
+              variant={
+                isActiveByEqual([appAbsoluteRoutes.adminProducts], location)
+                  ? 'contained'
+                  : 'text'
+              }
+              size="large"
+              startIcon={<ShoppingBag />}
+              sx={{
+                ...linkButtonStyle,
+                marginBottom: '4px',
+              }}
+            >
+              Admin Products
+            </Button>
+          </Link>
           <Link component={NavLink} to={appAbsoluteRoutes.adminProductsAdd}>
             <Button
               fullWidth
@@ -72,7 +97,7 @@ export default function NavLinks() {
               startIcon={<Add />}
               sx={{
                 ...linkButtonStyle,
-                marginBottom: isAdmin ? '0px' : '4px',
+                marginBottom: '4px',
               }}
             >
               Admin Add Product

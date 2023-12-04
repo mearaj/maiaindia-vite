@@ -14,10 +14,14 @@ import AuthRoutes from '@/Auth';
 import AboutUsPage from '@/pages/AboutUs';
 import TermsConditionsPage from '@/pages/TermsConditions';
 import PrivacyPolicyPage from '@/pages/PrivacyPolicy';
+import AdminProductsPage from '@/pages/Admin/Products';
+import AdminProductDetailsPage from '@/pages/Admin/AdminProductDetails';
 // Abs implies absolute
 
 const homeAbs = '/products';
 const homeRelative = 'products';
+const adminHomeAbs = '/admin/products';
+const adminHomeRelative = 'products';
 
 export const appAbsoluteRoutes = {
   root: '/',
@@ -32,7 +36,9 @@ export const appAbsoluteRoutes = {
   cancellationRefundPolicies: '/cancellationRefundPolicy',
   aboutUs: '/aboutUs',
   liveChat: '/liveChat',
-  adminHome: '/admin/home',
+  adminHomeAbs,
+  adminProducts: '/admin/products',
+  adminProductDetails: '/admin/products/:id',
   adminOrders: '/admin/orders',
   adminProductsAdd: '/admin/products/add',
   profile: '/profile',
@@ -51,10 +57,13 @@ export const appRelativeRoutes = {
   termsConditions: 'termsConditions',
   cancellationRefundPolicy: 'cancellationRefundPolicy',
   liveChat: 'liveChat',
+  adminHomeRelative, // relative to admin
+  adminProducts: 'products', // relative to admin
   profile: 'profile',
   adminHome: 'home', // relative to admin
   adminOrders: 'orders', // relative to admin
   adminProductsAdd: 'products/add', // relative to admin,
+  adminProductDetails: 'products/:id', // relative to admin,
 };
 
 export const router = createBrowserRouter([
@@ -119,7 +128,7 @@ export const router = createBrowserRouter([
             children: [
               {
                 path: appRelativeRoutes.root,
-                element: <Navigate to={appAbsoluteRoutes.adminHome} />,
+                element: <Navigate to={appAbsoluteRoutes.adminHomeAbs} />,
               },
               {
                 path: appRelativeRoutes.adminHome,
@@ -132,6 +141,14 @@ export const router = createBrowserRouter([
               {
                 path: appRelativeRoutes.adminProductsAdd,
                 element: <AdminAddProductPage />,
+              },
+              {
+                path: appRelativeRoutes.adminProducts,
+                element: <AdminProductsPage />,
+              },
+              {
+                path: appRelativeRoutes.adminProductDetails,
+                element: <AdminProductDetailsPage />,
               },
             ],
           },
