@@ -3,10 +3,12 @@ import {
   supportChatsAtom,
   supportChatUsersAtom,
 } from '@/recoil/atoms/supportChat';
-import { appFirestore } from '@/firebase';
+import { appFirebaseStorage, appFirestore } from '@/firebase';
 import { doc, getDoc } from '@firebase/firestore';
 import { userAtom } from '@/recoil/atoms';
 import { useEffect } from 'react';
+import { FirebaseError } from '@firebase/util';
+import { getDownloadURL, ref } from '@firebase/storage';
 import { adminUsers, UserProfile } from '@/config';
 
 export default function SupportChatUsersSideEffects() {
@@ -49,6 +51,21 @@ export default function SupportChatUsersSideEffects() {
                     ...userDocRef.data().profile,
                     uid: eachMemberUID,
                   };
+                  const firebaseImageRef = ref(
+                    appFirebaseStorage,
+                    `users/${userProfile.uid}/profile`
+                  );
+                  try {
+                    userProfile.photoURL =
+                      await getDownloadURL(firebaseImageRef);
+                  } catch (e) {
+                    if (e instanceof FirebaseError) {
+                      // If photoURL is not found then remove it from profile
+                      if (e.code === 'storage/object-not-found') {
+                        userProfile.photoURL = null;
+                      }
+                    }
+                  }
                 }
                 currentChatUsers.push(userProfile);
               }

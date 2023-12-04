@@ -32,7 +32,10 @@ export default function LiveChatPage() {
   const supportChatMessages = useRecoilValue(supportChatsMessagesAtom);
 
   const handleSubmit = async () => {
-    const textValueCurr = textValue;
+    const textValueCurr = textValue.trim();
+    if (textValueCurr.length === 0) {
+      return;
+    }
     setTextValue('');
     setTimeout(() => {
       if (ref && ref.current) {

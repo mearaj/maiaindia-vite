@@ -96,7 +96,11 @@ export const userAtom = atom<AppUser>({
               // If photoURL is not found then remove it from profile
               if (e.code === 'storage/object-not-found') {
                 userProfile.photoURL = null;
+              } else {
+                console.log(e);
               }
+            } else {
+              console.log(e);
             }
           }
           // If profile picture doesn't exist, then fetch image from google profile

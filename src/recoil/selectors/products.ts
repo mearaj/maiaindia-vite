@@ -8,7 +8,6 @@ import {
 } from '@/recoil/atoms/allProducts';
 import { appFirebaseStorage } from '@/firebase';
 import { getDownloadURL, listAll, ref } from '@firebase/storage';
-import imagePlaceholder from '@/assets/images/placeholder.svg';
 
 export const productsSelector = selector({
   key: recoilKeys.productsSelector,
@@ -38,9 +37,9 @@ export const imagesByProductIDSelector = selectorFamily({
           imagesURLs.push(imageURL);
         }
       }
-      if (imagesURLs.length === 0) {
-        return [imagePlaceholder];
-      }
+      // if (imagesURLs.length === 0) {
+      //   return [imagePlaceholder];
+      // }
       return imagesURLs;
     },
 });

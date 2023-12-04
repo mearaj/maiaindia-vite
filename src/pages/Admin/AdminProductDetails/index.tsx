@@ -9,8 +9,6 @@ import { productIdSelector } from '@/recoil/selectors/productId';
 import { imagesByProductIDSelector } from '@/recoil/selectors/products';
 import ProductPrice from '@/components/Product/Price';
 import styles from './index.module.css';
-import AddUpdateButton from '@/components/Buttons/AddUpdate';
-import BuyButton from '@/components/Buttons/Buy';
 import { appAbsoluteRoutes } from '@/Router';
 
 export default function AdminProductDetailsPage() {
@@ -117,13 +115,6 @@ export default function AdminProductDetailsPage() {
           <div className={styles.productName}>{contents.name}</div>
           <ProductPrice product={contents} />
         </div>
-        <Box sx={{ padding: '16px' }}>
-          <AddUpdateButton
-            product={contents}
-            sxAddButton={{ marginBottom: '16px' }}
-          />
-          <BuyButton product={contents} />
-        </Box>
       </Box>
     </Box>
   );
