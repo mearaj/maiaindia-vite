@@ -1,12 +1,10 @@
 import {
-  Alert,
   AlertColor,
   Box,
   FormControl,
   FormLabel,
   LinearProgress,
   OutlinedInput,
-  Snackbar,
   useTheme,
 } from '@mui/material';
 import { useRecoilState, useSetRecoilState } from 'recoil';
@@ -29,6 +27,7 @@ import { doc, getDoc, setDoc } from '@firebase/firestore';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
 import createStyles from './styles';
 import { UserProfile } from '@/config';
+import SnackbarDialog from '@/components/Dialogs/SnackBar';
 
 /*
  * This Page assumes it's inside AuthRoutes and hence user should exist
@@ -127,20 +126,7 @@ export default function ProfilePage() {
 
   const showSnackbar = (severity: AlertColor, message: string) => {
     setDialogComponent(
-      <Snackbar
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        open
-        autoHideDuration={6000}
-        onClose={() => setDialogComponent(null)}
-      >
-        <Alert
-          onClose={() => setDialogComponent(null)}
-          severity={severity}
-          sx={{ width: '100%' }}
-        >
-          {message}
-        </Alert>
-      </Snackbar>
+      <SnackbarDialog severity={severity} message={message} />
     );
   };
 

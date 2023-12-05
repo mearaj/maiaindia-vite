@@ -63,20 +63,6 @@ export default function AddUpdateButton({ product }: AddUpdateButtonProps) {
     !cartItems[product.id] || cartItems[product.id].quantity < 1 || !user
       ? 0
       : cartItems[product.id].quantity;
-  if (!quantity) {
-    return (
-      <Button variant="text" fullWidth onClick={handleCartIncrement}>
-        <AddToCartIcon
-          sx={{
-            height: '32px',
-            width: 'auto',
-            marginRight: '4px',
-          }}
-        />
-        <Box sx={{ fontSize: '16px' }}>Add</Box>
-      </Button>
-    );
-  }
 
   return (
     <Box
@@ -89,14 +75,36 @@ export default function AddUpdateButton({ product }: AddUpdateButtonProps) {
       }}
     >
       <Button
+        variant="text"
+        fullWidth
+        onClick={handleCartIncrement}
+        sx={{ display: quantity < 1 ? 'flex' : 'none' }}
+      >
+        <AddToCartIcon
+          sx={{
+            height: '32px',
+            width: 'auto',
+            marginRight: '4px',
+          }}
+        />
+        <Box sx={{ fontSize: '16px' }}>Add</Box>
+      </Button>
+      <Button
+        sx={{
+          display: quantity > 0 ? 'flex' : 'none',
+          minWidth: 0,
+          padding: '4px',
+        }}
         onClick={onDecrementClicked}
-        sx={{ minWidth: 0, padding: '4px' }}
         variant="outlined"
       >
         <Remove />
       </Button>
       <Box
         sx={{
+          display: quantity > 0 ? 'flex' : 'none',
+          minWidth: 0,
+          padding: '4px',
           lineHeight: 1,
           fontSize: '22px',
         }}
@@ -104,8 +112,12 @@ export default function AddUpdateButton({ product }: AddUpdateButtonProps) {
         {quantity}
       </Box>
       <Button
+        sx={{
+          display: quantity > 0 ? 'flex' : 'none',
+          minWidth: 0,
+          padding: '4px',
+        }}
         onClick={handleCartIncrement}
-        sx={{ minWidth: 0, padding: '4px' }}
         variant="outlined"
       >
         <Add />

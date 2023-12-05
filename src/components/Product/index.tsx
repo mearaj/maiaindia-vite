@@ -66,9 +66,6 @@ export default function ProductComponent({ product }: { product: Product }) {
           boxShadow: 24,
         },
       }}
-      onClick={() => {
-        navigate(`/products/${product.id}`);
-      }}
     >
       <Box
         sx={{
@@ -79,66 +76,41 @@ export default function ProductComponent({ product }: { product: Product }) {
         }}
       >
         <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'flex-start',
-            padding: '16px',
+          onClick={() => {
+            navigate(`/products/${product.id}`);
           }}
         >
-          {imageComponent}
-        </Box>
-        <Box sx={{ padding: '4px 8px 4px' }}>
           <Box
             sx={{
-              fontSize: '14px',
-              lineHeight: 1,
-              marginBottom: '4px',
-              fontWeight: 500,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'flex-start',
+              padding: '16px',
             }}
           >
-            {product.name}
+            {imageComponent}
           </Box>
-          <ProductPrice product={product} />
+          <Box sx={{ padding: '4px 8px 4px' }}>
+            <Box
+              sx={{
+                fontSize: '14px',
+                lineHeight: 1,
+                marginBottom: '4px',
+                fontWeight: 500,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {product.name}
+            </Box>
+            <ProductPrice product={product} />
+          </Box>
         </Box>
-        <Box
-          sx={{ padding: '0px 8px' }}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            if (cardContentReference.current) {
-              cardContentReference.current.focus();
-            }
-          }}
-        >
+        <Box sx={{ padding: '0px 8px' }}>
           <AddUpdateButton product={product} />
         </Box>
       </Box>
-      {/* {cart.items && */}
-      {/*  cart.items[product.id] && */}
-      {/*  cart.items[product.id].quantity > 0 && ( */}
-      {/*    <Box */}
-      {/*      sx={{ */}
-      {/*        position: 'absolute', */}
-      {/*        bottom: '0px', */}
-      {/*        right: '0px', */}
-      {/*        backgroundColor: theme.palette.primary.main, */}
-      {/*        // borderRadius: '50%', */}
-      {/*        lineHeight: '1', */}
-      {/*        display: 'flex', */}
-      {/*        alignItems: 'center', */}
-      {/*        justifyContent: 'center', */}
-      {/*        color: theme.palette.primary.contrastText, */}
-      {/*        height: '20px', */}
-      {/*        width: '20px', */}
-      {/*      }} */}
-      {/*    > */}
-      {/*      {cart.items[product.id].quantity} */}
-      {/*    </Box> */}
-      {/*  )} */}
     </Paper>
   );
 }
