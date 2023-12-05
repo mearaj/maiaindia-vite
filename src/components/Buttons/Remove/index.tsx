@@ -1,7 +1,6 @@
 import { Box, Button, ButtonProps, SxProps, Theme } from '@mui/material';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { cartAtom } from '@/recoil/atoms/cart';
-import { useEffect, useState } from 'react';
 import { userAtom } from '@/recoil/atoms';
 import { Delete } from '@mui/icons-material';
 import { Product } from '@/recoil/data/product';
@@ -18,7 +17,6 @@ export default function RemoveButton({
 }: RemoveButtonProps) {
   const [cart, setCart] = useRecoilState(cartAtom);
   const user = useRecoilValue(userAtom);
-  const [showDialog, setShowDialog] = useState(false);
 
   const updateQuantity = (quantity: number) => {
     let { items } = cart;
@@ -36,12 +34,6 @@ export default function RemoveButton({
     }
     setCart({ items, updatedAt: Date.now() });
   };
-
-  useEffect(() => {
-    if (user && showDialog) {
-      setShowDialog(false);
-    }
-  }, [showDialog, user]);
 
   const cartItems = cart.items;
   if (!cartItems[product.id] || cartItems[product.id].quantity < 1 || !user) {

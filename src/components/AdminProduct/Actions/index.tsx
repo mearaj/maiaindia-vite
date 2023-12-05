@@ -31,7 +31,7 @@ export default function ProductActions({ product, sx }: ProductActionProps) {
       }}
     >
       <DetailsButton product={product} />
-      <AddUpdateButton product={product} sxAddButton={buttonStyle} />
+      <AddUpdateButton product={product} />
       <BuyButton
         product={product}
         sx={{ ...buttonStyle, marginBottom: '0px' }}

@@ -84,10 +84,7 @@ export default function CartItemComponent({
         }}
       >
         {imageComponent}
-        <AddUpdateButton
-          sxIncDecButtonContainer={{ marginBottom: '8px' }}
-          product={product}
-        />
+        <AddUpdateButton product={product} />
       </Box>
       <Box
         sx={{

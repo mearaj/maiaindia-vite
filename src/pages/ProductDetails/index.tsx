@@ -111,10 +111,9 @@ export default function ProductDetailsPage() {
           <ProductPrice product={contents} />
         </div>
         <Box sx={{ padding: '16px' }}>
-          <AddUpdateButton
-            product={contents}
-            sxAddButton={{ marginBottom: '16px' }}
-          />
+          <Box sx={{ marginBottom: '8px' }}>
+            <AddUpdateButton product={contents} />
+          </Box>
           <BuyButton product={contents} />
         </Box>
       </Box>

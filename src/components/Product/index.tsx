@@ -1,40 +1,18 @@
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-import { Box, Paper, useTheme } from '@mui/material';
-import { useRecoilValue, useRecoilValueLoadable } from 'recoil';
-import { cartAtom } from '@/recoil/atoms/cart';
+import { ReactNode, useRef } from 'react';
+import { Box, Paper } from '@mui/material';
+import { useRecoilValueLoadable } from 'recoil';
 import { Product } from '@/recoil/data/product';
 import { imagesByProductIDSelector } from '@/recoil/selectors/products';
 import { Loader } from '@/components';
-import ProductActions from '@/components/Product/Actions';
+import { useNavigate } from 'react-router-dom';
 import ProductPrice from '@/components/Product/Price';
-import ContentDrawer from '@/components/ContentDrawer';
+import AddUpdateButton from '@/components/Buttons/AddUpdate';
 
 export default function ProductComponent({ product }: { product: Product }) {
   const cardContentReference = useRef<HTMLDivElement>(null);
-  const [activeProductID, setActiveProductID] = useState('');
-  const theme = useTheme();
-  const cart = useRecoilValue(cartAtom);
   const { contents: preferredImgSrc, state: imagesState } =
     useRecoilValueLoadable(imagesByProductIDSelector(product.id));
-
-  const onWindowClicked = useCallback(
-    (ev: MouseEvent) => {
-      if (cardContentReference && cardContentReference.current) {
-        if (
-          !ev.composedPath().includes(cardContentReference.current) &&
-          activeProductID === product.id
-        ) {
-          setActiveProductID('');
-        }
-      }
-    },
-    [activeProductID, product.id]
-  );
-
-  useEffect(() => {
-    window.addEventListener('click', onWindowClicked);
-    return () => window.removeEventListener('click', onWindowClicked);
-  }, [onWindowClicked]);
+  const navigate = useNavigate();
 
   let imageComponent: ReactNode;
   if (imagesState === 'loading') {
@@ -82,8 +60,14 @@ export default function ProductComponent({ product }: { product: Product }) {
         overflowX: 'hidden',
         overflowY: 'auto',
         borderRadius: 0,
-        boxShadow: activeProductID === product.id ? 24 : 1,
+        boxShadow: 1,
         minHeight: '200px',
+        '&:active,&:hover': {
+          boxShadow: 24,
+        },
+      }}
+      onClick={() => {
+        navigate(`/products/${product.id}`);
       }}
     >
       <Box
@@ -92,9 +76,6 @@ export default function ProductComponent({ product }: { product: Product }) {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-        }}
-        onClick={(__) => {
-          setActiveProductID(product.id);
         }}
       >
         <Box
@@ -123,36 +104,41 @@ export default function ProductComponent({ product }: { product: Product }) {
           </Box>
           <ProductPrice product={product} />
         </Box>
+        <Box
+          sx={{ padding: '0px 8px' }}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (cardContentReference.current) {
+              cardContentReference.current.focus();
+            }
+          }}
+        >
+          <AddUpdateButton product={product} />
+        </Box>
       </Box>
-      {cart.items &&
-        cart.items[product.id] &&
-        cart.items[product.id].quantity > 0 && (
-          <Box
-            sx={{
-              position: 'absolute',
-              bottom: '0px',
-              right: '0px',
-              backgroundColor: theme.palette.primary.main,
-              // borderRadius: '50%',
-              lineHeight: '1',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: theme.palette.primary.contrastText,
-              height: '20px',
-              width: '20px',
-            }}
-          >
-            {cart.items[product.id].quantity}
-          </Box>
-        )}
-      <ContentDrawer
-        product={product}
-        activeProductID={activeProductID}
-        setActiveProductID={setActiveProductID}
-      >
-        <ProductActions product={product} />
-      </ContentDrawer>
+      {/* {cart.items && */}
+      {/*  cart.items[product.id] && */}
+      {/*  cart.items[product.id].quantity > 0 && ( */}
+      {/*    <Box */}
+      {/*      sx={{ */}
+      {/*        position: 'absolute', */}
+      {/*        bottom: '0px', */}
+      {/*        right: '0px', */}
+      {/*        backgroundColor: theme.palette.primary.main, */}
+      {/*        // borderRadius: '50%', */}
+      {/*        lineHeight: '1', */}
+      {/*        display: 'flex', */}
+      {/*        alignItems: 'center', */}
+      {/*        justifyContent: 'center', */}
+      {/*        color: theme.palette.primary.contrastText, */}
+      {/*        height: '20px', */}
+      {/*        width: '20px', */}
+      {/*      }} */}
+      {/*    > */}
+      {/*      {cart.items[product.id].quantity} */}
+      {/*    </Box> */}
+      {/*  )} */}
     </Paper>
   );
 }

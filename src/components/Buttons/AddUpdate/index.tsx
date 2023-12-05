@@ -1,4 +1,4 @@
-import { Box, Button, SxProps, Theme } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { cartAtom } from '@/recoil/atoms/cart';
 import AddToCartIcon from '@mui/icons-material/AddShoppingCart';
@@ -6,20 +6,14 @@ import React from 'react';
 import { userAtom } from '@/recoil/atoms';
 import { Product } from '@/recoil/data/product';
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
-import IncDecButton from '@/components/Buttons/IncDec';
+import { Add, Remove } from '@mui/icons-material';
 import SignInRequiredDialog from '@/components/Dialogs/SignInRequired';
 
 interface AddUpdateButtonProps {
   product: Product;
-  sxAddButton?: SxProps<Theme>;
-  sxIncDecButtonContainer?: SxProps<Theme>;
 }
 
-export default function AddUpdateButton({
-  product,
-  sxAddButton,
-  sxIncDecButtonContainer,
-}: AddUpdateButtonProps) {
+export default function AddUpdateButton({ product }: AddUpdateButtonProps) {
   const [cart, setCart] = useRecoilState(cartAtom);
   const user = useRecoilValue(userAtom);
   const setActiveDialog = useSetRecoilState(selectedDialogAtom);
@@ -41,26 +35,37 @@ export default function AddUpdateButton({
     setCart({ items, updatedAt: Date.now() });
   };
   const handleCartIncrement = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    _e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
-    e.preventDefault();
-    e.stopPropagation();
     if (!user.userState) {
       setActiveDialog(<SignInRequiredDialog />);
       return;
     }
-    updateQuantity(1);
+    const cartItems = cart.items;
+    const quantity = cartItems[product.id]
+      ? cartItems[product.id].quantity + 1
+      : 1;
+    updateQuantity(quantity);
+  };
+
+  const onDecrementClicked = (
+    _e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    const cartItems = cart.items;
+    const quantity = cartItems[product.id]
+      ? cartItems[product.id].quantity - 1
+      : 0;
+    updateQuantity(quantity);
   };
 
   const cartItems = cart.items;
-  if (!cartItems[product.id] || cartItems[product.id].quantity < 1 || !user) {
+  const quantity =
+    !cartItems[product.id] || cartItems[product.id].quantity < 1 || !user
+      ? 0
+      : cartItems[product.id].quantity;
+  if (!quantity) {
     return (
-      <Button
-        sx={sxAddButton}
-        variant="outlined"
-        fullWidth
-        onClick={handleCartIncrement}
-      >
+      <Button variant="text" fullWidth onClick={handleCartIncrement}>
         <AddToCartIcon
           sx={{
             height: '32px',
@@ -72,5 +77,39 @@ export default function AddUpdateButton({
       </Button>
     );
   }
-  return <IncDecButton sx={sxIncDecButtonContainer} product={product} />;
+
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        height: '44px',
+        padding: '6px 0',
+      }}
+    >
+      <Button
+        onClick={onDecrementClicked}
+        sx={{ minWidth: 0, padding: '4px' }}
+        variant="outlined"
+      >
+        <Remove />
+      </Button>
+      <Box
+        sx={{
+          lineHeight: 1,
+          fontSize: '22px',
+        }}
+      >
+        {quantity}
+      </Box>
+      <Button
+        onClick={handleCartIncrement}
+        sx={{ minWidth: 0, padding: '4px' }}
+        variant="outlined"
+      >
+        <Add />
+      </Button>
+    </Box>
+  );
 }
