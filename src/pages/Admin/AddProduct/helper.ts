@@ -18,6 +18,15 @@ export interface AddProductForm {
   allowDismissAction: boolean;
 }
 
+export interface ProductForm {
+  name: string;
+  details: string;
+  mrp: number | string;
+  sp: number | string;
+  category: Category;
+  id: string | null;
+}
+
 export const errorUploadingImage = {
   image: undefined,
   processingState: 'error',

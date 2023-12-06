@@ -50,7 +50,7 @@ export const userPlaceholderUrl = `https://firebasestorage.googleapis.com/v0/b/m
 export const userAtom = atom<AppUser>({
   key: recoilKeys.userAtom,
   dangerouslyAllowMutability: true,
-  default: { authState: AuthState.idle, userState: null },
+  default: { authState: AuthState.loading, userState: null },
   effects: [
     ({ setSelf, getPromise, node }) => {
       return onAuthStateChanged(appFirebaseAuth, async (user: User | null) => {

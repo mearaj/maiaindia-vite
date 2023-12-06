@@ -130,7 +130,11 @@ export default function Header({
                   zIndex: 1,
                 }}
               >
-                <small>{Object.keys(cart.items).length}</small>
+                <small>
+                  {Object.keys(cart.items).reduce((prev, curr) => {
+                    return prev + cart.items[curr].quantity ?? 0;
+                  }, 0)}
+                </small>
               </Box>
             )}
           </Link>

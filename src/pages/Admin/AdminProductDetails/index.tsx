@@ -54,7 +54,11 @@ export default function AdminProductDetailsPage() {
       <Swiper
         className={styles.swiper}
         modules={[FreeMode, Navigation, Thumbs]}
-        thumbs={thumbsSwiper ? { swiper: thumbsSwiper } : undefined}
+        thumbs={
+          thumbsSwiper && !thumbsSwiper.destroyed
+            ? { swiper: thumbsSwiper }
+            : undefined
+        }
         slidesPerView={1}
         loop
         navigation

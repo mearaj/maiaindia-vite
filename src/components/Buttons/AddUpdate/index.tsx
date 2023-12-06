@@ -7,6 +7,7 @@ import { userAtom } from '@/recoil/atoms';
 import { Product } from '@/recoil/data/product';
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
 import { Add, Remove } from '@mui/icons-material';
+import { cartQuantityByProductIDSelector } from '@/recoil/selectors/cart';
 import SignInRequiredDialog from '@/components/Dialogs/SignInRequired';
 
 interface AddUpdateButtonProps {
@@ -14,26 +15,13 @@ interface AddUpdateButtonProps {
 }
 
 export default function AddUpdateButton({ product }: AddUpdateButtonProps) {
-  const [cart, setCart] = useRecoilState(cartAtom);
+  const cart = useRecoilValue(cartAtom);
   const user = useRecoilValue(userAtom);
   const setActiveDialog = useSetRecoilState(selectedDialogAtom);
+  const [quantity, setQuantity] = useRecoilState(
+    cartQuantityByProductIDSelector(product.id)
+  );
 
-  const updateQuantity = (quantity: number) => {
-    let { items } = cart;
-    if (quantity < 1) {
-      const newCartItems = { ...items };
-      delete newCartItems[product.id];
-      items = newCartItems;
-    } else {
-      items = {
-        ...items,
-        [product.id]: {
-          quantity,
-        },
-      };
-    }
-    setCart({ items, updatedAt: Date.now() });
-  };
   const handleCartIncrement = (
     _e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
@@ -42,27 +30,21 @@ export default function AddUpdateButton({ product }: AddUpdateButtonProps) {
       return;
     }
     const cartItems = cart.items;
-    const quantity = cartItems[product.id]
+    const quantityAlt = cartItems[product.id]
       ? cartItems[product.id].quantity + 1
       : 1;
-    updateQuantity(quantity);
+    setQuantity(quantityAlt);
   };
 
   const onDecrementClicked = (
     _e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     const cartItems = cart.items;
-    const quantity = cartItems[product.id]
+    const quantityAlt = cartItems[product.id]
       ? cartItems[product.id].quantity - 1
       : 0;
-    updateQuantity(quantity);
+    setQuantity(quantityAlt);
   };
-
-  const cartItems = cart.items;
-  const quantity =
-    !cartItems[product.id] || cartItems[product.id].quantity < 1 || !user
-      ? 0
-      : cartItems[product.id].quantity;
 
   return (
     <Box
