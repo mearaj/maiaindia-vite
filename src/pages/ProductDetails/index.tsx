@@ -11,6 +11,7 @@ import ProductPrice from '@/components/Product/Price';
 import styles from './index.module.css';
 import AddUpdateButton from '@/components/Buttons/AddUpdate';
 import BuyButton from '@/components/Buttons/Buy';
+import CommonPageLayout from '@/components/Layouts/CommonPage';
 
 export default function ProductDetailsPage() {
   const params = useParams();
@@ -23,14 +24,17 @@ export default function ProductDetailsPage() {
 
   if (state === 'hasError' || imagesState === 'hasError') {
     return (
-      <Box className={styles.layout}>
-        <Header />
+      <CommonPageLayout>
         <Box className={styles.bodyAlt}>{contents.toString()}</Box>
-      </Box>
+      </CommonPageLayout>
     );
   }
   if (state === 'loading') {
-    return <Loader showHeader />;
+    return (
+      <CommonPageLayout>
+        <Loader />
+      </CommonPageLayout>
+    );
   }
   let swiperComponent: ReactNode;
   let swiperThumbsComponent: ReactNode;
@@ -54,7 +58,9 @@ export default function ProductDetailsPage() {
       <Swiper
         className={styles.swiper}
         modules={[FreeMode, Navigation, Thumbs]}
-        thumbs={thumbsSwiper ? { swiper: thumbsSwiper } : undefined}
+        thumbs={
+          thumbsSwiper && preferredImgSrc ? { swiper: thumbsSwiper } : undefined
+        }
         slidesPerView={1}
         loop
         navigation

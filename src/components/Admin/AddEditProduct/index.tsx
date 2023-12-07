@@ -10,7 +10,7 @@ import {
   OutlinedInput,
 } from '@mui/material';
 import Button from '@mui/material/Button';
-import { categories, Category } from '@/recoil/data/category';
+import { Category } from '@/recoil/data/category';
 import { Cancel, Edit } from '@mui/icons-material';
 import {
   addDoc,
@@ -42,7 +42,6 @@ interface ProcessingState {
 }
 
 enum FormModeEnum {
-  new,
   read,
   edit,
 }
@@ -50,23 +49,13 @@ enum FormModeEnum {
 export default function AddEditProductComponent({
   productForm: parentProductForm,
 }: {
-  productForm: ProductForm | null;
+  productForm: ProductForm;
 }) {
-  const initialProductForm: ProductForm = {
-    name: '',
-    details: '',
-    mrp: '',
-    sp: '',
-    category: categories[categories.length - 1],
-    id: '',
-  };
-
   // const styles = createStyles(theme);
-  const [productForm, setProductForm] = useState<ProductForm>(
-    parentProductForm || initialProductForm
-  );
+  const [productForm, setProductForm] =
+    useState<ProductForm>(parentProductForm);
   const [formMode, setFormMode] = useState(
-    parentProductForm ? FormModeEnum.read : FormModeEnum.new
+    parentProductForm.id != null ? FormModeEnum.read : FormModeEnum.edit
   );
   const [processingState, setProcessingState] = useState<ProcessingState>({
     uploadingState: UploadingState.idle,
@@ -186,7 +175,7 @@ export default function AddEditProductComponent({
       | SyntheticEvent<Element, Event>
   ) => {
     event.preventDefault();
-    setProductForm(parentProductForm || initialProductForm);
+    setProductForm(parentProductForm);
   };
 
   const formLabelSx = {
@@ -269,6 +258,9 @@ export default function AddEditProductComponent({
       );
       break;
     case FormModeEnum.edit:
+      if (productForm.id === null) {
+        break;
+      }
       addEditCancelComponent = (
         <Box
           sx={{

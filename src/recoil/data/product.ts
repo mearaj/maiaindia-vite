@@ -1,5 +1,5 @@
 import { FieldValue, Timestamp } from '@firebase/firestore';
-import { Category } from '@/recoil/data/category';
+import { categories, Category } from '@/recoil/data/category';
 
 export interface ProductPrice {
   timestamp: FieldValue | Timestamp;
@@ -56,9 +56,17 @@ export interface ProductForm {
   mrp: number | string;
   sp: number | string;
   category: Category;
-  id: string;
+  id: string | null;
 }
 
+export const defaultProductForm: ProductForm = {
+  name: '',
+  details: '',
+  mrp: '',
+  sp: '',
+  category: categories[categories.length - 1],
+  id: null,
+};
 export const errorUploadingImage = {
   image: undefined,
   processingState: 'error',

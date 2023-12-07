@@ -7,6 +7,8 @@ const rootStyles = (_: Theme): SxProps<Theme> => {
     height: '100%',
     width: '100%',
     overflowY: 'auto',
+    justifyContent: 'flex-start',
+    alignItems: 'stretch',
   };
 };
 
@@ -16,8 +18,8 @@ const bodyStyles = (_: Theme): SxProps<Theme> => {
     flexDirection: 'column',
     flexShrink: 0,
     flexGrow: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'stretch',
+    justifyContent: 'flex-start',
   };
 };
 
