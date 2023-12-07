@@ -265,7 +265,7 @@ export default function ProfilePage() {
                   console.log(_e);
                   showSnackbar(
                     'error',
-                    'An error occurred wrong during profile update'
+                    'An error occurred during profile update'
                   );
                 }
                 onCancelClick();

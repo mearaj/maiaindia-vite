@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 import { Product } from '@/recoil/data/product';
-import AdminProductComponent from '@/components/AdminProduct';
+import AdminProductComponent from '@/components/Admin/AdminProduct';
 
 function AdminProducts({ products }: { products: Product[] }) {
   return (

@@ -3,8 +3,8 @@ import { Box } from '@mui/material';
 import { useRecoilValueLoadable } from 'recoil';
 import { productsSelector } from '@/recoil';
 import { ReactNode } from 'react';
+import AdminProducts from '@/components/Admin/AdminProducts';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
-import AdminProducts from '@/components/AdminProducts';
 
 export default function AdminProductsPage() {
   const { contents, state } = useRecoilValueLoadable(productsSelector);
