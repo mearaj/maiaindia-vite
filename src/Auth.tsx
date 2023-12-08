@@ -28,7 +28,9 @@ export default function AuthRoutes() {
         text = null;
     }
     return (
-      <CommonPageLayout>
+      <CommonPageLayout
+        sxBodyProps={{ justifyContent: 'center', alignItems: 'center' }}
+      >
         <Box>{text}</Box>
         <Loader />
       </CommonPageLayout>
@@ -36,7 +38,9 @@ export default function AuthRoutes() {
   }
   if (!userState) {
     return (
-      <CommonPageLayout>
+      <CommonPageLayout
+        sxBodyProps={{ justifyContent: 'center', alignItems: 'center' }}
+      >
         <Box>Sign In required</Box>
         <SignInButton />
       </CommonPageLayout>

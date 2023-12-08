@@ -9,13 +9,13 @@ import placeholderImage from '@/assets/images/placeholder.svg';
 import { ReactNode } from 'react';
 import styles from './index.module.css';
 
-interface AddEditProductImagesProps {
+interface AddEditProductComponentImagesProps {
   product: Product;
 }
 
-export default function AddEditProductImages({
+export default function AddEditProductComponentImages({
   product,
-}: AddEditProductImagesProps) {
+}: AddEditProductComponentImagesProps) {
   const { contents: preferredImgSrc, state: imagesState } =
     useRecoilValueLoadable(imagesByProductIDSelector(product.id));
 
