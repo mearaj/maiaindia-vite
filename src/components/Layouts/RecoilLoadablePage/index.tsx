@@ -21,6 +21,7 @@ export default function RecoilLoadablePageLayout<T>({
       <CommonPageLayout
         sxRootProps={{ alignItems: 'center', justifyContent: 'center' }}
         sxBodyProps={{ alignItems: 'center', justifyContent: 'center' }}
+        {...otherProps}
       >
         <Loader />
       </CommonPageLayout>
@@ -34,6 +35,7 @@ export default function RecoilLoadablePageLayout<T>({
       <CommonPageLayout
         sxRootProps={{ alignItems: 'center', justifyContent: 'center' }}
         sxBodyProps={{ alignItems: 'center', justifyContent: 'center' }}
+        {...otherProps}
       >
         <Box>{message}</Box>
       </CommonPageLayout>
