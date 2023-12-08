@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChangeEvent, ReactNode, SyntheticEvent, useState } from 'react';
+import { ChangeEvent, ReactNode, SyntheticEvent } from 'react';
 import {
   AlertColor,
   Box,
@@ -21,46 +21,30 @@ import {
 } from '@firebase/firestore';
 import { appFirestore } from '@/firebase';
 
-import { Product, ProductForm, ProductWithoutID } from '@/recoil/data/product';
-import { useSetRecoilState } from 'recoil';
+import {
+  Product,
+  ProductFormModeState,
+  ProductFormUploadingState,
+  ProductWithoutID,
+} from '@/recoil/data/product';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
 import { useNavigate } from 'react-router-dom';
+import {
+  productFormModeStateSelector,
+  productFormProcessingStateSelector,
+  productFormSelector,
+} from '@/recoil/selectors/productForm';
 import SnackbarDialog from '@/components/Dialogs/SnackBar';
 import { appAbsoluteRoutes } from '@/Router';
 import CategoriesDropdown from '@/components/Dropdowns/Categories';
 
-enum UploadingState {
-  idle,
-  updatingProduct,
-  creatingProduct,
-  updatingImages,
-}
-
-interface ProcessingState {
-  uploadingState: UploadingState;
-  uploadProgress: number;
-}
-
-enum FormModeEnum {
-  read,
-  edit,
-}
-
-export default function AddEditProductComponent({
-  productForm: parentProductForm,
-}: {
-  productForm: ProductForm;
-}) {
-  // const styles = createStyles(theme);
-  const [productForm, setProductForm] =
-    useState<ProductForm>(parentProductForm);
-  const [formMode, setFormMode] = useState(
-    parentProductForm.id != null ? FormModeEnum.read : FormModeEnum.edit
+export default function AddEditProductComponent() {
+  const [productForm, setProductForm] = useRecoilState(productFormSelector);
+  const [formMode, setFormMode] = useRecoilState(productFormModeStateSelector);
+  const [processingState, setProcessingState] = useRecoilState(
+    productFormProcessingStateSelector
   );
-  const [processingState, setProcessingState] = useState<ProcessingState>({
-    uploadingState: UploadingState.idle,
-    uploadProgress: 0,
-  });
   const setDialogComponent = useSetRecoilState(selectedDialogAtom);
   const navigate = useNavigate();
 
@@ -73,6 +57,7 @@ export default function AddEditProductComponent({
       productForm.details
     );
   };
+
   const handleChange =
     (property: 'name' | 'details' | 'image' | 'mrp' | 'sp') =>
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -80,6 +65,11 @@ export default function AddEditProductComponent({
       let numVal: number | string = parseFloat(val);
       if (Number.isNaN(numVal)) {
         numVal = '';
+      }
+      if (typeof numVal === 'number') {
+        if (numVal < 0) {
+          numVal = 0;
+        }
       }
       switch (property) {
         case 'name':
@@ -109,12 +99,12 @@ export default function AddEditProductComponent({
     if (!isValid()) {
       return;
     }
-    if (formMode === FormModeEnum.read) {
+    if (formMode === ProductFormModeState.read) {
       return;
     }
-    let currentProcessingState = UploadingState.creatingProduct;
-    if (formMode === FormModeEnum.edit) {
-      currentProcessingState = UploadingState.updatingProduct;
+    let currentProcessingState = ProductFormUploadingState.creatingProduct;
+    if (formMode === ProductFormModeState.edit) {
+      currentProcessingState = ProductFormUploadingState.updatingProduct;
     }
     setProcessingState({
       ...processingState,
@@ -157,7 +147,7 @@ export default function AddEditProductComponent({
       }
       severity = 'error';
     } finally {
-      currentProcessingState = UploadingState.idle;
+      currentProcessingState = ProductFormUploadingState.idle;
       setProcessingState({
         ...processingState,
         uploadingState: currentProcessingState,
@@ -175,7 +165,7 @@ export default function AddEditProductComponent({
       | SyntheticEvent<Element, Event>
   ) => {
     event.preventDefault();
-    setProductForm(parentProductForm);
+    // setProductForm(parentProductForm);
   };
 
   const formLabelSx = {
@@ -190,10 +180,10 @@ export default function AddEditProductComponent({
 
   const getUploadProgressContainer = () => {
     let uploadProgressContainer: ReactNode;
-    if (processingState.uploadingState !== UploadingState.idle) {
+    if (processingState.uploadingState !== ProductFormUploadingState.idle) {
       let progressBar: ReactNode;
       switch (processingState.uploadingState) {
-        case UploadingState.creatingProduct:
+        case ProductFormUploadingState.creatingProduct:
           progressBar = (
             <Box>
               <LinearProgress sx={{ width: '100%', marginBottom: '4px' }} />
@@ -201,7 +191,7 @@ export default function AddEditProductComponent({
             </Box>
           );
           break;
-        case UploadingState.updatingProduct:
+        case ProductFormUploadingState.updatingProduct:
           progressBar = (
             <Box>
               <LinearProgress sx={{ width: '100%', marginBottom: '4px' }} />
@@ -233,57 +223,55 @@ export default function AddEditProductComponent({
     return uploadProgressContainer;
   };
   const disableForm =
-    processingState.uploadingState !== UploadingState.idle ||
-    formMode === FormModeEnum.read;
+    processingState.uploadingState !== ProductFormUploadingState.idle ||
+    formMode === ProductFormModeState.read;
   let addEditCancelComponent = <Box>Add New Product</Box>;
-  switch (formMode) {
-    case FormModeEnum.read:
-      addEditCancelComponent = (
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Box sx={{ fontSize: '16px' }}>{productForm.id}</Box>
-          <IconButton
-            onClick={() => {
-              setFormMode(FormModeEnum.edit);
+  if (productForm.id !== null) {
+    switch (formMode) {
+      case ProductFormModeState.read:
+        addEditCancelComponent = (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
-            <Edit />
-          </IconButton>
-        </Box>
-      );
-      break;
-    case FormModeEnum.edit:
-      if (productForm.id === null) {
+            <Box sx={{ fontSize: '16px' }}>{productForm.id}</Box>
+            <IconButton
+              onClick={() => {
+                setFormMode(ProductFormModeState.edit);
+              }}
+            >
+              <Edit />
+            </IconButton>
+          </Box>
+        );
         break;
-      }
-      addEditCancelComponent = (
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Box sx={{ fontSize: '16px' }}>{productForm.id}</Box>
-          <IconButton
-            onClick={() => {
-              setFormMode(FormModeEnum.read);
+      case ProductFormModeState.edit:
+        addEditCancelComponent = (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
-            <Cancel />
-          </IconButton>
-        </Box>
-      );
-      break;
-    default:
-      break;
+            <Box sx={{ fontSize: '16px' }}>{productForm.id}</Box>
+            <IconButton
+              onClick={() => {
+                setFormMode(ProductFormModeState.read);
+              }}
+            >
+              <Cancel />
+            </IconButton>
+          </Box>
+        );
+        break;
+      default:
+        break;
+    }
   }
-
   return (
     <Box
       sx={{

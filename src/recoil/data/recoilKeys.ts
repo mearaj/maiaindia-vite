@@ -20,4 +20,8 @@ export const recoilKeys = {
   selectedSupportChatUserSelector: 'selectedSupportChatUserSelector',
   selectedSupportChatAtom: 'selectedSupportChatAtom',
   selectedDialogAtom: 'selectedDialogAtom',
+  productFormStateAtom: 'productFormStateAtom',
+  productFormProcessingStateSelector: 'productFormProcessingStateSelector',
+  productFormSelector: 'productFormSelector',
+  productFormModeStateSelector: 'productFormModeStateSelector',
 };

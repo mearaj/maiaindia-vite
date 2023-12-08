@@ -1,5 +1,5 @@
 import { FieldValue, Timestamp } from '@firebase/firestore';
-import { categories, Category } from '@/recoil/data/category';
+import { Category } from '@/recoil/data/category';
 
 export interface ProductPrice {
   timestamp: FieldValue | Timestamp;
@@ -32,24 +32,6 @@ export interface Product extends ProductWithoutID {
   id: string;
 }
 
-export interface AddProductForm {
-  name: string;
-  details: string;
-  image?: {
-    url: string;
-    height: number;
-    width: number;
-    extension: string;
-    file: File | null;
-  };
-  mrp: number | string;
-  sp: number | string;
-  category: Category;
-  processingState: 'error' | 'warning' | 'info' | 'success' | 'none';
-  processingMsg: string;
-  allowDismissAction: boolean;
-}
-
 export interface ProductForm {
   name: string;
   details?: string;
@@ -59,17 +41,28 @@ export interface ProductForm {
   id: string | null;
 }
 
-export const defaultProductForm: ProductForm = {
-  name: '',
-  details: '',
-  mrp: '',
-  sp: '',
-  category: categories[categories.length - 1],
-  id: null,
-};
-export const errorUploadingImage = {
-  image: undefined,
-  processingState: 'error',
-  processingMsg: 'Error uploading image locally',
-  allowDismissAction: true,
-};
+export enum ProductFormUploadingState {
+  idle,
+  updatingProduct,
+  creatingProduct,
+  uploadingImagesLocally,
+  removingImagesLocally,
+  uploadingImagesToBackend,
+  removingImagesFromBackend,
+}
+
+export interface ProductFormProcessingState {
+  uploadingState: ProductFormUploadingState;
+  uploadProgress: number;
+}
+
+export enum ProductFormModeState {
+  read,
+  edit,
+}
+
+export interface ProductFormState {
+  productForm: ProductForm;
+  processingState: ProductFormProcessingState;
+  mode: ProductFormModeState;
+}
