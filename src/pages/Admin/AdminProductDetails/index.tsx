@@ -2,11 +2,6 @@ import { Box } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilValueLoadable } from 'recoil';
 import { productIdSelector } from '@/recoil/selectors/productId';
-import {
-  defaultProductForm,
-  Product,
-  ProductForm,
-} from '@/recoil/data/product';
 import { categories } from '@/recoil/data/category';
 import styles from './index.module.css';
 import { appAbsoluteRoutes } from '@/Router';
@@ -22,25 +17,23 @@ export default function AdminProductDetailsPage() {
 
   const navigate = useNavigate();
 
-  let product: Product | undefined;
-  let productForm: ProductForm = defaultProductForm;
-  if (
-    recoilValueLoadable.state === 'hasValue' &&
-    recoilValueLoadable.contents
-  ) {
-    product = recoilValueLoadable.contents as Product;
-    productForm = {
-      id: product.id,
-      name: product.name,
-      details: product.details,
-      mrp: product.price.mrp,
-      sp: product.price.sp,
-      category:
-        categories.find(
-          (eachCategory) => product?.id && eachCategory.id === product.id
-        ) ?? categories[categories.length - 1],
-    };
-  }
+  const product =
+    recoilValueLoadable.state === 'hasValue' && recoilValueLoadable.contents
+      ? recoilValueLoadable.contents
+      : undefined;
+  const productForm = product
+    ? {
+        id: product.id,
+        name: product.name,
+        details: product.details,
+        mrp: product.price.mrp,
+        sp: product.price.sp,
+        category:
+          categories.find(
+            (eachCategory) => product?.id && eachCategory.id === product.id
+          ) ?? categories[categories.length - 1],
+      }
+    : undefined;
 
   return (
     <RecoilLoadablePageLayout
@@ -53,7 +46,7 @@ export default function AdminProductDetailsPage() {
       showHeader
     >
       <Box className={styles.body}>
-        {productForm.id !== null && (
+        {productForm && productForm.id !== null && (
           <AddEditProductComponent productForm={productForm} />
         )}
         {product && <AddEditProductImages product={product} />}
