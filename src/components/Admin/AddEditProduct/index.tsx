@@ -1,163 +1,42 @@
 import * as React from 'react';
-import { ChangeEvent, ReactNode, SyntheticEvent } from 'react';
+import { SyntheticEvent, useContext } from 'react';
 import {
-  AlertColor,
   Box,
   FormControl,
   FormLabel,
   IconButton,
-  LinearProgress,
   OutlinedInput,
+  useTheme,
 } from '@mui/material';
 import Button from '@mui/material/Button';
-import { Category } from '@/recoil/data/category';
 import { Cancel, Edit } from '@mui/icons-material';
-import {
-  addDoc,
-  collection,
-  doc,
-  serverTimestamp,
-  setDoc,
-} from '@firebase/firestore';
-import { appFirestore } from '@/firebase';
 
 import {
-  Product,
   ProductFormModeState,
   ProductFormUploadingState,
-  ProductWithoutID,
 } from '@/recoil/data/product';
-import { useRecoilState, useSetRecoilState } from 'recoil';
-import { selectedDialogAtom } from '@/recoil/atoms/dialog';
-import { useNavigate } from 'react-router-dom';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   productFormModeStateSelector,
   productFormProcessingStateSelector,
   productFormSelector,
 } from '@/recoil/selectors/productForm';
-import SnackbarDialog from '@/components/Dialogs/SnackBar';
-import { appAbsoluteRoutes } from '@/Router';
 import CategoriesDropdown from '@/components/Dropdowns/Categories';
+import { ProductFormManagerContext } from '@/providers/productFormManager';
+import createStyles from './styles';
 
 export default function AddEditProductComponent() {
-  const [productForm, setProductForm] = useRecoilState(productFormSelector);
+  const productForm = useRecoilValue(productFormSelector);
   const [formMode, setFormMode] = useRecoilState(productFormModeStateSelector);
-  const [processingState, setProcessingState] = useRecoilState(
-    productFormProcessingStateSelector
-  );
-  const setDialogComponent = useSetRecoilState(selectedDialogAtom);
-  const navigate = useNavigate();
-
-  const isValid = () => {
-    return (
-      productForm &&
-      productForm.name &&
-      productForm.mrp &&
-      productForm.sp &&
-      productForm.details
-    );
-  };
-
-  const handleChange =
-    (property: 'name' | 'details' | 'image' | 'mrp' | 'sp') =>
-    (e: ChangeEvent<HTMLInputElement>) => {
-      const val = e.target.value;
-      let numVal: number | string = parseFloat(val);
-      if (Number.isNaN(numVal)) {
-        numVal = '';
-      }
-      if (typeof numVal === 'number') {
-        if (numVal < 0) {
-          numVal = 0;
-        }
-      }
-      switch (property) {
-        case 'name':
-          setProductForm({ ...productForm, name: val });
-          break;
-        case 'details':
-          setProductForm({ ...productForm, details: val });
-          break;
-        case 'image':
-          break;
-        case 'mrp':
-          setProductForm({ ...productForm, mrp: numVal });
-          break;
-        case 'sp':
-          setProductForm({ ...productForm, sp: numVal });
-          break;
-        default:
-          break;
-      }
-    };
-  const handleCategoryChange = (category: Category) => {
-    setProductForm({ ...productForm, category });
-  };
-
-  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!isValid()) {
-      return;
-    }
-    if (formMode === ProductFormModeState.read) {
-      return;
-    }
-    let currentProcessingState = ProductFormUploadingState.creatingProduct;
-    if (formMode === ProductFormModeState.edit) {
-      currentProcessingState = ProductFormUploadingState.updatingProduct;
-    }
-    setProcessingState({
-      ...processingState,
-      uploadingState: currentProcessingState,
-    });
-    const newProduct: ProductWithoutID = {
-      name: productForm.name,
-      categoryID: productForm.category.id,
-      price: {
-        timestamp: serverTimestamp(),
-        currency: 'INR',
-        mrp: productForm.mrp as number,
-        sp: productForm.sp as number,
-      },
-    };
-    let message: string = '';
-    let severity: AlertColor = 'success';
-    let productID = '';
-    try {
-      if (productForm.id === null) {
-        const res = await addDoc(
-          collection(appFirestore, 'products'),
-          newProduct
-        );
-        message = `Successfully created ${newProduct.name} with ID ${res.id}`;
-        productID = res.id;
-      } else {
-        const updateProduct: Product = { ...newProduct, id: productForm.id };
-        const productRef = doc(appFirestore, 'products', productForm.id);
-        await setDoc(productRef, updateProduct);
-        message = `Successfully updated ${newProduct.name} with ID ${productForm.id}`;
-        productID = productForm.id;
-      }
-      navigate(`${appAbsoluteRoutes.adminProducts}/${productID}`);
-    } catch (_) {
-      if (productForm.id !== null) {
-        message = `Failed to update ${productForm.name} with ID ${productForm.id}`;
-      } else {
-        message = 'Failed to create new Product';
-      }
-      severity = 'error';
-    } finally {
-      currentProcessingState = ProductFormUploadingState.idle;
-      setProcessingState({
-        ...processingState,
-        uploadingState: currentProcessingState,
-        uploadProgress: 0,
-      });
-      setDialogComponent(
-        <SnackbarDialog severity={severity} message={message} />
-      );
-    }
-  };
+  const processingState = useRecoilValue(productFormProcessingStateSelector);
+  const {
+    handleFormSubmit,
+    handleFieldChange,
+    handleCategoryChange,
+    isProductFormValid,
+  } = useContext(ProductFormManagerContext);
+  const theme = useTheme();
+  const styles = createStyles(theme);
 
   const handleReset = (
     event:
@@ -168,75 +47,23 @@ export default function AddEditProductComponent() {
     // setProductForm(parentProductForm);
   };
 
-  const formLabelSx = {
-    marginBottom: '4px',
-    fontSize: '14px',
-    fontWeight: 600,
-  };
-  const formControlStyle = {
-    marginBottom: '16px',
-    width: '100%',
-  };
+  const formLabelSx = styles.formLabel;
+  const formControlStyle = styles.formControl;
 
-  const getUploadProgressContainer = () => {
-    let uploadProgressContainer: ReactNode;
-    if (processingState.uploadingState !== ProductFormUploadingState.idle) {
-      let progressBar: ReactNode;
-      switch (processingState.uploadingState) {
-        case ProductFormUploadingState.creatingProduct:
-          progressBar = (
-            <Box>
-              <LinearProgress sx={{ width: '100%', marginBottom: '4px' }} />
-              <Box>Creating New Product</Box>
-            </Box>
-          );
-          break;
-        case ProductFormUploadingState.updatingProduct:
-          progressBar = (
-            <Box>
-              <LinearProgress sx={{ width: '100%', marginBottom: '4px' }} />
-              <Box>
-                Updating Product ${productForm.name} with ID ${productForm.id}
-              </Box>
-            </Box>
-          );
-          break;
-        default:
-          break;
-      }
-      if (progressBar) {
-        uploadProgressContainer = (
-          <Box
-            sx={{
-              width: '100%',
-              height: '50px',
-              padding: '8px',
-              backgroundColor: 'white',
-              marginBottom: '16px',
-            }}
-          >
-            {progressBar}
-          </Box>
-        );
-      }
-    }
-    return uploadProgressContainer;
-  };
   const disableForm =
     processingState.uploadingState !== ProductFormUploadingState.idle ||
     formMode === ProductFormModeState.read;
   let addEditCancelComponent = <Box>Add New Product</Box>;
   if (productForm.id !== null) {
+    const addEditContainerStyle = {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    };
     switch (formMode) {
       case ProductFormModeState.read:
         addEditCancelComponent = (
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
+          <Box sx={addEditContainerStyle}>
             <Box sx={{ fontSize: '16px' }}>{productForm.id}</Box>
             <IconButton
               onClick={() => {
@@ -250,13 +77,7 @@ export default function AddEditProductComponent() {
         break;
       case ProductFormModeState.edit:
         addEditCancelComponent = (
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
+          <Box sx={addEditContainerStyle}>
             <Box sx={{ fontSize: '16px' }}>{productForm.id}</Box>
             <IconButton
               onClick={() => {
@@ -279,7 +100,6 @@ export default function AddEditProductComponent() {
         overflowX: 'hidden',
       }}
     >
-      {getUploadProgressContainer()}
       <Box sx={{ padding: '16px' }}>
         <Box
           sx={{
@@ -295,7 +115,7 @@ export default function AddEditProductComponent() {
         >
           {addEditCancelComponent}
         </Box>
-        <form onSubmit={onSubmit}>
+        <form onSubmit={handleFormSubmit}>
           <FormControl fullWidth sx={formControlStyle}>
             <FormLabel sx={formLabelSx} htmlFor="product-name">
               Name&nbsp;*
@@ -306,7 +126,7 @@ export default function AddEditProductComponent() {
               fullWidth
               size="small"
               value={productForm.name}
-              onChange={handleChange('name')}
+              onChange={handleFieldChange('name')}
               placeholder="Enter product name..."
               disabled={disableForm}
             />
@@ -322,7 +142,7 @@ export default function AddEditProductComponent() {
               placeholder="Enter max retail price..."
               size="small"
               value={productForm.mrp}
-              onChange={handleChange('mrp')}
+              onChange={handleFieldChange('mrp')}
               disabled={disableForm}
             />
           </FormControl>
@@ -337,7 +157,7 @@ export default function AddEditProductComponent() {
               fullWidth
               size="small"
               value={productForm.sp}
-              onChange={handleChange('sp')}
+              onChange={handleFieldChange('sp')}
               disabled={disableForm}
             />
           </FormControl>
@@ -356,7 +176,7 @@ export default function AddEditProductComponent() {
               fullWidth
               size="small"
               value={productForm.details}
-              onChange={handleChange('details')}
+              onChange={handleFieldChange('details')}
               placeholder="Enter product description..."
               disabled={disableForm}
               minRows={3}
@@ -373,7 +193,7 @@ export default function AddEditProductComponent() {
               Reset
             </Button>
             <Button
-              disabled={!isValid() || disableForm}
+              disabled={!isProductFormValid() || disableForm}
               variant="contained"
               type="submit"
             >

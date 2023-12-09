@@ -9,6 +9,7 @@ import { ProductFormModeState } from '@/recoil/data/product';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
 import AddEditProductComponent from '@/components/Admin/AddEditProduct';
 import { appAbsoluteRoutes } from '@/Router';
+import AdminProductProcessingStateComponent from '@/components/Admin/ProductProcessingState';
 
 export default function AdminAddProductPage() {
   const setProductFormState = useSetRecoilState(productFormStateAtom);
@@ -23,15 +24,18 @@ export default function AdminAddProductPage() {
     };
   }, [setProductFormState]);
   return (
-    <CommonPageLayout
-      headerProps={{
-        showBackIcon: true,
-        onBackIconClick: () => {
-          navigate(appAbsoluteRoutes.adminProducts);
-        },
-      }}
-    >
-      <AddEditProductComponent />
-    </CommonPageLayout>
+    <>
+      <AdminProductProcessingStateComponent />
+      <CommonPageLayout
+        headerProps={{
+          showBackIcon: true,
+          onBackIconClick: () => {
+            navigate(appAbsoluteRoutes.adminProducts);
+          },
+        }}
+      >
+        <AddEditProductComponent />
+      </CommonPageLayout>
+    </>
   );
 }

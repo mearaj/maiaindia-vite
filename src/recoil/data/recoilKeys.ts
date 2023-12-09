@@ -24,4 +24,5 @@ export const recoilKeys = {
   productFormProcessingStateSelector: 'productFormProcessingStateSelector',
   productFormSelector: 'productFormSelector',
   productFormModeStateSelector: 'productFormModeStateSelector',
+  productFormImagesSelector: 'productFormStateSelector',
 };

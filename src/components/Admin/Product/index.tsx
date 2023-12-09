@@ -36,7 +36,7 @@ export default function AdminProductComponent({
     imageComponent = (
       <Box
         component="img"
-        src={preferredImgSrc[0]}
+        src={preferredImgSrc[0].url}
         alt={product.name}
         sx={{
           height: 'auto',

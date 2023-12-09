@@ -10,14 +10,12 @@ export interface ProductPrice {
 
 export interface ProductImage {
   name: string;
-  height: number;
-  width: number;
-  src?: string;
+  url: string;
 }
 
 export interface ProductImages {
   // value corresponds to img element's src attribute val
-  [productID: string]: string[];
+  [productID: string]: ProductImage[];
 }
 
 export interface ProductWithoutID {
@@ -65,4 +63,5 @@ export interface ProductFormState {
   productForm: ProductForm;
   processingState: ProductFormProcessingState;
   mode: ProductFormModeState;
+  images: ProductImage[];
 }

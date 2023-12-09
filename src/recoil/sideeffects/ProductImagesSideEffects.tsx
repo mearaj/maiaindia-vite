@@ -22,7 +22,10 @@ export default function ProductImagesSideEffects() {
           const allListRef = await listAll(imagesRef);
           for await (const eachImageRef of allListRef.items) {
             const imageURL = await getDownloadURL(eachImageRef);
-            allProductImages[product.id].push(imageURL);
+            allProductImages[product.id].push({
+              url: imageURL,
+              name: eachImageRef.name,
+            });
           }
         }
         set(allProductsImagesAtom, allProductImages);

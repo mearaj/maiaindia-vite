@@ -50,3 +50,19 @@ export const productFormModeStateSelector = selector({
     }
   },
 });
+export const productFormImagesSelector = selector({
+  key: recoilKeys.productFormImagesSelector,
+  get: ({ get }) => {
+    const { images } = get(productFormStateAtom);
+    return images;
+  },
+  set: ({ set, get }, newValue) => {
+    const productFormState = get(productFormStateAtom);
+    if (!(newValue instanceof DefaultValue)) {
+      set(productFormStateAtom, {
+        ...productFormState,
+        images: newValue,
+      });
+    }
+  },
+});

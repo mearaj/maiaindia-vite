@@ -1,10 +1,12 @@
 import { Box } from '@mui/material';
-import { useRecoilValueLoadable } from 'recoil';
+import { useRecoilValueLoadable, useSetRecoilState } from 'recoil';
 import { imagesByProductIDSelector } from '@/recoil/selectors/products';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode, Navigation, Thumbs } from 'swiper/modules';
 import { Product } from '@/recoil/data/product';
 import placeholderImage from '@/assets/images/placeholder.svg';
+import { useEffect, useMemo } from 'react';
+import { productFormImagesSelector } from '@/recoil/selectors/productForm';
 import styles from './index.module.css';
 import RecoilLoadableComponent from '@/components/Layouts/RecoilLoadableComponent';
 
@@ -12,17 +14,24 @@ interface AddEditProductComponentImagesProps {
   product: Product;
 }
 
-export default function AddEditProductComponentImages({
+export default function AddEditProductImagesComponent({
   product,
 }: AddEditProductComponentImagesProps) {
   const recoilValueLoadable = useRecoilValueLoadable(
     imagesByProductIDSelector(product.id)
   );
+  const setProductFormImages = useSetRecoilState(productFormImagesSelector);
 
-  const imagesURLs =
-    recoilValueLoadable.state === 'hasValue' && recoilValueLoadable.contents
+  const imagesURLs = useMemo(() => {
+    return recoilValueLoadable.state === 'hasValue' &&
+      recoilValueLoadable.contents
       ? recoilValueLoadable.contents
       : [];
+  }, [recoilValueLoadable.contents, recoilValueLoadable.state]);
+
+  useEffect(() => {
+    setProductFormImages(imagesURLs);
+  }, [imagesURLs, setProductFormImages]);
 
   return (
     <Box className={styles.swiperContainer}>
@@ -51,10 +60,10 @@ export default function AddEditProductComponentImages({
             </SwiperSlide>
           ) : (
             imagesURLs.map((item) => (
-              <SwiperSlide key={item} className={styles.slide}>
+              <SwiperSlide key={item.url} className={styles.slide}>
                 <img
-                  src={item}
-                  alt={item}
+                  src={item.url}
+                  alt={item.name}
                   className={styles.image}
                   placeholder="blur"
                 />

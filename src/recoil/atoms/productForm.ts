@@ -21,10 +21,11 @@ export const defaultProductFormProcessingState = {
 };
 
 export const defaultProductFormMode = ProductFormModeState.read;
-export const defaultProductFormState = {
+export const defaultProductFormState: ProductFormState = {
   productForm: defaultProductForm,
   processingState: defaultProductFormProcessingState,
   mode: defaultProductFormMode,
+  images: [],
 };
 export const productFormStateAtom = atom<ProductFormState>({
   key: recoilKeys.productFormStateAtom,

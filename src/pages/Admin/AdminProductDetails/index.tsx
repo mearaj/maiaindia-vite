@@ -4,8 +4,6 @@ import { useRecoilValueLoadable, useSetRecoilState } from 'recoil';
 import { productIdSelector } from '@/recoil/selectors/productId';
 import { categories } from '@/recoil/data/category';
 import {
-  defaultProductFormMode,
-  defaultProductFormProcessingState,
   defaultProductFormState,
   productFormStateAtom,
 } from '@/recoil/atoms/productForm';
@@ -14,8 +12,9 @@ import { ProductForm } from '@/recoil/data/product';
 import styles from './index.module.css';
 import { appAbsoluteRoutes } from '@/Router';
 import AddEditProductComponent from '@/components/Admin/AddEditProduct';
-import AddEditProductComponentImages from '@/components/Admin/AddEditProductImages';
+import AddEditProductImagesComponent from '@/components/Admin/AddEditProductImages';
 import RecoilLoadablePageLayout from '@/components/Layouts/RecoilLoadablePage';
+import AdminProductProcessingStateComponent from '@/components/Admin/ProductProcessingState';
 
 export default function AdminProductDetailsPage() {
   const params = useParams();
@@ -47,27 +46,29 @@ export default function AdminProductDetailsPage() {
           ) ?? categories[categories.length - 1],
       };
       setProductFormState({
+        ...defaultProductFormState,
         productForm,
-        processingState: defaultProductFormProcessingState,
-        mode: defaultProductFormMode,
       });
     }
   }, [product, setProductFormState]);
 
   return (
-    <RecoilLoadablePageLayout
-      recoilLoadable={recoilValueLoadable}
-      headerProps={{
-        showBackIcon: true,
-        onBackIconClick: () => {
-          navigate(appAbsoluteRoutes.adminProducts);
-        },
-      }}
-    >
-      <Box className={styles.body}>
-        <AddEditProductComponent />
-        {product && <AddEditProductComponentImages product={product} />}
-      </Box>
-    </RecoilLoadablePageLayout>
+    <>
+      <AdminProductProcessingStateComponent />
+      <RecoilLoadablePageLayout
+        recoilLoadable={recoilValueLoadable}
+        headerProps={{
+          showBackIcon: true,
+          onBackIconClick: () => {
+            navigate(appAbsoluteRoutes.adminProducts);
+          },
+        }}
+      >
+        <Box className={styles.body}>
+          <AddEditProductComponent />
+          {product && <AddEditProductImagesComponent product={product} />}
+        </Box>
+      </RecoilLoadablePageLayout>
+    </>
   );
 }

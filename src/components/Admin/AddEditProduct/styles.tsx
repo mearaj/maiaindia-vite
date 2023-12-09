@@ -13,9 +13,27 @@ const nativeUploadInputStyles = (_: Theme): SxProps<Theme> => {
   };
 };
 
+const formLabelStyles = (_: Theme): SxProps<Theme> => {
+  return {
+    marginBottom: '4px',
+    fontSize: '14px',
+    fontWeight: 600,
+  };
+};
+const formControlStyles = (_: Theme): SxProps<Theme> => {
+  return {
+    marginBottom: '16px',
+    width: '100%',
+  };
+};
+
 export default function createStyles(theme: Theme) {
   const nativeUploadInput = nativeUploadInputStyles(theme);
+  const formLabel = formLabelStyles(theme);
+  const formControl = formControlStyles(theme);
   return {
     nativeUploadInput,
+    formLabel,
+    formControl,
   };
 }

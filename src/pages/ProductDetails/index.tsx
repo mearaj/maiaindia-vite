@@ -60,9 +60,9 @@ export default function ProductDetailsPage() {
                 productImages &&
                 productImages.map((item) => {
                   return (
-                    <SwiperSlide key={item} className={styles.slide}>
+                    <SwiperSlide key={item.url} className={styles.slide}>
                       <img
-                        src={item}
+                        src={item.url}
                         alt={recoilProductLoadable.contents.name}
                         className={styles.image}
                         placeholder="blur"
@@ -84,9 +84,9 @@ export default function ProductDetailsPage() {
                 productImages &&
                 productImages.map((item) => {
                   return (
-                    <SwiperSlide key={item} className={styles.thumbsSlide}>
+                    <SwiperSlide key={item.url} className={styles.thumbsSlide}>
                       <img
-                        src={item}
+                        src={item.url}
                         alt={recoilProductLoadable.contents.name}
                         className={styles.thumbnailImage}
                         placeholder="blur"

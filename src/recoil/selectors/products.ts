@@ -34,7 +34,10 @@ export const imagesByProductIDSelector = selectorFamily({
         const allListRef = await listAll(imagesRef);
         for await (const eachImageRef of allListRef.items) {
           const imageURL = await getDownloadURL(eachImageRef);
-          imagesURLs.push(imageURL);
+          imagesURLs.push({
+            name: eachImageRef.name,
+            url: imageURL,
+          });
         }
       }
       // if (imagesURLs.length === 0) {
