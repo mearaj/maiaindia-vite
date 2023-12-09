@@ -1,12 +1,12 @@
-import { ReactNode } from 'react';
 import { Box, Paper } from '@mui/material';
 import { useRecoilValueLoadable } from 'recoil';
-import { Product } from '@/recoil/data/product';
+import { Product, ProductImage } from '@/recoil/data/product';
 import { imagesByProductIDSelector } from '@/recoil/selectors/products';
-import { Loader } from '@/components';
 import { useNavigate } from 'react-router-dom';
+import placeholderImage from '@/assets/images/placeholder.svg';
 import ProductPrice from '@/components/Product/Price';
 import { appAbsoluteRoutes } from '@/Router';
+import RecoilLoadableComponent from '@/components/Layouts/RecoilLoadableComponent';
 
 export default function AdminProductComponent({
   product,
@@ -14,42 +14,25 @@ export default function AdminProductComponent({
   product: Product;
 }) {
   const navigate = useNavigate();
-  const { contents: preferredImgSrc, state: imagesState } =
-    useRecoilValueLoadable(imagesByProductIDSelector(product.id));
+  const recoilValueLoadable = useRecoilValueLoadable(
+    imagesByProductIDSelector(product.id)
+  );
 
-  let imageComponent: ReactNode;
-  if (imagesState === 'loading') {
-    imageComponent = (
-      <Box
-        sx={{
-          height: 'auto',
-          width: '100%',
-          maxHeight: '170px',
-          maxWidth: '100%',
-          marginBottom: '4px',
-        }}
-      >
-        <Loader />
-      </Box>
-    );
-  } else {
-    imageComponent = (
-      <Box
-        component="img"
-        src={preferredImgSrc[0].url}
-        alt={product.name}
-        sx={{
-          height: 'auto',
-          width: '100%',
-          maxHeight: '170px',
-          maxWidth: '100%',
-          objectFit: 'fill',
-          objectPosition: 'center',
-          marginBottom: '4px',
-        }}
-      />
-    );
-  }
+  const preferredImgSrc: ProductImage =
+    recoilValueLoadable.state === 'hasValue' &&
+    recoilValueLoadable.contents &&
+    recoilValueLoadable.contents.length > 0
+      ? recoilValueLoadable.contents[0]
+      : { name: 'Placeholder', url: placeholderImage };
+  const imageStyle = {
+    height: 'auto',
+    width: '100%',
+    maxHeight: '170px',
+    maxWidth: '100%',
+    objectFit: 'fill',
+    objectPosition: 'center',
+    marginBottom: '4px',
+  };
 
   return (
     <Paper
@@ -88,7 +71,18 @@ export default function AdminProductComponent({
             padding: '16px',
           }}
         >
-          {imageComponent}
+          <RecoilLoadableComponent
+            errorContainerStyle={imageStyle}
+            loaderContainerStyle={imageStyle}
+            recoilLoadable={recoilValueLoadable}
+          >
+            <Box
+              component="img"
+              src={preferredImgSrc.url}
+              alt={product.name}
+              sx={imageStyle}
+            />
+          </RecoilLoadableComponent>
         </Box>
         <Box sx={{ padding: '4px 8px 4px' }}>
           <Box

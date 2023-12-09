@@ -43,6 +43,7 @@ export enum ProductFormUploadingState {
   idle,
   updatingProduct,
   creatingProduct,
+  deletingProduct,
   uploadingImagesLocally,
   removingImagesLocally,
   uploadingImagesToBackend,

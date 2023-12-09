@@ -40,9 +40,6 @@ export const imagesByProductIDSelector = selectorFamily({
           });
         }
       }
-      // if (imagesURLs.length === 0) {
-      //   return [imagePlaceholder];
-      // }
       return imagesURLs;
     },
 });
