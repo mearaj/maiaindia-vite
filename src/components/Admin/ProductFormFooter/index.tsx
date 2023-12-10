@@ -1,16 +1,27 @@
 import * as React from 'react';
-import { ReactNode, SyntheticEvent, useCallback } from 'react';
-import { AlertColor, Box, LinearProgress } from '@mui/material';
+import { ReactNode, SyntheticEvent, useCallback, useState } from 'react';
+import {
+  AlertColor,
+  Box,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogProps,
+  LinearProgress,
+  useTheme,
+} from '@mui/material';
 import Button from '@mui/material/Button';
 
 import {
+  LocallyUploadedImage,
   Product,
   ProductFormModeState,
-  ProductFormUploadingState,
   ProductWithoutID,
 } from '@/recoil/data/product';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
+  productFormImagesSelector,
+  productFormLocalImagesSelector,
   productFormModeStateSelector,
   productFormProcessingStateSelector,
   productFormSelector,
@@ -23,10 +34,13 @@ import {
   serverTimestamp,
   setDoc,
 } from '@firebase/firestore';
-import { appFirestore } from '@/firebase';
+import { appFirebaseStorage, appFirestore } from '@/firebase';
 import { useNavigate } from 'react-router-dom';
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
 import { categories } from '@/recoil/data/category';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { deleteObject, ref } from '@firebase/storage';
+import createStyles from './styles';
 import { appAbsoluteRoutes } from '@/Router';
 import SnackbarDialog from '@/components/Dialogs/SnackBar';
 
@@ -42,12 +56,22 @@ export default function AdminProductFormFooterComponent({
   handleReset,
 }: AdminProductFormFooterComponentProps) {
   const formMode = useRecoilValue(productFormModeStateSelector);
-  const [processingState, setProcessingState] = useRecoilState(
+  const [isProcessing, setIsProcessing] = useRecoilState(
     productFormProcessingStateSelector
   );
   const productForm = useRecoilValue(productFormSelector);
   const navigate = useNavigate();
   const setDialogComponent = useSetRecoilState(selectedDialogAtom);
+  const theme = useTheme();
+  const styles = createStyles(theme);
+  const [localImages, setLocalImages] = useRecoilState(
+    productFormLocalImagesSelector
+  );
+  const productImages = useRecoilValue(productFormImagesSelector);
+  const [localDialog, setLocalDialog] = useState<{
+    props: DialogProps;
+    children: ReactNode;
+  } | null>(null);
 
   const isProductFormValid = useCallback(() => {
     return !!(
@@ -55,9 +79,8 @@ export default function AdminProductFormFooterComponent({
       productForm.name &&
       ((typeof productForm.mrp === 'number' && productForm.mrp >= 0) ||
         (typeof productForm.mrp === 'string' &&
-          !Number.isNaN(
-            parseFloat(productForm.mrp) && parseFloat(productForm.mrp) >= 0
-          ))) &&
+          !Number.isNaN(parseFloat(productForm.mrp)) &&
+          parseFloat(productForm.mrp) >= 0)) &&
       ((typeof productForm.sp === 'number' && productForm.sp >= 0) ||
         (typeof productForm.sp === 'string' &&
           !Number.isNaN(
@@ -78,14 +101,7 @@ export default function AdminProductFormFooterComponent({
       if (formMode === ProductFormModeState.read) {
         return;
       }
-      let currentProcessingState = ProductFormUploadingState.creatingProduct;
-      if (formMode === ProductFormModeState.edit) {
-        currentProcessingState = ProductFormUploadingState.updatingProduct;
-      }
-      setProcessingState({
-        ...processingState,
-        uploadingState: currentProcessingState,
-      });
+
       const newProduct: ProductWithoutID = {
         name: productForm.name,
         categoryID: productForm.category.id,
@@ -96,41 +112,51 @@ export default function AdminProductFormFooterComponent({
           sp: productForm.sp as number,
         },
       };
-      let message: string = '';
+      let snackbarMsg: string = '';
       let severity: AlertColor = 'success';
       let productID = '';
+      let localDialogMessage = 'Creating New Product';
       try {
+        if (productForm.id !== null) {
+          localDialogMessage = `Updating Product ${productForm.name} with ID ${productForm.id}`;
+        }
+        setIsProcessing(true);
+        setLocalDialog({
+          props: { open: true },
+          children: (
+            <Box>
+              <LinearProgress sx={{ width: '100%', marginBottom: '4px' }} />
+              <Box>{localDialogMessage}</Box>
+            </Box>
+          ),
+        });
         if (productForm.id === null) {
           const res = await addDoc(
             collection(appFirestore, 'products'),
             newProduct
           );
-          message = `Successfully created ${newProduct.name} with ID ${res.id}`;
+          snackbarMsg = `Successfully created ${newProduct.name} with ID ${res.id}`;
           productID = res.id;
         } else {
           const updateProduct: Product = { ...newProduct, id: productForm.id };
           const productRef = doc(appFirestore, 'products', productForm.id);
           await setDoc(productRef, updateProduct);
-          message = `Successfully updated ${newProduct.name} with ID ${productForm.id}`;
+          snackbarMsg = `Successfully updated ${newProduct.name} with ID ${productForm.id}`;
           productID = productForm.id;
         }
         navigate(`${appAbsoluteRoutes.adminProducts}/${productID}`);
       } catch (_) {
         if (productForm.id !== null) {
-          message = `Failed to update ${productForm.name} with ID ${productForm.id}`;
+          snackbarMsg = `Failed to update ${productForm.name} with ID ${productForm.id}`;
         } else {
-          message = 'Failed to create new Product';
+          snackbarMsg = 'Failed to create new Product';
         }
         severity = 'error';
       } finally {
-        currentProcessingState = ProductFormUploadingState.idle;
-        setProcessingState({
-          ...processingState,
-          uploadingState: currentProcessingState,
-          uploadProgress: 0,
-        });
+        setLocalDialog(null);
+        setIsProcessing(false);
         setDialogComponent(
-          <SnackbarDialog severity={severity} message={message} />
+          <SnackbarDialog severity={severity} message={snackbarMsg} />
         );
       }
     },
@@ -138,65 +164,309 @@ export default function AdminProductFormFooterComponent({
       formMode,
       isProductFormValid,
       navigate,
-      processingState,
       productForm.category.id,
       productForm.id,
       productForm.mrp,
       productForm.name,
       productForm.sp,
       setDialogComponent,
-      setProcessingState,
+      setIsProcessing,
     ]
   );
 
-  const handleDeleteProduct = useCallback(async () => {
-    if (productForm.id !== null) {
-      setProcessingState({
-        uploadingState: ProductFormUploadingState.deletingProduct,
-        uploadProgress: 0,
-      });
-      try {
-        await deleteDoc(doc(appFirestore, 'products', productForm.id));
-        setDialogComponent(
-          <SnackbarDialog
-            severity="success"
-            message={`successfully deleted product with id ${productForm.id}`}
-          />
-        );
-      } catch (e) {
-        setDialogComponent(
-          <SnackbarDialog
-            severity="error"
-            message={
-              e instanceof Error
-                ? e.message
-                : `Failed to deleted product with id ${productForm.id}`
-            }
-          />
-        );
-      } finally {
-        setProcessingState({
-          uploadingState: ProductFormUploadingState.idle,
-          uploadProgress: 0,
-        });
-      }
-      setProcessingState(processingState);
-    }
-  }, [processingState, productForm.id, setDialogComponent, setProcessingState]);
+  const shouldDeleteProductPrompt = useCallback(async (): Promise<boolean> => {
+    return new Promise<boolean>((r) => {
+      const open = true;
+      setDialogComponent(
+        <Dialog
+          open={open}
+          onClose={() => {
+            r(false);
+            setDialogComponent(null);
+          }}
+        >
+          <DialogContent>
+            Are you sure you want to delete product?
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => {
+                r(false);
+                setDialogComponent(null);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                r(true);
+                setDialogComponent(null);
+              }}
+            >
+              Yes
+            </Button>
+          </DialogActions>
+        </Dialog>
+      );
+    });
+  }, [setDialogComponent]);
 
-  const disableForm =
-    processingState.uploadingState !== ProductFormUploadingState.idle ||
-    formMode === ProductFormModeState.read;
+  const handleDeleteProduct = useCallback(async () => {
+    if (productForm.id !== null && !isProcessing) {
+      const shouldDelete = await shouldDeleteProductPrompt();
+      if (shouldDelete) {
+        let localDialogMessage = `Deleting Product ${productForm.name} with ID ${productForm.id}`;
+        if (productImages.length > 0) {
+          localDialogMessage = `Deleting Product ${productForm.name} Images with ID ${productForm.id}`;
+        }
+        setIsProcessing(true);
+        setLocalDialog({
+          props: { open: true },
+          children: (
+            <Box>
+              <LinearProgress sx={{ width: '100%', marginBottom: '4px' }} />
+              <Box>{localDialogMessage}</Box>
+            </Box>
+          ),
+        });
+        try {
+          for await (const eachImage of productImages) {
+            localDialogMessage = `Deleting Image ${eachImage.name}`;
+            const imageFileRef = ref(
+              appFirebaseStorage,
+              `products/${productForm.id}/${eachImage.name}`
+            );
+            setLocalDialog({
+              props: { open: true },
+              children: (
+                <Box>
+                  <LinearProgress sx={{ width: '100%', marginBottom: '4px' }} />
+                  <Box>{localDialogMessage}</Box>
+                </Box>
+              ),
+            });
+            await deleteObject(imageFileRef);
+            localDialogMessage = `Successfully deleted Image ${eachImage.name}`;
+            setLocalDialog({
+              props: { open: true },
+              children: (
+                <Box>
+                  <LinearProgress sx={{ width: '100%', marginBottom: '4px' }} />
+                  <Box>{localDialogMessage}</Box>
+                </Box>
+              ),
+            });
+          }
+          if (productImages.length > 0) {
+            localDialogMessage = `Successfully deleted images for product ${productForm.name} with id ${productForm.id}`;
+            setLocalDialog({
+              props: { open: true },
+              children: (
+                <Box>
+                  <LinearProgress sx={{ width: '100%', marginBottom: '4px' }} />
+                  <Box>{localDialogMessage}</Box>
+                </Box>
+              ),
+            });
+          }
+          await deleteDoc(doc(appFirestore, 'products', productForm.id!));
+          setDialogComponent(
+            <SnackbarDialog
+              severity="success"
+              message={`successfully deleted product ${productForm.name} with id ${productForm.id}`}
+            />
+          );
+          navigate(appAbsoluteRoutes.adminProducts);
+        } catch (e) {
+          setDialogComponent(
+            <SnackbarDialog
+              severity="error"
+              message={
+                e instanceof Error
+                  ? e.message
+                  : `Failed to deleted product ${productForm.name} with id ${productForm.id}`
+              }
+            />
+          );
+        } finally {
+          setIsProcessing(false);
+          setLocalDialog(null);
+        }
+      }
+    }
+  }, [
+    isProcessing,
+    navigate,
+    productForm.id,
+    productForm.name,
+    productImages,
+    setDialogComponent,
+    setIsProcessing,
+    shouldDeleteProductPrompt,
+  ]);
+
+  const handleImagesUploadLocally = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const { files } = event.target;
+    if (files && files.length > 0) {
+      setIsProcessing(true);
+      let localDialogMessage = 'Uploading Images Locally';
+      try {
+        setLocalDialog({
+          props: { open: true },
+          children: (
+            <Box>
+              <LinearProgress sx={{ width: '100%', marginBottom: '4px' }} />
+              <Box>{localDialogMessage}</Box>
+            </Box>
+          ),
+        });
+        const errors: { name: string; message: string }[] = [];
+        const supportedImages: LocallyUploadedImage[] = [];
+        for await (const file of files) {
+          if (file.type.toLowerCase() !== 'image/avif') {
+            localDialogMessage = `Unsupported file extension ${file.type}.\nSupported extension is .avif`;
+            errors.push({
+              name: file.name,
+              message: localDialogMessage,
+            });
+            setLocalDialog({
+              props: { open: true },
+              children: (
+                <Box>
+                  <LinearProgress sx={{ width: '100%', marginBottom: '4px' }} />
+                  <Box>{localDialogMessage}</Box>
+                </Box>
+              ),
+            });
+            continue;
+          }
+          if (file.size > 1024 * 200) {
+            localDialogMessage = `File size ${
+              file.size / 1024
+            }Kb exceeds limit of 200kb`;
+            errors.push({
+              name: file.name,
+              message: localDialogMessage,
+            });
+            setLocalDialog({
+              props: { open: true },
+              children: (
+                <Box>
+                  <LinearProgress sx={{ width: '100%', marginBottom: '4px' }} />
+                  <Box>{localDialogMessage}</Box>
+                </Box>
+              ),
+            });
+            continue;
+          }
+          await new Promise<void>((resolve) => {
+            const img = new Image();
+            img.src = URL.createObjectURL(file);
+            img.onload = (_ev) => {
+              supportedImages.push({ file, url: img.src });
+              const newLocalMessage = `Uploaded file ${file.name} locally`;
+              setLocalDialog({
+                props: { open: true },
+                children: (
+                  <Box>
+                    <LinearProgress
+                      sx={{ width: '100%', marginBottom: '4px' }}
+                    />
+                    <Box>{newLocalMessage}</Box>
+                  </Box>
+                ),
+              });
+              resolve();
+            };
+            img.onerror = (e) => {
+              errors.push({ name: file.name, message: e.toString() });
+              const newLocalMessage = `Failed to upload file ${
+                file.name
+              } locally.\nError: ${e.toString()}`;
+              setLocalDialog({
+                props: { open: true },
+                children: (
+                  <Box>
+                    <LinearProgress
+                      sx={{ width: '100%', marginBottom: '4px' }}
+                    />
+                    <Box>{newLocalMessage}</Box>
+                  </Box>
+                ),
+              });
+              URL.revokeObjectURL(img.src);
+              resolve();
+            };
+          });
+        }
+        if (errors.length > 0) {
+          setDialogComponent(
+            <SnackbarDialog
+              severity="error"
+              message={`Failed to upload ${errors.length} file(s) locally!`}
+            />
+          );
+          await new Promise<void>((r) => {
+            setTimeout(() => {
+              r();
+            }, 2000);
+          });
+        }
+        if (supportedImages.length > 0) {
+          setDialogComponent(
+            <SnackbarDialog
+              severity="success"
+              message={`Successfully uploaded ${supportedImages.length} file(s) locally!!`}
+            />
+          );
+        }
+        const imagesToUpload = [...localImages, ...supportedImages].filter(
+          (eachImage, index, arr) => {
+            return (
+              index ===
+              arr.findIndex(
+                (imgToFind) => eachImage.file.name === imgToFind.file.name
+              )
+            );
+          }
+        );
+        setLocalImages(imagesToUpload);
+        setIsProcessing(false);
+        setLocalDialog(null);
+      } catch (_e) {
+        setIsProcessing(false);
+        setLocalDialog(null);
+      }
+    }
+  };
+
+  const disableForm = isProcessing || formMode === ProductFormModeState.read;
   let uploadImagesButton: ReactNode;
   let deleteProductButton: ReactNode;
   // If product is not new
   if (productForm.id !== null) {
     uploadImagesButton = (
       <Button
+        component="label"
         sx={{ marginBottom: '16px' }}
         variant="contained"
         disabled={disableForm}
+        startIcon={<CloudUploadIcon />}
       >
+        <Box
+          component="input"
+          type="file"
+          hidden
+          placeholder="Product Upload Images"
+          sx={styles.nativeUploadInput}
+          accept="image/avif"
+          onChange={handleImagesUploadLocally}
+          multiple
+        />
         Upload Images
       </Button>
     );
@@ -217,7 +487,10 @@ export default function AdminProductFormFooterComponent({
       <Button
         sx={{ marginBottom: '16px' }}
         variant="contained"
-        onClick={handleReset}
+        onClick={(e) => {
+          setLocalDialog(null);
+          handleReset(e);
+        }}
         disabled={disableForm}
       >
         Reset
@@ -234,52 +507,6 @@ export default function AdminProductFormFooterComponent({
       </Button>
     </>
   );
-  let uploadProgressContainer: ReactNode;
-  if (processingState.uploadingState !== ProductFormUploadingState.idle) {
-    let progressBar: ReactNode;
-    let message: string | null = null;
-    // @ts-ignore
-    switch (processingState.uploadingState) {
-      // @ts-ignore
-      case ProductFormUploadingState.creatingProduct:
-        message = 'Creating New Product';
-      // @ts-ignore
-      // eslint-disable-next-line no-fallthrough
-      case ProductFormUploadingState.updatingProduct:
-        if (message === null) {
-          message = `Updating Product ${productForm.name} with ID ${productForm.id}`;
-        }
-      // eslint-disable-next-line no-fallthrough
-      case ProductFormUploadingState.deletingProduct:
-        if (message === null) {
-          message = `Deleting Product ${productForm.name} with ID ${productForm.id}`;
-        }
-        progressBar = (
-          <Box>
-            <LinearProgress sx={{ width: '100%', marginBottom: '4px' }} />
-            <Box>{message}</Box>
-          </Box>
-        );
-        break;
-      default:
-        break;
-    }
-    if (progressBar) {
-      uploadProgressContainer = (
-        <Box
-          sx={{
-            width: '100%',
-            height: '50px',
-            padding: '8px',
-            backgroundColor: 'white',
-            marginBottom: '16px',
-          }}
-        >
-          {progressBar}
-        </Box>
-      );
-    }
-  }
 
   return (
     <>
@@ -294,7 +521,11 @@ export default function AdminProductFormFooterComponent({
       >
         {commonButtons}
       </Box>
-      {uploadProgressContainer}
+      {isProcessing && localDialog && (
+        <Dialog {...localDialog.props}>
+          <Box sx={styles.dialogContentContainer}>{localDialog.children}</Box>
+        </Dialog>
+      )}
     </>
   );
 }

@@ -13,8 +13,7 @@ export interface ProductImage {
   url: string;
 }
 
-export interface ProductImages {
-  // value corresponds to img element's src attribute val
+export interface ProductsImages {
   [productID: string]: ProductImage[];
 }
 
@@ -39,30 +38,20 @@ export interface ProductForm {
   id: string | null;
 }
 
-export enum ProductFormUploadingState {
-  idle,
-  updatingProduct,
-  creatingProduct,
-  deletingProduct,
-  uploadingImagesLocally,
-  removingImagesLocally,
-  uploadingImagesToBackend,
-  removingImagesFromBackend,
-}
-
-export interface ProductFormProcessingState {
-  uploadingState: ProductFormUploadingState;
-  uploadProgress: number;
-}
-
 export enum ProductFormModeState {
   read,
   edit,
 }
 
+export interface LocallyUploadedImage {
+  file: File;
+  url: string;
+}
+
 export interface ProductFormState {
   productForm: ProductForm;
-  processingState: ProductFormProcessingState;
+  isProcessing: boolean;
   mode: ProductFormModeState;
   images: ProductImage[];
+  localImages: LocallyUploadedImage[];
 }

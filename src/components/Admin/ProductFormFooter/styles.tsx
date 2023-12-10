@@ -27,13 +27,26 @@ const formControlStyles = (_: Theme): SxProps<Theme> => {
   };
 };
 
+const dialogContentContainerStyles = (_: Theme): SxProps<Theme> => {
+  return {
+    width: '100%',
+    minHeight: '50px',
+    height: 'auto',
+    padding: '8px',
+    backgroundColor: 'white',
+    marginBottom: '16px',
+  };
+};
+
 export default function createStyles(theme: Theme) {
   const nativeUploadInput = nativeUploadInputStyles(theme);
   const formLabel = formLabelStyles(theme);
   const formControl = formControlStyles(theme);
+  const dialogContentContainer = dialogContentContainerStyles(theme);
   return {
     nativeUploadInput,
     formLabel,
     formControl,
+    dialogContentContainer,
   };
 }

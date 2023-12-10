@@ -25,7 +25,10 @@ export default function AdminAddProductPage() {
       if (event) {
         event.preventDefault();
       }
-      setProductFormState(defaultProductFormState);
+      setProductFormState({
+        ...defaultProductFormState,
+        mode: ProductFormModeState.edit,
+      });
     },
     [setProductFormState]
   );

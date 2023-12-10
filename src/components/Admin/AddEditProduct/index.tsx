@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback } from 'react';
+import { ChangeEvent, ReactNode, useCallback } from 'react';
 import {
   Box,
   FormControl,
@@ -9,10 +9,7 @@ import {
 } from '@mui/material';
 import { Cancel, Edit } from '@mui/icons-material';
 
-import {
-  ProductFormModeState,
-  ProductFormUploadingState,
-} from '@/recoil/data/product';
+import { ProductFormModeState } from '@/recoil/data/product';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   productFormModeStateSelector,
@@ -26,7 +23,7 @@ import createStyles from './styles';
 export default function AddEditProductComponent() {
   const [productForm, setProductForm] = useRecoilState(productFormSelector);
   const [formMode, setFormMode] = useRecoilState(productFormModeStateSelector);
-  const processingState = useRecoilValue(productFormProcessingStateSelector);
+  const isProcessing = useRecoilValue(productFormProcessingStateSelector);
 
   const theme = useTheme();
   const styles = createStyles(theme);
@@ -72,10 +69,8 @@ export default function AddEditProductComponent() {
     [productForm, setProductForm]
   );
 
-  const disableForm =
-    processingState.uploadingState !== ProductFormUploadingState.idle ||
-    formMode === ProductFormModeState.read;
-  let addEditCancelComponent = <Box>Add New Product</Box>;
+  const disableForm = isProcessing || formMode === ProductFormModeState.read;
+  let addEditCancelComponent: ReactNode = <Box>Add New Product</Box>;
   if (productForm.id !== null) {
     const addEditContainerStyle = {
       display: 'flex',

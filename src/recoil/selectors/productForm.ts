@@ -21,15 +21,15 @@ export const productFormSelector = selector({
 export const productFormProcessingStateSelector = selector({
   key: recoilKeys.productFormProcessingStateSelector,
   get: ({ get }) => {
-    const { processingState } = get(productFormStateAtom);
-    return processingState;
+    const { isProcessing } = get(productFormStateAtom);
+    return isProcessing;
   },
-  set: ({ set, get }, newValue) => {
+  set: ({ set, get }, isProcessing) => {
     const productFormState = get(productFormStateAtom);
-    if (!(newValue instanceof DefaultValue)) {
+    if (!(isProcessing instanceof DefaultValue)) {
       set(productFormStateAtom, {
         ...productFormState,
-        processingState: { ...newValue },
+        isProcessing,
       });
     }
   },
@@ -62,6 +62,23 @@ export const productFormImagesSelector = selector({
       set(productFormStateAtom, {
         ...productFormState,
         images: newValue,
+      });
+    }
+  },
+});
+
+export const productFormLocalImagesSelector = selector({
+  key: recoilKeys.productFormLocalImagesSelector,
+  get: ({ get }) => {
+    const { localImages } = get(productFormStateAtom);
+    return localImages;
+  },
+  set: ({ set, get }, newValue) => {
+    const productFormState = get(productFormStateAtom);
+    if (!(newValue instanceof DefaultValue)) {
+      set(productFormStateAtom, {
+        ...productFormState,
+        localImages: newValue,
       });
     }
   },

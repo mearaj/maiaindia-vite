@@ -6,7 +6,7 @@ import {
 } from '@/recoil/atoms/allProducts';
 import { getDownloadURL, listAll, ref } from '@firebase/storage';
 import { appFirebaseStorage } from '@/firebase';
-import { ProductImages } from '@/recoil/data/product';
+import { ProductsImages } from '@/recoil/data/product';
 
 export default function ProductImagesSideEffects() {
   const allProducts = useRecoilValue(allProductsAtom);
@@ -15,7 +15,7 @@ export default function ProductImagesSideEffects() {
     ({ snapshot, set }) =>
       async () => {
         const currentAllProducts = await snapshot.getPromise(allProductsAtom);
-        const allProductImages: ProductImages = {};
+        const allProductImages: ProductsImages = {};
         for await (const product of currentAllProducts) {
           const imagesRef = ref(appFirebaseStorage, `products/${product.id}`);
           allProductImages[product.id] = [];

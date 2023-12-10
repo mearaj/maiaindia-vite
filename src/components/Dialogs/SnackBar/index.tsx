@@ -1,8 +1,8 @@
-import { Alert, AlertColor, Snackbar } from '@mui/material';
+import { Alert, AlertColor, Snackbar, SnackbarProps } from '@mui/material';
 import { useRecoilState } from 'recoil';
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
 
-export interface SnackbarDialogProps {
+export interface SnackbarDialogProps extends SnackbarProps {
   severity: AlertColor;
   message: string;
 }
@@ -10,6 +10,7 @@ export interface SnackbarDialogProps {
 export default function SnackbarDialog({
   severity,
   message,
+  ...otherProps
 }: SnackbarDialogProps) {
   const [dialogComponent, setDialogComponent] =
     useRecoilState(selectedDialogAtom);
@@ -19,6 +20,7 @@ export default function SnackbarDialog({
       open={dialogComponent != null}
       autoHideDuration={6000}
       onClose={() => setDialogComponent(null)}
+      {...otherProps}
     >
       <Alert
         onClose={() => setDialogComponent(null)}

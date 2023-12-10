@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 import { recoilKeys } from '@/recoil/data/recoilKeys';
-import { Product, ProductImages } from '@/recoil/data/product';
+import { Product, ProductsImages } from '@/recoil/data/product';
 import { collection, onSnapshot, query } from '@firebase/firestore';
 import { appFirestore } from '@/firebase';
 import { updateDocsSnapshots } from '@/misc';
@@ -20,7 +20,7 @@ export const allProductsAtom = atom<Product[]>({
   ],
 });
 
-export const allProductsImagesAtom = atom<ProductImages>({
+export const allProductsImagesAtom = atom<ProductsImages>({
   key: recoilKeys.allProductsImagesAtom,
   default: {},
 });
