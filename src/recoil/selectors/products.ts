@@ -27,8 +27,10 @@ export const imagesByProductIDSelector = selectorFamily({
     (productID: string) =>
     async ({ get }) => {
       const allProductImages = get(allProductsImagesAtom);
-      let imagesURLs = allProductImages[productID];
-      if (!imagesURLs || imagesURLs.length === 0) {
+      let imagesURLs = allProductImages[productID]
+        ? [...allProductImages[productID]]
+        : [];
+      if (imagesURLs.length === 0) {
         imagesURLs = [];
         const imagesRef = ref(appFirebaseStorage, `products/${productID}`);
         const allListRef = await listAll(imagesRef);

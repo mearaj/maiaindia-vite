@@ -12,7 +12,7 @@ import {
   productFormStateAtom,
 } from '@/recoil/atoms/productForm';
 import * as React from 'react';
-import { SyntheticEvent, useCallback, useEffect } from 'react';
+import { SyntheticEvent, useCallback, useEffect, useMemo } from 'react';
 import { ProductForm } from '@/recoil/data/product';
 import { imagesByProductIDSelector } from '@/recoil/selectors/products';
 import {
@@ -48,11 +48,15 @@ export default function AdminProductDetailsPage() {
     recoilProductValueLoadable.contents
       ? recoilProductValueLoadable.contents
       : undefined;
-  const productImages =
-    recoilProductImagesValueLoadable.state === 'hasValue' &&
-    recoilProductImagesValueLoadable.contents
+  const productImages = useMemo(() => {
+    return recoilProductImagesValueLoadable.state === 'hasValue' &&
+      recoilProductImagesValueLoadable.contents
       ? recoilProductImagesValueLoadable.contents
       : [];
+  }, [
+    recoilProductImagesValueLoadable.contents,
+    recoilProductImagesValueLoadable.state,
+  ]);
 
   const handleReset = useCallback(
     (
@@ -106,8 +110,7 @@ export default function AdminProductDetailsPage() {
     if (
       recoilProductValueLoadable.state === 'hasValue' &&
       recoilProductImagesValueLoadable.state === 'hasValue' &&
-      recoilProductValueLoadable.contents.id !== null &&
-      recoilProductValueLoadable.contents.id !== productForm.id
+      recoilProductValueLoadable.contents.id !== null
     ) {
       const newProduct = recoilProductValueLoadable.contents;
       const newProductForm: ProductForm = {

@@ -40,6 +40,7 @@ import { selectedDialogAtom } from '@/recoil/atoms/dialog';
 import { categories } from '@/recoil/data/category';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { deleteObject, ref } from '@firebase/storage';
+import { Delete, Publish, RestartAlt } from '@mui/icons-material';
 import createStyles from './styles';
 import { appAbsoluteRoutes } from '@/Router';
 import SnackbarDialog from '@/components/Dialogs/SnackBar';
@@ -455,6 +456,7 @@ export default function AdminProductFormFooterComponent({
         sx={{ marginBottom: '16px' }}
         variant="contained"
         disabled={disableForm}
+        color="info"
         startIcon={<CloudUploadIcon />}
       >
         <Box
@@ -476,6 +478,8 @@ export default function AdminProductFormFooterComponent({
         variant="contained"
         disabled={disableForm}
         onClick={handleDeleteProduct}
+        startIcon={<Delete />}
+        color="error"
       >
         Delete Product
       </Button>
@@ -492,8 +496,10 @@ export default function AdminProductFormFooterComponent({
           handleReset(e);
         }}
         disabled={disableForm}
+        startIcon={<RestartAlt />}
+        color="success"
       >
-        Reset
+        Reset Form
       </Button>
       {deleteProductButton}
       <Button
@@ -502,8 +508,9 @@ export default function AdminProductFormFooterComponent({
         variant="contained"
         type="button"
         onClick={handleFormSubmit}
+        startIcon={<Publish />}
       >
-        Submit
+        Submit Form
       </Button>
     </>
   );
