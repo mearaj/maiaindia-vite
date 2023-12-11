@@ -10,7 +10,7 @@ import {
   productFormModeStateSelector,
   productFormProcessingStateSelector,
 } from '@/recoil/selectors/productForm';
-import { Delete } from '@mui/icons-material';
+import { Delete, Download } from '@mui/icons-material';
 import Button from '@mui/material/Button';
 import { ProductFormModeState } from '@/recoil/data/product';
 import styles from './index.module.css';
@@ -66,7 +66,7 @@ export default function AddEditProductImagesComponent() {
                   className={styles.image}
                   placeholder="blur"
                 />
-                <Box>
+                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                   <Button
                     onClick={() => {
                       const newImagesForDeletion = [...imagesForDeletion, item];
@@ -81,7 +81,42 @@ export default function AddEditProductImagesComponent() {
                   >
                     Remove Backend Image
                   </Button>
-                  <Box sx={{ textAlign: 'center' }}>{item.name}</Box>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-end',
+                      maxWidth: 'calc(100vw - 32px)',
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        textAlign: 'center',
+                        lineHeight: '1',
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
+                        textOverflow: 'ellipsis',
+                      }}
+                    >
+                      {item.name}
+                    </Box>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      component="a"
+                      href={item.url}
+                      download
+                      sx={{ padding: '2px', minWidth: '40px' }}
+                    >
+                      <Download
+                        sx={{
+                          padding: '0px',
+                          fontSize: '20px',
+                          lineHeight: '1',
+                        }}
+                      />
+                    </Button>
+                  </Box>
                 </Box>
               </SwiperSlide>
             ))}
@@ -111,7 +146,42 @@ export default function AddEditProductImagesComponent() {
                   >
                     Remove Local Image
                   </Button>
-                  <Box sx={{ textAlign: 'center' }}>{item.file.name}</Box>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-end',
+                      maxWidth: 'calc(100vw - 32px)',
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        textAlign: 'center',
+                        lineHeight: '1',
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
+                        textOverflow: 'ellipsis',
+                      }}
+                    >
+                      {item.file.name}
+                    </Box>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      component="a"
+                      href={item.url}
+                      download
+                      sx={{ padding: '2px', minWidth: '40px' }}
+                    >
+                      <Download
+                        sx={{
+                          padding: '0px',
+                          fontSize: '20px',
+                          lineHeight: '1',
+                        }}
+                      />
+                    </Button>
+                  </Box>
                 </Box>
               </SwiperSlide>
             ))}
