@@ -593,7 +593,7 @@ export default function AdminProductFormFooterComponent({
             errorFound = true;
             localDialogMessage = `Unsupported file extension ${file.type}.\nSupported extension is .avif`;
           }
-          if (!errorFound && file.size > 1024 * 200) {
+          if (!errorFound && file.size > 1024 * 1024) {
             errorFound = true;
             localDialogMessage = `File size ${
               file.size / 1024
