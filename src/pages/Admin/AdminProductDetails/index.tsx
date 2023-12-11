@@ -17,6 +17,7 @@ import { ProductForm } from '@/recoil/data/product';
 import { imagesByProductIDSelector } from '@/recoil/selectors/products';
 import {
   productFormLocalImagesSelector,
+  productFormModeStateSelector,
   productFormProcessingStateSelector,
   productFormSelector,
 } from '@/recoil/selectors/productForm';
@@ -42,6 +43,7 @@ export default function AdminProductDetailsPage() {
   const navigate = useNavigate();
   const locallyUploadedImages = useRecoilValue(productFormLocalImagesSelector);
   const isProcessing = useRecoilValue(productFormProcessingStateSelector);
+  const formMode = useRecoilValue(productFormModeStateSelector);
 
   const product =
     recoilProductValueLoadable.state === 'hasValue' &&
@@ -110,7 +112,8 @@ export default function AdminProductDetailsPage() {
     if (
       recoilProductValueLoadable.state === 'hasValue' &&
       recoilProductImagesValueLoadable.state === 'hasValue' &&
-      recoilProductValueLoadable.contents.id !== null
+      recoilProductValueLoadable.contents.id !== null &&
+      recoilProductImagesValueLoadable.contents
     ) {
       const newProduct = recoilProductValueLoadable.contents;
       const newProductForm: ProductForm = {
@@ -129,11 +132,14 @@ export default function AdminProductDetailsPage() {
         ...defaultProductFormState,
         productForm: newProductForm,
         images: productImages,
+        mode: formMode,
       });
     }
   }, [
+    formMode,
     productForm.id,
     productImages,
+    recoilProductImagesValueLoadable.contents,
     recoilProductImagesValueLoadable.state,
     recoilProductValueLoadable.contents,
     recoilProductValueLoadable.state,

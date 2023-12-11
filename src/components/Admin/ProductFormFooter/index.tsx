@@ -16,10 +16,17 @@ import {
   LocallyUploadedImage,
   Product,
   ProductFormModeState,
+  ProductImage,
   ProductWithoutID,
 } from '@/recoil/data/product';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
+  useRecoilRefresher_UNSTABLE,
+  useRecoilState,
+  useRecoilValue,
+  useSetRecoilState,
+} from 'recoil';
+import {
+  productFormImagesForDeletionSelector,
   productFormImagesSelector,
   productFormLocalImagesSelector,
   productFormModeStateSelector,
@@ -39,8 +46,10 @@ import { useNavigate } from 'react-router-dom';
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
 import { categories } from '@/recoil/data/category';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { deleteObject, ref } from '@firebase/storage';
+import { deleteObject, ref, uploadBytesResumable } from '@firebase/storage';
 import { Delete, Publish, RestartAlt } from '@mui/icons-material';
+import { imagesByProductIDSelector } from '@/recoil/selectors/products';
+import { allProductsAtom } from '@/recoil/atoms/allProducts';
 import createStyles from './styles';
 import { appAbsoluteRoutes } from '@/Router';
 import SnackbarDialog from '@/components/Dialogs/SnackBar';
@@ -69,10 +78,67 @@ export default function AdminProductFormFooterComponent({
     productFormLocalImagesSelector
   );
   const productImages = useRecoilValue(productFormImagesSelector);
+  const imagesForDeletion = useRecoilValue(
+    productFormImagesForDeletionSelector
+  );
   const [localDialog, setLocalDialog] = useState<{
     props: DialogProps;
     children: ReactNode;
   } | null>(null);
+  const recoilProductImagesRefresher = useRecoilRefresher_UNSTABLE(
+    imagesByProductIDSelector(productForm.id ?? ('' as string))
+  );
+  const recoilAllProductsRefresher =
+    useRecoilRefresher_UNSTABLE(allProductsAtom);
+
+  const commonPromptDialogHandler = useCallback(
+    async (
+      content: string | ReactNode,
+      noButtonText: string | null = null,
+      yesButtonText: string | null = null
+    ): Promise<boolean> => {
+      return new Promise<boolean>((r) => {
+        const open = true;
+        setDialogComponent(
+          <Dialog
+            open={open}
+            sx={styles.dialogContainer}
+            onClose={() => {
+              r(false);
+              setDialogComponent(null);
+            }}
+          >
+            <DialogContent sx={{ overflowX: 'hidden', wordWrap: 'break-word' }}>
+              {content}
+            </DialogContent>
+            <DialogActions>
+              {noButtonText && (
+                <Button
+                  onClick={() => {
+                    r(false);
+                    setDialogComponent(null);
+                  }}
+                >
+                  {noButtonText}
+                </Button>
+              )}
+              {yesButtonText && (
+                <Button
+                  onClick={() => {
+                    r(true);
+                    setDialogComponent(null);
+                  }}
+                >
+                  {yesButtonText}
+                </Button>
+              )}
+            </DialogActions>
+          </Dialog>
+        );
+      });
+    },
+    [setDialogComponent, styles.dialogContainer]
+  );
 
   const isProductFormValid = useCallback(() => {
     return !!(
@@ -93,145 +159,12 @@ export default function AdminProductFormFooterComponent({
     );
   }, [productForm]);
 
-  const handleFormSubmit = useCallback(
-    async (event: React.FormEvent<HTMLFormElement | HTMLButtonElement>) => {
-      event.preventDefault();
-      if (!isProductFormValid()) {
-        return;
-      }
-      if (formMode === ProductFormModeState.read) {
-        return;
-      }
-
-      const newProduct: ProductWithoutID = {
-        name: productForm.name,
-        categoryID: productForm.category.id,
-        price: {
-          timestamp: serverTimestamp(),
-          currency: 'INR',
-          mrp: productForm.mrp as number,
-          sp: productForm.sp as number,
-        },
-      };
-      let snackbarMsg: string = '';
-      let severity: AlertColor = 'success';
-      let productID = '';
-      let localDialogMessage = 'Creating New Product';
-      try {
-        if (productForm.id !== null) {
-          localDialogMessage = `Updating Product ${productForm.name} with ID ${productForm.id}`;
-        }
-        setIsProcessing(true);
-        setLocalDialog({
-          props: { open: true },
-          children: (
-            <Box>
-              <LinearProgress sx={{ width: '100%', marginBottom: '4px' }} />
-              <Box>{localDialogMessage}</Box>
-            </Box>
-          ),
-        });
-        if (productForm.id === null) {
-          const res = await addDoc(
-            collection(appFirestore, 'products'),
-            newProduct
-          );
-          snackbarMsg = `Successfully created ${newProduct.name} with ID ${res.id}`;
-          productID = res.id;
-        } else {
-          const updateProduct: Product = { ...newProduct, id: productForm.id };
-          const productRef = doc(appFirestore, 'products', productForm.id);
-          await setDoc(productRef, updateProduct);
-          snackbarMsg = `Successfully updated ${newProduct.name} with ID ${productForm.id}`;
-          productID = productForm.id;
-        }
-        navigate(`${appAbsoluteRoutes.adminProducts}/${productID}`);
-      } catch (_) {
-        if (productForm.id !== null) {
-          snackbarMsg = `Failed to update ${productForm.name} with ID ${productForm.id}`;
-        } else {
-          snackbarMsg = 'Failed to create new Product';
-        }
-        severity = 'error';
-      } finally {
-        setLocalDialog(null);
-        setIsProcessing(false);
-        setDialogComponent(
-          <SnackbarDialog severity={severity} message={snackbarMsg} />
-        );
-      }
-    },
-    [
-      formMode,
-      isProductFormValid,
-      navigate,
-      productForm.category.id,
-      productForm.id,
-      productForm.mrp,
-      productForm.name,
-      productForm.sp,
-      setDialogComponent,
-      setIsProcessing,
-    ]
-  );
-
-  const shouldDeleteProductPrompt = useCallback(async (): Promise<boolean> => {
-    return new Promise<boolean>((r) => {
-      const open = true;
-      setDialogComponent(
-        <Dialog
-          open={open}
-          onClose={() => {
-            r(false);
-            setDialogComponent(null);
-          }}
-        >
-          <DialogContent>
-            Are you sure you want to delete product?
-          </DialogContent>
-          <DialogActions>
-            <Button
-              onClick={() => {
-                r(false);
-                setDialogComponent(null);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={() => {
-                r(true);
-                setDialogComponent(null);
-              }}
-            >
-              Yes
-            </Button>
-          </DialogActions>
-        </Dialog>
-      );
-    });
-  }, [setDialogComponent]);
-
-  const handleDeleteProduct = useCallback(async () => {
-    if (productForm.id !== null && !isProcessing) {
-      const shouldDelete = await shouldDeleteProductPrompt();
-      if (shouldDelete) {
-        let localDialogMessage = `Deleting Product ${productForm.name} with ID ${productForm.id}`;
-        if (productImages.length > 0) {
-          localDialogMessage = `Deleting Product ${productForm.name} Images with ID ${productForm.id}`;
-        }
-        setIsProcessing(true);
-        setLocalDialog({
-          props: { open: true },
-          children: (
-            <Box>
-              <LinearProgress sx={{ width: '100%', marginBottom: '4px' }} />
-              <Box>{localDialogMessage}</Box>
-            </Box>
-          ),
-        });
+  const commonImagesDeletionHandler = useCallback(
+    async (imagesArr: ProductImage[]) => {
+      if (imagesArr.length > 0) {
         try {
-          for await (const eachImage of productImages) {
+          let localDialogMessage = `Deleting Product ${productForm.name} Images with ID ${productForm.id}`;
+          for await (const eachImage of imagesArr) {
             localDialogMessage = `Deleting Image ${eachImage.name}`;
             const imageFileRef = ref(
               appFirebaseStorage,
@@ -258,18 +191,327 @@ export default function AdminProductFormFooterComponent({
               ),
             });
           }
-          if (productImages.length > 0) {
-            localDialogMessage = `Successfully deleted images for product ${productForm.name} with id ${productForm.id}`;
-            setLocalDialog({
-              props: { open: true },
-              children: (
-                <Box>
-                  <LinearProgress sx={{ width: '100%', marginBottom: '4px' }} />
-                  <Box>{localDialogMessage}</Box>
+          localDialogMessage = `Successfully deleted images for product ${productForm.name} with id ${productForm.id}`;
+          setLocalDialog({
+            props: { open: true },
+            children: (
+              <Box>
+                <LinearProgress sx={{ width: '100%', marginBottom: '4px' }} />
+                <Box>{localDialogMessage}</Box>
+              </Box>
+            ),
+          });
+        } catch (e) {
+          setDialogComponent(
+            <SnackbarDialog
+              severity="error"
+              message={
+                e instanceof Error
+                  ? e.message
+                  : `Failed to deleted product ${productForm.name} with id ${productForm.id}`
+              }
+            />
+          );
+        }
+      }
+    },
+    [productForm.id, productForm.name, setDialogComponent]
+  );
+
+  const createImageStateComponent = (
+    uniqueKey: string,
+    content: string,
+    progress?: number,
+    determinate?: 'determinate'
+  ) => (
+    <Box key={uniqueKey} sx={{ marginBottom: '16px' }}>
+      <LinearProgress
+        value={progress}
+        variant={determinate}
+        sx={{ width: '100%', marginBottom: '4px' }}
+      />
+      <Box sx={{ fontSize: '14px', lineHeight: 1, textAlign: 'center' }}>
+        {content}
+      </Box>
+    </Box>
+  );
+
+  const commonImagesUploadHandler = useCallback(
+    async (imagesArr: LocallyUploadedImage[]) => {
+      if (imagesArr.length > 0 && productForm.id !== null) {
+        interface ImageStateData {
+          image: LocallyUploadedImage;
+          progress: number;
+          state: string;
+        }
+
+        const metadata = {
+          contentType: 'image/avif',
+        };
+        const imagesStateMap: {
+          [imageName: string]: ImageStateData;
+        } = {};
+        const imagesNameArr: string[] = [];
+        const promisesArr: Promise<void>[] = [];
+        imagesArr.forEach((eachLocalImage) => {
+          imagesStateMap[eachLocalImage.file.name] = {
+            image: eachLocalImage,
+            progress: 0,
+            state: `Preparing for upload of ${eachLocalImage.file.name}`,
+          };
+          imagesNameArr.push(eachLocalImage.file.name);
+        });
+        setLocalDialog({
+          props: { open: true },
+          children: imagesNameArr.map((eachImage) => {
+            return createImageStateComponent(
+              eachImage,
+              imagesStateMap[eachImage].state
+            );
+          }),
+        });
+        for (const eachLocalImage of imagesArr) {
+          const imagePromise = new Promise<void>((resolve) => {
+            // Upload file and metadata to the object 'images/mountains.jpg'
+            const storageRef = ref(
+              appFirebaseStorage,
+              `products/${productForm.id}/${eachLocalImage.file.name}`
+            );
+            const uploadTask = uploadBytesResumable(
+              storageRef,
+              eachLocalImage.file,
+              metadata
+            );
+            const imgFilename = eachLocalImage.file.name;
+
+            // Listen for state changes, errors, and completion of the upload.
+            uploadTask.on(
+              'state_changed',
+              (snapshot) => {
+                // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                const progress =
+                  (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                imagesStateMap[imgFilename].progress = progress;
+                let state = `Uploaded ${progress}% of ${imgFilename}`;
+                switch (snapshot.state) {
+                  case 'paused':
+                    state += `\n. Uploading is paused.`;
+                    break;
+                  case 'running':
+                  default:
+                    state += `\n. Uploading is running.`;
+                    break;
+                }
+                imagesStateMap[imgFilename].state = state;
+                setLocalDialog({
+                  props: { open: true },
+                  children: imagesNameArr.map((eachImage) => {
+                    return createImageStateComponent(
+                      eachImage,
+                      imagesStateMap[eachImage].state,
+                      imagesStateMap[eachImage].progress,
+                      'determinate'
+                    );
+                  }),
+                });
+              },
+              (error) => {
+                imagesStateMap[
+                  imgFilename
+                ].state = `Uploading ${imgFilename} failed.\n${error.message}`;
+                setLocalDialog({
+                  props: { open: true },
+                  children: imagesNameArr.map((eachImage) => {
+                    return createImageStateComponent(
+                      eachImage,
+                      imagesStateMap[eachImage].state,
+                      imagesStateMap[eachImage].progress,
+                      'determinate'
+                    );
+                  }),
+                });
+                resolve();
+              },
+              () => {
+                imagesStateMap[imgFilename].progress = 100;
+                imagesStateMap[
+                  imgFilename
+                ].state = `Successfully uploaded ${imgFilename}`;
+                setLocalDialog({
+                  props: { open: true },
+                  children: imagesNameArr.map((eachImage) => {
+                    return createImageStateComponent(
+                      eachImage,
+                      imagesStateMap[eachImage].state,
+                      imagesStateMap[eachImage].progress,
+                      'determinate'
+                    );
+                  }),
+                });
+                resolve();
+              }
+            );
+          });
+          promisesArr.push(imagePromise);
+        }
+        await Promise.all(promisesArr);
+      }
+    },
+    [productForm.id]
+  );
+
+  const handleFormSubmit = useCallback(
+    async (event: React.FormEvent<HTMLFormElement | HTMLButtonElement>) => {
+      event.preventDefault();
+      if (!isProductFormValid()) {
+        return;
+      }
+      if (formMode === ProductFormModeState.read) {
+        return;
+      }
+
+      const newProduct: ProductWithoutID = {
+        name: productForm.name,
+        categoryID: productForm.category.id,
+        price: {
+          timestamp: serverTimestamp(),
+          currency: 'INR',
+          mrp: productForm.mrp as number,
+          sp: productForm.sp as number,
+        },
+      };
+      let modalContentPrompt:
+        | string
+        | ReactNode = `Do you want to continue creating new product ${productForm.name}?`;
+      let snackbarMsg: string = '';
+      let severity: AlertColor = 'success';
+      let productID = '';
+      let localDialogMessage = 'Creating New Product';
+      if (productForm.id !== null) {
+        localDialogMessage = `Preparing Updating Of Product ${productForm.name} with ID ${productForm.id}`;
+        modalContentPrompt = (
+          <Box>
+            <Box sx={{ marginBottom: '8px' }}>
+              {localImages.length > 0 && (
+                <Box sx={{ lineHeight: 1 }}>
+                  <small>Images To Add: {localImages.length}</small>
                 </Box>
-              ),
-            });
+              )}
+              {imagesForDeletion.length > 0 && (
+                <Box sx={{ lineHeight: 1 }}>
+                  <small>Images For Deletion: {imagesForDeletion.length}</small>
+                </Box>
+              )}
+            </Box>
+            <Box>
+              {`Do you want to continue updating product ${productForm.name} with
+                ID ${productForm.id} ?`}
+            </Box>
+          </Box>
+        );
+      }
+      const shouldContinue = await commonPromptDialogHandler(
+        modalContentPrompt,
+        'No',
+        'Yes'
+      );
+      if (shouldContinue) {
+        try {
+          setIsProcessing(true);
+          setLocalDialog({
+            props: { open: true },
+            children: (
+              <Box>
+                <LinearProgress sx={{ width: '100%', marginBottom: '4px' }} />
+                <Box>{localDialogMessage}</Box>
+              </Box>
+            ),
+          });
+          if (productForm.id === null) {
+            const res = await addDoc(
+              collection(appFirestore, 'products'),
+              newProduct
+            );
+            snackbarMsg = `Successfully created ${newProduct.name} with ID ${res.id}`;
+            productID = res.id;
+          } else {
+            const updateProduct: Product = {
+              ...newProduct,
+              id: productForm.id,
+            };
+            await commonImagesDeletionHandler(imagesForDeletion);
+            await commonImagesUploadHandler(localImages);
+            const productRef = doc(appFirestore, 'products', productForm.id);
+            await setDoc(productRef, updateProduct);
+            snackbarMsg = `Successfully updated ${newProduct.name} with ID ${productForm.id}`;
+            productID = productForm.id;
           }
+          navigate(`${appAbsoluteRoutes.adminProducts}/${productID}`);
+        } catch (_) {
+          if (productForm.id !== null) {
+            snackbarMsg = `Failed to update ${productForm.name} with ID ${productForm.id}`;
+          } else {
+            snackbarMsg = 'Failed to create new Product';
+          }
+          severity = 'error';
+        } finally {
+          setLocalDialog(null);
+          setIsProcessing(false);
+          if (productID !== null) {
+            recoilAllProductsRefresher();
+            recoilProductImagesRefresher();
+          }
+          setDialogComponent(
+            <SnackbarDialog severity={severity} message={snackbarMsg} />
+          );
+        }
+      }
+    },
+    [
+      commonImagesDeletionHandler,
+      commonImagesUploadHandler,
+      commonPromptDialogHandler,
+      formMode,
+      imagesForDeletion,
+      isProductFormValid,
+      localImages,
+      navigate,
+      productForm.category.id,
+      productForm.id,
+      productForm.mrp,
+      productForm.name,
+      productForm.sp,
+      recoilAllProductsRefresher,
+      recoilProductImagesRefresher,
+      setDialogComponent,
+      setIsProcessing,
+    ]
+  );
+
+  const handleDeleteProduct = useCallback(async () => {
+    if (productForm.id !== null && !isProcessing) {
+      const shouldDelete = await commonPromptDialogHandler(
+        `Are you sure you want to delete product ${productForm.name}? with ID ${productForm.id}`,
+        'Cancel',
+        'Yes'
+      );
+      if (shouldDelete) {
+        let localDialogMessage = `Deleting Product ${productForm.name} with ID ${productForm.id}`;
+        if (productImages.length > 0) {
+          localDialogMessage = `Deleting Product ${productForm.name} Images with ID ${productForm.id}`;
+        }
+        setIsProcessing(true);
+        setLocalDialog({
+          props: { open: true },
+          children: (
+            <Box>
+              <LinearProgress sx={{ width: '100%', marginBottom: '4px' }} />
+              <Box>{localDialogMessage}</Box>
+            </Box>
+          ),
+        });
+        try {
+          await commonImagesDeletionHandler(productImages);
           await deleteDoc(doc(appFirestore, 'products', productForm.id!));
           setDialogComponent(
             <SnackbarDialog
@@ -296,14 +538,15 @@ export default function AdminProductFormFooterComponent({
       }
     }
   }, [
-    isProcessing,
-    navigate,
     productForm.id,
     productForm.name,
+    isProcessing,
+    commonPromptDialogHandler,
     productImages,
-    setDialogComponent,
     setIsProcessing,
-    shouldDeleteProductPrompt,
+    commonImagesDeletionHandler,
+    setDialogComponent,
+    navigate,
   ]);
 
   const handleImagesUploadLocally = async (
@@ -328,27 +571,25 @@ export default function AdminProductFormFooterComponent({
         const errors: { name: string; message: string }[] = [];
         const supportedImages: LocallyUploadedImage[] = [];
         for await (const file of files) {
+          let errorFound = false;
           if (file.type.toLowerCase() !== 'image/avif') {
+            errorFound = true;
             localDialogMessage = `Unsupported file extension ${file.type}.\nSupported extension is .avif`;
-            errors.push({
-              name: file.name,
-              message: localDialogMessage,
-            });
-            setLocalDialog({
-              props: { open: true },
-              children: (
-                <Box>
-                  <LinearProgress sx={{ width: '100%', marginBottom: '4px' }} />
-                  <Box>{localDialogMessage}</Box>
-                </Box>
-              ),
-            });
-            continue;
           }
-          if (file.size > 1024 * 200) {
+          if (!errorFound && file.size > 1024 * 200) {
+            errorFound = true;
             localDialogMessage = `File size ${
               file.size / 1024
             }Kb exceeds limit of 200kb`;
+          }
+          if (
+            !errorFound &&
+            productImages.find((eachImage) => eachImage.name === file.name)
+          ) {
+            errorFound = true;
+            localDialogMessage = `Image ${file.name} with the same name already exists.`;
+          }
+          if (errorFound) {
             errors.push({
               name: file.name,
               message: localDialogMessage,
@@ -412,16 +653,14 @@ export default function AdminProductFormFooterComponent({
             />
           );
           await new Promise<void>((r) => {
-            setTimeout(() => {
-              r();
-            }, 2000);
+            setTimeout(r, 2000);
           });
         }
         if (supportedImages.length > 0) {
           setDialogComponent(
             <SnackbarDialog
               severity="success"
-              message={`Successfully uploaded ${supportedImages.length} file(s) locally!!`}
+              message={`Successfully uploaded ${supportedImages.length} file(s) locally!`}
             />
           );
         }
@@ -456,7 +695,7 @@ export default function AdminProductFormFooterComponent({
         sx={{ marginBottom: '16px' }}
         variant="contained"
         disabled={disableForm}
-        color="info"
+        color="warning"
         startIcon={<CloudUploadIcon />}
       >
         <Box
@@ -493,6 +732,7 @@ export default function AdminProductFormFooterComponent({
         variant="contained"
         onClick={(e) => {
           setLocalDialog(null);
+          setIsProcessing(false);
           handleReset(e);
         }}
         disabled={disableForm}
@@ -503,7 +743,7 @@ export default function AdminProductFormFooterComponent({
       </Button>
       {deleteProductButton}
       <Button
-        sx={{ marginBottom: '16px' }}
+        sx={{ marginBottom: '16px', backgroundColor: '#1565c0' }}
         disabled={!isProductFormValid() || disableForm}
         variant="contained"
         type="button"
@@ -529,8 +769,8 @@ export default function AdminProductFormFooterComponent({
         {commonButtons}
       </Box>
       {isProcessing && localDialog && (
-        <Dialog {...localDialog.props}>
-          <Box sx={styles.dialogContentContainer}>{localDialog.children}</Box>
+        <Dialog sx={styles.dialogContainer} {...localDialog.props}>
+          <DialogContent>{localDialog.children}</DialogContent>
         </Dialog>
       )}
     </>

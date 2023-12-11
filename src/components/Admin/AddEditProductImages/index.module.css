@@ -13,12 +13,14 @@
 .slide, .slide:global(.swiper-slide) {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
+    flex-direction: column;
 }
 
 .image {
+    display: block;
     width: auto;
     height: auto;
-    max-height: 100%;
+    max-height: calc(100% - 60px);
     max-width: 100%;
 }

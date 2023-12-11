@@ -20,6 +20,7 @@ export const defaultProductFormState: ProductFormState = {
   mode: defaultProductFormMode,
   images: [],
   localImages: [],
+  imagesForDeletion: [],
 };
 export const productFormStateAtom = atom<ProductFormState>({
   key: recoilKeys.productFormStateAtom,

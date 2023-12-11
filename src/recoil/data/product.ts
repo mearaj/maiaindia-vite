@@ -53,5 +53,6 @@ export interface ProductFormState {
   isProcessing: boolean;
   mode: ProductFormModeState;
   images: ProductImage[];
+  imagesForDeletion: ProductImage[];
   localImages: LocallyUploadedImage[];
 }

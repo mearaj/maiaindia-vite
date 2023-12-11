@@ -83,3 +83,19 @@ export const productFormLocalImagesSelector = selector({
     }
   },
 });
+export const productFormImagesForDeletionSelector = selector({
+  key: recoilKeys.productFormImagesForDeletionSelector,
+  get: ({ get }) => {
+    const { imagesForDeletion } = get(productFormStateAtom);
+    return imagesForDeletion;
+  },
+  set: ({ set, get }, imagesForDeletion) => {
+    const productFormState = get(productFormStateAtom);
+    if (!(imagesForDeletion instanceof DefaultValue)) {
+      set(productFormStateAtom, {
+        ...productFormState,
+        imagesForDeletion,
+      });
+    }
+  },
+});

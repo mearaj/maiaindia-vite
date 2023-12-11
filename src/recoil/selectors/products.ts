@@ -26,21 +26,34 @@ export const imagesByProductIDSelector = selectorFamily({
   get:
     (productID: string) =>
     async ({ get }) => {
+      if (productID.trim() === '') {
+        return [];
+      }
       const allProductImages = get(allProductsImagesAtom);
-      let imagesURLs = allProductImages[productID]
+      const imagesURLs = allProductImages[productID]
         ? [...allProductImages[productID]]
         : [];
-      if (imagesURLs.length === 0) {
-        imagesURLs = [];
-        const imagesRef = ref(appFirebaseStorage, `products/${productID}`);
-        const allListRef = await listAll(imagesRef);
-        for await (const eachImageRef of allListRef.items) {
-          const imageURL = await getDownloadURL(eachImageRef);
-          imagesURLs.push({
-            name: eachImageRef.name,
-            url: imageURL,
-          });
-        }
+      // if (imagesURLs.length === 0) {
+      //   imagesURLs = [];
+      //   const imagesRef = ref(appFirebaseStorage, `products/${productID}`);
+      //   const allListRef = await listAll(imagesRef);
+      //   for await (const eachImageRef of allListRef.items) {
+      //     const imageURL = await getDownloadURL(eachImageRef);
+      //     imagesURLs.push({
+      //       name: eachImageRef.name,
+      //       url: imageURL,
+      //     });
+      //   }
+      // }
+      // imagesURLs = [];
+      const imagesRef = ref(appFirebaseStorage, `products/${productID}`);
+      const allListRef = await listAll(imagesRef);
+      for await (const eachImageRef of allListRef.items) {
+        const imageURL = await getDownloadURL(eachImageRef);
+        imagesURLs.push({
+          name: eachImageRef.name,
+          url: imageURL,
+        });
       }
       return imagesURLs;
     },
