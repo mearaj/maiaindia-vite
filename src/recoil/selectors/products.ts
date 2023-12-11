@@ -1,4 +1,4 @@
-import { selector, selectorFamily } from 'recoil';
+import { DefaultValue, selector, selectorFamily } from 'recoil';
 import { recoilKeys } from '@/recoil/data/recoilKeys';
 import { categoryAtom } from '@/recoil/atoms';
 import { defaultSelectedCategory } from '@/recoil/data/category';
@@ -33,28 +33,28 @@ export const imagesByProductIDSelector = selectorFamily({
       const imagesURLs = allProductImages[productID]
         ? [...allProductImages[productID]]
         : [];
-      // if (imagesURLs.length === 0) {
-      //   imagesURLs = [];
-      //   const imagesRef = ref(appFirebaseStorage, `products/${productID}`);
-      //   const allListRef = await listAll(imagesRef);
-      //   for await (const eachImageRef of allListRef.items) {
-      //     const imageURL = await getDownloadURL(eachImageRef);
-      //     imagesURLs.push({
-      //       name: eachImageRef.name,
-      //       url: imageURL,
-      //     });
-      //   }
-      // }
-      // imagesURLs = [];
-      const imagesRef = ref(appFirebaseStorage, `products/${productID}`);
-      const allListRef = await listAll(imagesRef);
-      for await (const eachImageRef of allListRef.items) {
-        const imageURL = await getDownloadURL(eachImageRef);
-        imagesURLs.push({
-          name: eachImageRef.name,
-          url: imageURL,
-        });
+      if (imagesURLs.length === 0) {
+        const imagesRef = ref(appFirebaseStorage, `products/${productID}`);
+        const allListRef = await listAll(imagesRef);
+        for await (const eachImageRef of allListRef.items) {
+          const imageURL = await getDownloadURL(eachImageRef);
+          imagesURLs.push({
+            name: eachImageRef.name,
+            url: imageURL,
+          });
+        }
       }
       return imagesURLs;
+    },
+  set:
+    (productID: string) =>
+    ({ set, get }, newValue) => {
+      const allProductImages = get(allProductsImagesAtom);
+      if (!(newValue instanceof DefaultValue)) {
+        set(allProductsImagesAtom, {
+          ...allProductImages,
+          [productID]: newValue,
+        });
+      }
     },
 });
