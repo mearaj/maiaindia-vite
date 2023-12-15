@@ -3,7 +3,6 @@ import { Product } from '@/recoil/data/product';
 import ProductComponent from '@/components/Product';
 
 function Products({ products }: { products: Product[] }) {
-  console.log(products);
   return (
     <Box
       sx={{
@@ -20,7 +19,9 @@ function Products({ products }: { products: Product[] }) {
     >
       {products &&
         products.map((el: Product) => {
-          return <ProductComponent key={el.id} product={el} />;
+          return (
+            <ProductComponent key={el.id} product={el} isAdminProduct={false} />
+          );
         })}
     </Box>
   );

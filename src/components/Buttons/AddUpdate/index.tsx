@@ -19,7 +19,7 @@ export default function AddUpdateButton({ product }: AddUpdateButtonProps) {
   const user = useRecoilValue(userAtom);
   const setActiveDialog = useSetRecoilState(selectedDialogAtom);
   const [quantity, setQuantity] = useRecoilState(
-    cartQuantityByProductIDSelector(product.id)
+    cartQuantityByProductIDSelector(product.id!)
   );
 
   const handleCartIncrement = (
@@ -30,8 +30,8 @@ export default function AddUpdateButton({ product }: AddUpdateButtonProps) {
       return;
     }
     const cartItems = cart.items;
-    const quantityAlt = cartItems[product.id]
-      ? cartItems[product.id].quantity + 1
+    const quantityAlt = cartItems[product.id!]
+      ? cartItems[product.id!].quantity + 1
       : 1;
     setQuantity(quantityAlt);
   };
@@ -40,8 +40,8 @@ export default function AddUpdateButton({ product }: AddUpdateButtonProps) {
     _e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     const cartItems = cart.items;
-    const quantityAlt = cartItems[product.id]
-      ? cartItems[product.id].quantity - 1
+    const quantityAlt = cartItems[product.id!]
+      ? cartItems[product.id!].quantity - 1
       : 0;
     setQuantity(quantityAlt);
   };

@@ -2,33 +2,22 @@ import { atom } from 'recoil';
 import { recoilKeys } from '@/recoil/data/recoilKeys';
 import { Product } from '@/recoil/data/product';
 import { collection, getDocs, onSnapshot, query } from '@firebase/firestore';
-import { appFirebaseStorage, appFirestore } from '@/firebase';
-import { getDownloadURL, listAll, ref } from '@firebase/storage';
+import { appFirestore } from '@/firebase';
 
 export const allProductsAtom = atom<Product[]>({
   key: recoilKeys.allProductsAtom,
   default: new Promise((r) => {
-    const getAllProductsAsyn = async () => {
+    const getAllProductsAsync = async () => {
       const allProductsQuery = query(collection(appFirestore, 'products'));
       const products: Product[] = [];
       const querySnapShot = await getDocs(allProductsQuery);
       for await (const doc of querySnapShot.docs) {
-        const product: Product = { ...doc.data(), id: doc.id };
-        const imagesRef = ref(appFirebaseStorage, `products/${doc.id}`);
-        const allListRef = await listAll(imagesRef);
-        product.images = [];
-        for await (const eachImageRef of allListRef.items) {
-          const imageURL = await getDownloadURL(eachImageRef);
-          product.images.push({
-            url: imageURL,
-            name: eachImageRef.name,
-          });
-        }
+        const product: Product = { ...doc.data(), id: doc.id } as Product;
         products.push(product);
       }
       r(products);
     };
-    getAllProductsAsyn();
+    getAllProductsAsync();
   }),
   effects: [
     ({ setSelf, getPromise, node }) => {
@@ -56,16 +45,6 @@ export const allProductsAtom = atom<Product[]>({
               break;
           }
           if (updateRequired) {
-            const imagesRef = ref(appFirebaseStorage, `products/${id}`);
-            const allListRef = await listAll(imagesRef);
-            productToAddModify.images = [];
-            for await (const eachImageRef of allListRef.items) {
-              const imageURL = await getDownloadURL(eachImageRef);
-              productToAddModify.images.push({
-                url: imageURL,
-                name: eachImageRef.name,
-              });
-            }
             if (foundIndex >= 0) {
               products[foundIndex] = productToAddModify;
             } else {

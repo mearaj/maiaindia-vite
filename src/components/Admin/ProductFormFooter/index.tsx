@@ -17,9 +17,13 @@ import {
   Product,
   ProductFormModeState,
   ProductImage,
-  ProductWithoutID,
 } from '@/recoil/data/product';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import {
+  useRecoilRefresher_UNSTABLE,
+  useRecoilState,
+  useRecoilValue,
+  useSetRecoilState,
+} from 'recoil';
 import {
   productFormImagesForDeletionSelector,
   productFormImagesSelector,
@@ -43,6 +47,7 @@ import { categories } from '@/recoil/data/category';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { deleteObject, ref, uploadBytesResumable } from '@firebase/storage';
 import { Delete, Publish, RestartAlt } from '@mui/icons-material';
+import { productIdSelector } from '@/recoil/selectors/productId';
 import createStyles from './styles';
 import { appAbsoluteRoutes } from '@/Router';
 import SnackbarDialog from '@/components/Dialogs/SnackBar';
@@ -78,6 +83,9 @@ export default function AdminProductFormFooterComponent({
     props: DialogProps;
     children: ReactNode;
   } | null>(null);
+  const recoilProductValueLoadableRefresher = useRecoilRefresher_UNSTABLE(
+    productIdSelector(productForm.id ?? '')
+  );
 
   const commonPromptDialogHandler = useCallback(
     async (
@@ -358,7 +366,7 @@ export default function AdminProductFormFooterComponent({
         return;
       }
 
-      const newProduct: ProductWithoutID = {
+      const newProduct: Product = {
         name: productForm.name,
         categoryID: productForm.category.id,
         updatedAt: serverTimestamp(),
@@ -448,6 +456,7 @@ export default function AdminProductFormFooterComponent({
           setDialogComponent(
             <SnackbarDialog severity={severity} message={snackbarMsg} />
           );
+          recoilProductValueLoadableRefresher();
         }
       }
     },
@@ -466,6 +475,7 @@ export default function AdminProductFormFooterComponent({
       productForm.mrp,
       productForm.name,
       productForm.sp,
+      recoilProductValueLoadableRefresher,
       setDialogComponent,
       setIsProcessing,
     ]

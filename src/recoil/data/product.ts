@@ -12,27 +12,27 @@ export const defaultPlaceholderProductImage = {
   url: placeholderImage,
 };
 
-export interface ProductWithoutID {
-  categoryID?: string;
-  name?: string;
-  details?: string;
-  updatedAt?: FieldValue | Timestamp;
-  createdAt?: FieldValue | Timestamp;
-  currency?: string;
-  mrp?: number;
-  sp?: number;
-  images?: ProductImage[];
+export interface Product {
+  id?: string;
+  categoryID: string;
+  name: string;
+  details: string;
+  updatedAt: FieldValue | Timestamp;
+  createdAt: FieldValue | Timestamp;
+  currency: string;
+  mrp: number;
+  sp: number;
 }
 
-export interface Product extends ProductWithoutID {
-  id: string;
+export interface ProductWithImages extends Product {
+  images: ProductImage[];
 }
 
 export interface ProductForm {
-  name?: string;
-  details?: string;
-  mrp?: number | string;
-  sp?: number | string;
+  name: string;
+  details: string;
+  mrp: number | string;
+  sp: number | string;
   category: Category;
   id?: string | null;
 }

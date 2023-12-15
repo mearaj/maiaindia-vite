@@ -1,19 +1,32 @@
-import { useRef } from 'react';
 import { Box, Paper } from '@mui/material';
-import { Product, ProductImage } from '@/recoil/data/product';
+import { defaultPlaceholderProductImage, Product } from '@/recoil/data/product';
 import { useNavigate } from 'react-router-dom';
-import placeholderImage from '@/assets/images/placeholder.svg';
+import { useRecoilValueLoadable } from 'recoil';
+import { productIdSelector } from '@/recoil/selectors/productId';
 import ProductPrice from '@/components/Product/Price';
 import AddUpdateButton from '@/components/Buttons/AddUpdate';
+import RecoilLoadableComponent from '@/components/Layouts/RecoilLoadableComponent';
+import { appAbsoluteRoutes } from '@/Router';
 
-export default function ProductComponent({ product }: { product: Product }) {
-  const cardContentReference = useRef<HTMLDivElement>(null);
+export default function ProductComponent({
+  product,
+  isAdminProduct = false,
+}: {
+  product: Product;
+  isAdminProduct: boolean;
+}) {
   const navigate = useNavigate();
-  const preferredImgSrc: ProductImage =
-    product.images && product.images.length
-      ? product.images[0]
-      : { name: 'Placeholder', url: placeholderImage };
+  const productWithImages = useRecoilValueLoadable(
+    productIdSelector(product.id!)
+  );
 
+  const preferredImgSrc =
+    productWithImages.state === 'hasValue' &&
+    productWithImages.contents &&
+    productWithImages.contents.images &&
+    productWithImages.contents.images.length > 0
+      ? productWithImages.contents.images[0]
+      : defaultPlaceholderProductImage;
   const imageStyle = {
     height: 'auto',
     width: '100%',
@@ -26,7 +39,6 @@ export default function ProductComponent({ product }: { product: Product }) {
 
   return (
     <Paper
-      ref={cardContentReference}
       sx={{
         padding: '0px',
         display: 'flex',
@@ -53,7 +65,11 @@ export default function ProductComponent({ product }: { product: Product }) {
       >
         <Box
           onClick={() => {
-            navigate(`/products/${product.id}`);
+            if (isAdminProduct) {
+              navigate(`${appAbsoluteRoutes.adminProducts}/${product.id}`);
+            } else {
+              navigate(`/products/${product.id}`);
+            }
           }}
         >
           <Box
@@ -64,12 +80,18 @@ export default function ProductComponent({ product }: { product: Product }) {
               padding: '16px',
             }}
           >
-            <Box
-              component="img"
-              src={preferredImgSrc.url}
-              alt={product.name}
-              sx={imageStyle}
-            />
+            <RecoilLoadableComponent
+              errorContainerStyle={imageStyle}
+              loaderContainerStyle={imageStyle}
+              recoilLoadable={productWithImages}
+            >
+              <Box
+                component="img"
+                src={preferredImgSrc.url}
+                alt={product.name}
+                sx={imageStyle}
+              />
+            </RecoilLoadableComponent>
           </Box>
           <Box sx={{ padding: '4px 8px 4px' }}>
             <Box
@@ -81,6 +103,7 @@ export default function ProductComponent({ product }: { product: Product }) {
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
+                textAlign: 'center',
               }}
             >
               {product.name}
@@ -88,9 +111,11 @@ export default function ProductComponent({ product }: { product: Product }) {
             <ProductPrice product={product} />
           </Box>
         </Box>
-        <Box sx={{ padding: '0px 8px' }}>
-          <AddUpdateButton product={product} />
-        </Box>
+        {!isAdminProduct && (
+          <Box sx={{ padding: '0px 8px' }}>
+            <AddUpdateButton product={product} />
+          </Box>
+        )}
       </Box>
     </Paper>
   );

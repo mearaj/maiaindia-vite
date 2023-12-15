@@ -262,10 +262,11 @@ export default function ProfilePage() {
                   setAppUserState(currentAppUserState);
                   showSnackbar('success', 'Successfully updated profile');
                 } catch (_e) {
-                  console.log(_e);
                   showSnackbar(
                     'error',
-                    'An error occurred during profile update'
+                    `An error occurred during profile update ${
+                      _e instanceof Error ? _e.message : ''
+                    }`
                   );
                 }
                 onCancelClick();

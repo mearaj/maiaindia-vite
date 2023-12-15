@@ -16,6 +16,7 @@ export default function ProductPrice({
         flexWrap: 'wrap',
         fontSize: '12px',
         alignItems: 'center',
+        justifyContent: 'center',
         ...sx,
       }}
     >

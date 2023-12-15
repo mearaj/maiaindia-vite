@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 import { Product } from '@/recoil/data/product';
-import AdminProductComponent from '@/components/Admin/Product';
+import ProductComponent from '@/components/Product';
 
 function AdminProducts({ products }: { products: Product[] }) {
   return (
@@ -19,7 +19,7 @@ function AdminProducts({ products }: { products: Product[] }) {
     >
       {products &&
         products.map((el: Product) => {
-          return <AdminProductComponent key={el.id} product={el} />;
+          return <ProductComponent key={el.id} product={el} isAdminProduct />;
         })}
     </Box>
   );

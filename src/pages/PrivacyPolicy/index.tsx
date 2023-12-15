@@ -173,13 +173,13 @@ export default function PrivacyPolicyPage() {
       <Box sx={{ marginBottom: '16px' }}>
         Maia Jewellery follows a standard procedure of using log files. These
         files log visitors when they visit websites. All hosting companies do
-        this and a part of hosting services' analytics. The information
+        this and a part of hosting services&apos; analytics. The information
         collected by log files include internet protocol (IP) addresses, browser
         type, Internet Service Provider (ISP), date and time stamp,
         referring/exit pages, and possibly the number of clicks. These are not
         linked to any information that is personally identifiable. The purpose
         of the information is for analyzing trends, administering the site,
-        tracking user's movement on the website, and gathering demographic
+        tracking user&apos;s movement on the website, and gathering demographic
         information.
       </Box>
       <Typography
@@ -200,8 +200,8 @@ export default function PrivacyPolicyPage() {
           Third-party ad servers or ad networks uses technologies like cookies,
           JavaScript, or Web Beacons that are used in their respective
           advertisements and links that appear on Maia Jewellery, which are sent
-          directly to user's browser. They automatically receive your IP address
-          when this occurs. These technologies are used to measure the
+          directly to user&apos;s browser. They automatically receive your IP
+          address when this occurs. These technologies are used to measure the
           effectiveness of their advertising campaigns and/or to personalize the
           advertising content that you see on websites that you visit.
         </Box>
@@ -221,16 +221,16 @@ export default function PrivacyPolicyPage() {
       </Typography>
       <Box sx={{ marginBottom: '16px' }}>
         <Box sx={{ marginBottom: '8px' }}>
-          Maia Jewellery's Privacy Policy does not apply to other advertisers or
-          websites. Thus, we are advising you to consult the respective Privacy
-          Policies of these third-party ad servers for more detailed
-          information. It may include their practices and instructions about how
-          to opt-out of certain options.{' '}
+          Maia Jewellery&apos;s Privacy Policy does not apply to other
+          advertisers or websites. Thus, we are advising you to consult the
+          respective Privacy Policies of these third-party ad servers for more
+          detailed information. It may include their practices and instructions
+          about how to opt-out of certain options.{' '}
         </Box>
         <Box sx={{ marginBottom: '8px' }}>
           You can choose to disable cookies through your individual browser
           options. To know more detailed information about cookie management
-          with specific web browsers, it can be found at the browser's
+          with specific web browsers, it can be found at the browser&apos;s
           respective websites.
         </Box>
       </Box>
@@ -249,7 +249,7 @@ export default function PrivacyPolicyPage() {
           right to:
         </Box>
         <Box sx={{ marginBottom: '8px' }}>
-          Request that a business that collects a consumer's personal data
+          Request that a business that collects a consumer&apos;s personal data
           disclose the categories and specific pieces of personal data that a
           business has collected about consumers.
         </Box>
@@ -258,8 +258,8 @@ export default function PrivacyPolicyPage() {
           that a business has collected.
         </Box>
         <Box sx={{ marginBottom: '8px' }}>
-          Request that a business that sells a consumer's personal data, not
-          sell the consumer's personal data.
+          Request that a business that sells a consumer&apos;s personal data,
+          not sell the consumer&apos;s personal data.
         </Box>
         <Box sx={{ marginBottom: '8px' }}>
           If you make a request, we have one month to respond to you. If you

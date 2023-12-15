@@ -19,7 +19,7 @@ export default function RemoveButton({
   const cart = useRecoilValue(cartAtom);
   const user = useRecoilValue(userAtom);
   const setQuantity = useSetRecoilState(
-    cartQuantityByProductIDSelector(product.id)
+    cartQuantityByProductIDSelector(product.id!)
   );
 
   const updateQuantity = (quantityAlt: number) => {
@@ -27,7 +27,7 @@ export default function RemoveButton({
   };
 
   const cartItems = cart.items;
-  if (!cartItems[product.id] || cartItems[product.id].quantity < 1 || !user) {
+  if (!cartItems[product.id!] || cartItems[product.id!].quantity < 1 || !user) {
     return null;
   }
   return (
