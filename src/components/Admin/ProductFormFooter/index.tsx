@@ -396,6 +396,7 @@ export default function AdminProductFormFooterComponent({
           mrp: productForm.mrp as number,
           sp: productForm.sp as number,
         },
+        details: productForm.details,
       };
       let modalContentPrompt:
         | string
