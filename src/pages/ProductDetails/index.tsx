@@ -6,7 +6,6 @@ import { useParams } from 'react-router-dom';
 import { useState } from 'react';
 import { useRecoilValueLoadable } from 'recoil';
 import { productIdSelector } from '@/recoil/selectors/productId';
-import { imagesByProductIDSelector } from '@/recoil/selectors/products';
 import ProductPrice from '@/components/Product/Price';
 import styles from './index.module.css';
 import AddUpdateButton from '@/components/Buttons/AddUpdate';
@@ -18,9 +17,6 @@ export default function ProductDetailsPage() {
   const recoilProductLoadable = useRecoilValueLoadable(
     productIdSelector(params.id as string)
   );
-  const recoilProductImagesLoadable = useRecoilValueLoadable(
-    imagesByProductIDSelector(params.id as string)
-  );
 
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperClass | undefined>();
 
@@ -28,13 +24,6 @@ export default function ProductDetailsPage() {
     recoilProductLoadable.state === 'hasValue' && recoilProductLoadable.contents
       ? recoilProductLoadable.contents
       : undefined;
-  const productImages =
-    recoilProductImagesLoadable.state === 'hasValue' &&
-    product &&
-    recoilProductImagesLoadable.contents
-      ? recoilProductImagesLoadable.contents
-      : undefined;
-
   return (
     <Box className={styles.layout}>
       <Header showBackIcon />
@@ -44,21 +33,16 @@ export default function ProductDetailsPage() {
           errorContainerStyle={{ height: '80vh', width: '100%' }}
           recoilLoadable={recoilProductLoadable}
         >
-          <RecoilLoadableComponent
-            loaderContainerStyle={{ height: '80vh', width: '100%' }}
-            errorContainerStyle={{ height: '80vh', width: '100%' }}
-            recoilLoadable={recoilProductImagesLoadable}
-          >
-            <Swiper
-              className={styles.swiper}
-              modules={[FreeMode, Navigation, Thumbs]}
-              slidesPerView={1}
-              navigation
-              thumbs={thumbsSwiper ? { swiper: thumbsSwiper } : undefined}
-            >
-              {product &&
-                productImages &&
-                productImages.map((item) => {
+          {product && product.images && product.images.length > 0 && (
+            <>
+              <Swiper
+                className={styles.swiper}
+                modules={[FreeMode, Navigation, Thumbs]}
+                slidesPerView={1}
+                navigation
+                thumbs={thumbsSwiper ? { swiper: thumbsSwiper } : undefined}
+              >
+                {product.images.map((item) => {
                   return (
                     <SwiperSlide key={item.url} className={styles.slide}>
                       <img
@@ -70,19 +54,17 @@ export default function ProductDetailsPage() {
                     </SwiperSlide>
                   );
                 })}
-            </Swiper>
-            <Swiper
-              className={styles.swiperThumbs}
-              modules={[FreeMode, Navigation, Thumbs]}
-              spaceBetween={4}
-              slidesPerView="auto"
-              freeMode
-              watchSlidesProgress
-              onSwiper={setThumbsSwiper}
-            >
-              {product &&
-                productImages &&
-                productImages.map((item) => {
+              </Swiper>
+              <Swiper
+                className={styles.swiperThumbs}
+                modules={[FreeMode, Navigation, Thumbs]}
+                spaceBetween={4}
+                slidesPerView="auto"
+                freeMode
+                watchSlidesProgress
+                onSwiper={setThumbsSwiper}
+              >
+                {product.images.map((item) => {
                   return (
                     <SwiperSlide key={item.url} className={styles.thumbsSlide}>
                       <img
@@ -94,25 +76,26 @@ export default function ProductDetailsPage() {
                     </SwiperSlide>
                   );
                 })}
-            </Swiper>
-          </RecoilLoadableComponent>
-          {product && (
-            <>
-              <div className={styles.productDetails}>
-                <div className={styles.productName}>
-                  {recoilProductLoadable.contents.name}
-                </div>
-                <ProductPrice product={recoilProductLoadable.contents} />
-              </div>
-              <Box sx={{ padding: '16px' }}>
-                <Box sx={{ marginBottom: '8px' }}>
-                  <AddUpdateButton product={recoilProductLoadable.contents} />
-                </Box>
-                <BuyButton product={recoilProductLoadable.contents} />
-              </Box>
+              </Swiper>
             </>
           )}
         </RecoilLoadableComponent>
+        {product && (
+          <>
+            <div className={styles.productDetails}>
+              <div className={styles.productName}>
+                {recoilProductLoadable.contents.name}
+              </div>
+              <ProductPrice product={recoilProductLoadable.contents} />
+            </div>
+            <Box sx={{ padding: '16px' }}>
+              <Box sx={{ marginBottom: '8px' }}>
+                <AddUpdateButton product={recoilProductLoadable.contents} />
+              </Box>
+              <BuyButton product={recoilProductLoadable.contents} />
+            </Box>
+          </>
+        )}
       </Box>
     </Box>
   );

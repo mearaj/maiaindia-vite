@@ -12,9 +12,8 @@ import {
   productFormStateAtom,
 } from '@/recoil/atoms/productForm';
 import * as React from 'react';
-import { SyntheticEvent, useCallback, useEffect, useMemo } from 'react';
+import { SyntheticEvent, useCallback, useEffect } from 'react';
 import { ProductForm } from '@/recoil/data/product';
-import { imagesByProductIDSelector } from '@/recoil/selectors/products';
 import {
   productFormLocalImagesSelector,
   productFormModeStateSelector,
@@ -27,15 +26,11 @@ import AddEditProductComponent from '@/components/Admin/AddEditProduct';
 import AddEditProductImagesComponent from '@/components/Admin/AddEditProductImages';
 import RecoilLoadablePageLayout from '@/components/Layouts/RecoilLoadablePage';
 import AdminProductFormFooterComponent from '@/components/Admin/ProductFormFooter';
-import RecoilLoadableComponent from '@/components/Layouts/RecoilLoadableComponent';
 
 export default function AdminProductDetailsPage() {
   const params = useParams();
   const recoilProductValueLoadable = useRecoilValueLoadable(
     productIdSelector(params.id as string)
-  );
-  const recoilProductImagesValueLoadable = useRecoilValueLoadable(
-    imagesByProductIDSelector(params.id as string)
   );
 
   const setProductFormState = useSetRecoilState(productFormStateAtom);
@@ -50,15 +45,6 @@ export default function AdminProductDetailsPage() {
     recoilProductValueLoadable.contents
       ? recoilProductValueLoadable.contents
       : undefined;
-  const productImages = useMemo(() => {
-    return recoilProductImagesValueLoadable.state === 'hasValue' &&
-      recoilProductImagesValueLoadable.contents
-      ? recoilProductImagesValueLoadable.contents
-      : [];
-  }, [
-    recoilProductImagesValueLoadable.contents,
-    recoilProductImagesValueLoadable.state,
-  ]);
 
   const handleReset = useCallback(
     (
@@ -71,15 +57,13 @@ export default function AdminProductDetailsPage() {
         event.stopPropagation();
       }
       const shouldReset =
-        recoilProductImagesValueLoadable.state === 'hasValue' &&
-        recoilProductValueLoadable.state === 'hasValue' &&
-        !isProcessing;
+        recoilProductValueLoadable.state === 'hasValue' && !isProcessing;
 
-      if (shouldReset && product && productImages) {
+      if (shouldReset && product) {
         const newProductForm: ProductForm = {
           details: product.details,
-          mrp: product.price.mrp,
-          sp: product.price.sp,
+          mrp: product.mrp,
+          sp: product.sp,
           name: product.name,
           id: product.id,
           category:
@@ -93,7 +77,7 @@ export default function AdminProductDetailsPage() {
         setProductFormState({
           ...defaultProductFormState,
           productForm: newProductForm,
-          images: productImages,
+          images: product.images,
         });
       }
     },
@@ -101,25 +85,18 @@ export default function AdminProductDetailsPage() {
       locallyUploadedImages,
       isProcessing,
       product,
-      productImages,
-      recoilProductImagesValueLoadable.state,
       recoilProductValueLoadable.state,
       setProductFormState,
     ]
   );
 
   useEffect(() => {
-    if (
-      recoilProductValueLoadable.state === 'hasValue' &&
-      recoilProductImagesValueLoadable.state === 'hasValue' &&
-      recoilProductValueLoadable.contents.id !== null &&
-      recoilProductImagesValueLoadable.contents
-    ) {
+    if (recoilProductValueLoadable.state === 'hasValue') {
       const newProduct = recoilProductValueLoadable.contents;
       const newProductForm: ProductForm = {
         details: newProduct.details,
-        mrp: newProduct.price.mrp,
-        sp: newProduct.price.sp,
+        mrp: newProduct.mrp,
+        sp: newProduct.sp,
         name: newProduct.name,
         id: newProduct.id,
         category:
@@ -131,16 +108,14 @@ export default function AdminProductDetailsPage() {
       setProductFormState({
         ...defaultProductFormState,
         productForm: newProductForm,
-        images: productImages,
+        images: product?.images,
         mode: formMode,
       });
     }
   }, [
     formMode,
+    product?.images,
     productForm.id,
-    productImages,
-    recoilProductImagesValueLoadable.contents,
-    recoilProductImagesValueLoadable.state,
     recoilProductValueLoadable.contents,
     recoilProductValueLoadable.state,
     setProductFormState,
@@ -160,13 +135,9 @@ export default function AdminProductDetailsPage() {
         {product && (
           <>
             {productForm.id !== null && <AddEditProductComponent />}
-            <RecoilLoadableComponent
-              loaderContainerStyle={{ width: '100%', height: '40vh' }}
-              errorContainerStyle={{ width: '100%', height: '40vh' }}
-              recoilLoadable={recoilProductImagesValueLoadable}
-            >
-              {productImages && <AddEditProductImagesComponent />}
-            </RecoilLoadableComponent>
+            {product.images && product.images.length > 0 && (
+              <AddEditProductImagesComponent />
+            )}
             <AdminProductFormFooterComponent handleReset={handleReset} />
           </>
         )}

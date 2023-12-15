@@ -3,15 +3,18 @@ import { productsSelector } from '@/recoil';
 import styles from './index.module.css';
 import Videos from '@/components/Videos';
 import Products from '@/components/Products';
-import RecoilLoadablePageLayout from '@/components/Layouts/RecoilLoadablePage';
+import RecoilLoadableComponent from '@/components/Layouts/RecoilLoadableComponent';
+import CommonPageLayout from '@/components/Layouts/CommonPage';
 
 export default function AdminProductsPage() {
   const recoilValueLoadable = useRecoilValueLoadable(productsSelector);
 
   return (
-    <RecoilLoadablePageLayout recoilLoadable={recoilValueLoadable}>
+    <CommonPageLayout>
       <Videos className={styles.videosContainer} />
-      <Products products={recoilValueLoadable.contents} />
-    </RecoilLoadablePageLayout>
+      <RecoilLoadableComponent recoilLoadable={recoilValueLoadable}>
+        <Products products={recoilValueLoadable.contents} />
+      </RecoilLoadableComponent>
+    </CommonPageLayout>
   );
 }

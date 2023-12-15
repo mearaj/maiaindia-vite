@@ -26,7 +26,7 @@ export default function AddEditProductImagesComponent() {
   const isProcessing = useRecoilValue(productFormProcessingStateSelector);
   const formMode = useRecoilValue(productFormModeStateSelector);
 
-  const filteredProductImages = productImages.filter(
+  const filteredProductImages = (productImages ?? []).filter(
     (eacImage) =>
       !imagesForDeletion.find(
         (imageToDelete) => imageToDelete.url === eacImage.url
@@ -36,7 +36,7 @@ export default function AddEditProductImagesComponent() {
   return (
     <Box className={styles.swiperContainer}>
       <Box sx={{ marginBottom: '16px' }}>
-        <Box>Backend Images Count: {productImages.length}</Box>
+        <Box>Backend Images Count: {(productImages ?? []).length}</Box>
         <Box>Local Images Count: {localImages.length}</Box>
         <Box>Images For Deletion Count: {imagesForDeletion.length}</Box>
       </Box>

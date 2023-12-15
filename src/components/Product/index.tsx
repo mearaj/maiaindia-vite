@@ -1,25 +1,17 @@
 import { useRef } from 'react';
 import { Box, Paper } from '@mui/material';
-import { useRecoilValueLoadable } from 'recoil';
 import { Product, ProductImage } from '@/recoil/data/product';
-import { imagesByProductIDSelector } from '@/recoil/selectors/products';
 import { useNavigate } from 'react-router-dom';
 import placeholderImage from '@/assets/images/placeholder.svg';
 import ProductPrice from '@/components/Product/Price';
 import AddUpdateButton from '@/components/Buttons/AddUpdate';
-import RecoilLoadableComponent from '@/components/Layouts/RecoilLoadableComponent';
 
 export default function ProductComponent({ product }: { product: Product }) {
   const cardContentReference = useRef<HTMLDivElement>(null);
-  const recoilValueLoadable = useRecoilValueLoadable(
-    imagesByProductIDSelector(product.id)
-  );
   const navigate = useNavigate();
   const preferredImgSrc: ProductImage =
-    recoilValueLoadable.state === 'hasValue' &&
-    recoilValueLoadable.contents &&
-    recoilValueLoadable.contents.length > 0
-      ? recoilValueLoadable.contents[0]
+    product.images && product.images.length
+      ? product.images[0]
       : { name: 'Placeholder', url: placeholderImage };
 
   const imageStyle = {
@@ -72,18 +64,12 @@ export default function ProductComponent({ product }: { product: Product }) {
               padding: '16px',
             }}
           >
-            <RecoilLoadableComponent
-              errorContainerStyle={imageStyle}
-              loaderContainerStyle={imageStyle}
-              recoilLoadable={recoilValueLoadable}
-            >
-              <Box
-                component="img"
-                src={preferredImgSrc.url}
-                alt={product.name}
-                sx={imageStyle}
-              />
-            </RecoilLoadableComponent>
+            <Box
+              component="img"
+              src={preferredImgSrc.url}
+              alt={product.name}
+              sx={imageStyle}
+            />
           </Box>
           <Box sx={{ padding: '4px 8px 4px' }}>
             <Box

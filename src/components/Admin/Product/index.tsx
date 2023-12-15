@@ -1,12 +1,12 @@
 import { Box, Paper } from '@mui/material';
-import { useRecoilValueLoadable } from 'recoil';
-import { Product, ProductImage } from '@/recoil/data/product';
-import { imagesByProductIDSelector } from '@/recoil/selectors/products';
+import {
+  defaultPlaceholderProductImage,
+  Product,
+  ProductImage,
+} from '@/recoil/data/product';
 import { useNavigate } from 'react-router-dom';
-import placeholderImage from '@/assets/images/placeholder.svg';
 import ProductPrice from '@/components/Product/Price';
 import { appAbsoluteRoutes } from '@/Router';
-import RecoilLoadableComponent from '@/components/Layouts/RecoilLoadableComponent';
 
 export default function AdminProductComponent({
   product,
@@ -14,16 +14,11 @@ export default function AdminProductComponent({
   product: Product;
 }) {
   const navigate = useNavigate();
-  const recoilValueLoadable = useRecoilValueLoadable(
-    imagesByProductIDSelector(product.id)
-  );
 
   const preferredImgSrc: ProductImage =
-    recoilValueLoadable.state === 'hasValue' &&
-    recoilValueLoadable.contents &&
-    recoilValueLoadable.contents.length > 0
-      ? recoilValueLoadable.contents[0]
-      : { name: 'Placeholder', url: placeholderImage };
+    product.images && product.images.length > 0
+      ? product.images[0]
+      : defaultPlaceholderProductImage;
   const imageStyle = {
     height: 'auto',
     width: '100%',
@@ -71,18 +66,12 @@ export default function AdminProductComponent({
             padding: '16px',
           }}
         >
-          <RecoilLoadableComponent
-            errorContainerStyle={imageStyle}
-            loaderContainerStyle={imageStyle}
-            recoilLoadable={recoilValueLoadable}
-          >
-            <Box
-              component="img"
-              src={preferredImgSrc.url}
-              alt={product.name}
-              sx={imageStyle}
-            />
-          </RecoilLoadableComponent>
+          <Box
+            component="img"
+            src={preferredImgSrc.url}
+            alt={product.name}
+            sx={imageStyle}
+          />
         </Box>
         <Box sx={{ padding: '4px 8px 4px' }}>
           <Box

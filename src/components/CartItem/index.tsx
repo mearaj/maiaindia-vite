@@ -2,9 +2,11 @@ import { Box, Card } from '@mui/material';
 import { useRecoilValueLoadable } from 'recoil';
 import { productIdSelector } from '@/recoil/selectors/productId';
 import { Loader } from '@/components';
-import { Product } from '@/recoil/data/product';
-import { imagesByProductIDSelector } from '@/recoil/selectors/products';
-import { ReactNode } from 'react';
+import {
+  defaultPlaceholderProductImage,
+  Product,
+  ProductImage,
+} from '@/recoil/data/product';
 import ProductPrice from '@/components/Product/Price';
 import AddUpdateButton from '@/components/Buttons/AddUpdate';
 import RemoveButton from '@/components/Buttons/Remove';
@@ -20,8 +22,6 @@ export default function CartItemComponent({
     productIdSelector(productId)
   );
   const { contents, state } = productIDLoadable;
-  const { contents: preferredImgSrc, state: imagesState } =
-    useRecoilValueLoadable(imagesByProductIDSelector(productId));
 
   if (state === 'hasError') {
     return <Box>{contents?.message ?? 'Unknown error'}</Box>;
@@ -35,35 +35,25 @@ export default function CartItemComponent({
     return <Box>Product couldn&apos;t be fetched</Box>;
   }
 
-  let imageComponent: ReactNode;
-  if (imagesState === 'loading') {
-    imageComponent = (
-      <Box
-        sx={{
-          height: 'auto',
-          width: '100%',
-          marginBottom: '16px',
-        }}
-      >
-        <Loader />
-      </Box>
-    );
-  } else {
-    imageComponent = (
-      <Box
-        component="img"
-        src={preferredImgSrc[0].url}
-        alt={product.name}
-        sx={{
-          height: 'auto',
-          width: '100%',
-          objectFit: 'fill',
-          objectPosition: 'center',
-          marginBottom: '16px',
-        }}
-      />
-    );
-  }
+  const preferredImgSrc: ProductImage =
+    product.images && product.images.length > 0
+      ? product.images[0]
+      : defaultPlaceholderProductImage;
+
+  const imageComponent = (
+    <Box
+      component="img"
+      src={preferredImgSrc.url}
+      alt={product.name}
+      sx={{
+        height: 'auto',
+        width: '100%',
+        objectFit: 'fill',
+        objectPosition: 'center',
+        marginBottom: '16px',
+      }}
+    />
+  );
 
   return (
     <Card

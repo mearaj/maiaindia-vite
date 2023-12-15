@@ -63,25 +63,27 @@ export const updateDocsSnapshots = <T extends { id: string }>(
     .docChanges()
     .forEach((change: { doc: { data?: any; id?: any }; type: string }) => {
       const { id } = change.doc;
-      if (change.type === 'added') {
-        const docItem = {
-          ...change.doc.data(),
-          id,
-        };
-        snapDocs.unshift(docItem);
-      } else if (change.type === 'modified') {
-        const foundIndex = snapDocs.findIndex((docItem) => docItem.id === id);
-        if (foundIndex >= 0) {
-          snapDocs[foundIndex] = {
-            ...change.doc.data(),
-            id,
-          };
-        }
-      } else if (change.type === 'removed') {
-        const foundIndex = snapDocs.findIndex((docItem) => docItem.id === id);
-        if (foundIndex >= 0) {
-          snapDocs.splice(foundIndex, 1);
-        }
+      const foundIndex = snapDocs.findIndex((docItem) => docItem.id === id);
+      const docItem = {
+        ...change.doc.data(),
+        id,
+      };
+      switch (change.type) {
+        case 'added':
+        case 'modified':
+          if (foundIndex >= 0) {
+            snapDocs[foundIndex] = docItem;
+          } else {
+            snapDocs.unshift(docItem);
+          }
+          break;
+        case 'removed':
+          if (foundIndex >= 0) {
+            snapDocs.splice(foundIndex, 1);
+          }
+          break;
+        default:
+          break;
       }
     });
   return snapDocs;

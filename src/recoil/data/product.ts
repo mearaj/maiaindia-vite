@@ -1,28 +1,27 @@
 import { FieldValue, Timestamp } from '@firebase/firestore';
 import { Category } from '@/recoil/data/category';
-
-export interface ProductPrice {
-  timestamp: FieldValue | Timestamp;
-  currency: string;
-  mrp: number;
-  sp: number;
-}
+import placeholderImage from '@/assets/images/placeholder.svg';
 
 export interface ProductImage {
   name: string;
   url: string;
 }
 
-export interface ProductsImages {
-  [productID: string]: ProductImage[];
-}
+export const defaultPlaceholderProductImage = {
+  name: 'Placeholder',
+  url: placeholderImage,
+};
 
 export interface ProductWithoutID {
-  categoryID: string;
-  name: string;
-  price: ProductPrice;
-  priceHistory?: ProductPrice[];
+  categoryID?: string;
+  name?: string;
   details?: string;
+  updatedAt?: FieldValue | Timestamp;
+  createdAt?: FieldValue | Timestamp;
+  currency?: string;
+  mrp?: number;
+  sp?: number;
+  images?: ProductImage[];
 }
 
 export interface Product extends ProductWithoutID {
@@ -30,12 +29,12 @@ export interface Product extends ProductWithoutID {
 }
 
 export interface ProductForm {
-  name: string;
+  name?: string;
   details?: string;
-  mrp: number | string;
-  sp: number | string;
+  mrp?: number | string;
+  sp?: number | string;
   category: Category;
-  id: string | null;
+  id?: string | null;
 }
 
 export enum ProductFormModeState {
@@ -52,7 +51,7 @@ export interface ProductFormState {
   productForm: ProductForm;
   isProcessing: boolean;
   mode: ProductFormModeState;
-  images: ProductImage[];
+  images?: ProductImage[];
   imagesForDeletion: ProductImage[];
   localImages: LocallyUploadedImage[];
 }

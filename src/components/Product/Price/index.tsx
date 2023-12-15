@@ -33,7 +33,7 @@ export default function ProductPrice({
             fontWeight: '600',
           }}
         >
-          {product.price.sp}&nbsp;
+          {product.sp}&nbsp;
         </Box>
       </Box>
       <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
@@ -54,7 +54,7 @@ export default function ProductPrice({
               fontWeight: 300,
             }}
           >
-            {product.price.mrp}
+            {product.mrp}
           </Box>
         </Box>
       </Box>

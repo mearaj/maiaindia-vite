@@ -1,13 +1,8 @@
-import { DefaultValue, selector, selectorFamily } from 'recoil';
+import { selector } from 'recoil';
 import { recoilKeys } from '@/recoil/data/recoilKeys';
 import { categoryAtom } from '@/recoil/atoms';
 import { defaultSelectedCategory } from '@/recoil/data/category';
-import {
-  allProductsAtom,
-  allProductsImagesAtom,
-} from '@/recoil/atoms/allProducts';
-import { appFirebaseStorage } from '@/firebase';
-import { getDownloadURL, listAll, ref } from '@firebase/storage';
+import { allProductsAtom } from '@/recoil/atoms/allProducts';
 
 export const productsSelector = selector({
   key: recoilKeys.productsSelector,
@@ -20,41 +15,4 @@ export const productsSelector = selector({
       (eachProduct) => eachProduct.categoryID === selectedCategory.id
     );
   },
-});
-export const imagesByProductIDSelector = selectorFamily({
-  key: recoilKeys.imagesByProductIDSelector,
-  get:
-    (productID: string) =>
-    async ({ get }) => {
-      if (productID.trim() === '') {
-        return [];
-      }
-      const allProductImages = get(allProductsImagesAtom);
-      const imagesURLs = allProductImages[productID]
-        ? [...allProductImages[productID]]
-        : [];
-      if (imagesURLs.length === 0) {
-        const imagesRef = ref(appFirebaseStorage, `products/${productID}`);
-        const allListRef = await listAll(imagesRef);
-        for await (const eachImageRef of allListRef.items) {
-          const imageURL = await getDownloadURL(eachImageRef);
-          imagesURLs.push({
-            name: eachImageRef.name,
-            url: imageURL,
-          });
-        }
-      }
-      return imagesURLs;
-    },
-  set:
-    (productID: string) =>
-    ({ set, get }, newValue) => {
-      const allProductImages = get(allProductsImagesAtom);
-      if (!(newValue instanceof DefaultValue)) {
-        set(allProductsImagesAtom, {
-          ...allProductImages,
-          [productID]: newValue,
-        });
-      }
-    },
 });

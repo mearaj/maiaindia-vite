@@ -39,3 +39,20 @@ export {
   appFirebaseStorage,
   appFirebaseRealtime,
 };
+
+/*
+ *  The following code is intended by the app developer, don't uncomment it.
+ * */
+// allProucts fetched from backend and modified
+// const updateProducts = async () => {
+//   for await (const eachProduct of allProducts) {
+//     const productRef = doc(appFirestore, 'products', eachProduct.id);
+//     try {
+//       await setDoc(productRef, eachProduct);
+//       console.log('reacahed');
+//     } catch (e) {
+//       console.log(e);
+//     }
+//   }
+// };
+// updateProducts();

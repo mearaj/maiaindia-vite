@@ -3,6 +3,7 @@ import { Product } from '@/recoil/data/product';
 import ProductComponent from '@/components/Product';
 
 function Products({ products }: { products: Product[] }) {
+  console.log(products);
   return (
     <Box
       sx={{

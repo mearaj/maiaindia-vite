@@ -41,15 +41,8 @@ import { useNavigate } from 'react-router-dom';
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
 import { categories } from '@/recoil/data/category';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import {
-  deleteObject,
-  getDownloadURL,
-  listAll,
-  ref,
-  uploadBytesResumable,
-} from '@firebase/storage';
+import { deleteObject, ref, uploadBytesResumable } from '@firebase/storage';
 import { Delete, Publish, RestartAlt } from '@mui/icons-material';
-import { imagesByProductIDSelector } from '@/recoil/selectors/products';
 import createStyles from './styles';
 import { appAbsoluteRoutes } from '@/Router';
 import SnackbarDialog from '@/components/Dialogs/SnackBar';
@@ -77,7 +70,7 @@ export default function AdminProductFormFooterComponent({
   const [localImages, setLocalImages] = useRecoilState(
     productFormLocalImagesSelector
   );
-  const productImages = useRecoilValue(productFormImagesSelector);
+  const productImages = useRecoilValue(productFormImagesSelector) ?? [];
   const imagesForDeletion = useRecoilValue(
     productFormImagesForDeletionSelector
   );
@@ -85,9 +78,6 @@ export default function AdminProductFormFooterComponent({
     props: DialogProps;
     children: ReactNode;
   } | null>(null);
-  const setImagesForProduct = useSetRecoilState(
-    imagesByProductIDSelector(productForm.id ?? '')
-  );
 
   const commonPromptDialogHandler = useCallback(
     async (
@@ -234,25 +224,6 @@ export default function AdminProductFormFooterComponent({
     </Box>
   );
 
-  const commonPostSubmitImagesUpdater = useCallback(
-    async (productID: string) => {
-      if (productID.trim() !== '') {
-        const imagesURLs: ProductImage[] = [];
-        const imagesRef = ref(appFirebaseStorage, `products/${productID}`);
-        const allListRef = await listAll(imagesRef);
-        for await (const eachImageRef of allListRef.items) {
-          const imageURL = await getDownloadURL(eachImageRef);
-          imagesURLs.push({
-            name: eachImageRef.name,
-            url: imageURL,
-          });
-        }
-        setImagesForProduct(imagesURLs);
-      }
-    },
-    [setImagesForProduct]
-  );
-
   const commonImagesUploadHandler = useCallback(
     async (imagesArr: LocallyUploadedImage[]) => {
       if (imagesArr.length > 0 && productForm.id !== null) {
@@ -390,12 +361,11 @@ export default function AdminProductFormFooterComponent({
       const newProduct: ProductWithoutID = {
         name: productForm.name,
         categoryID: productForm.category.id,
-        price: {
-          timestamp: serverTimestamp(),
-          currency: 'INR',
-          mrp: productForm.mrp as number,
-          sp: productForm.sp as number,
-        },
+        updatedAt: serverTimestamp(),
+        createdAt: serverTimestamp(),
+        currency: 'INR',
+        mrp: productForm.mrp as number,
+        sp: productForm.sp as number,
         details: productForm.details,
       };
       let modalContentPrompt:
@@ -455,14 +425,14 @@ export default function AdminProductFormFooterComponent({
           } else {
             const updateProduct: Product = {
               ...newProduct,
-              id: productForm.id,
+              id: productForm.id!,
             };
             await commonImagesDeletionHandler(imagesForDeletion);
             await commonImagesUploadHandler(localImages);
-            const productRef = doc(appFirestore, 'products', productForm.id);
+            const productRef = doc(appFirestore, 'products', productForm.id!);
             await setDoc(productRef, updateProduct);
             snackbarMsg = `Successfully updated ${newProduct.name} with ID ${productForm.id}`;
-            productID = productForm.id;
+            productID = productForm.id!;
           }
           navigate(`${appAbsoluteRoutes.adminProducts}/${productID}`);
         } catch (_) {
@@ -475,9 +445,6 @@ export default function AdminProductFormFooterComponent({
         } finally {
           setLocalDialog(null);
           setIsProcessing(false);
-          if (productID.trim() !== '') {
-            await commonPostSubmitImagesUpdater(productID);
-          }
           setDialogComponent(
             <SnackbarDialog severity={severity} message={snackbarMsg} />
           );
@@ -487,7 +454,6 @@ export default function AdminProductFormFooterComponent({
     [
       commonImagesDeletionHandler,
       commonImagesUploadHandler,
-      commonPostSubmitImagesUpdater,
       commonPromptDialogHandler,
       formMode,
       imagesForDeletion,
@@ -495,6 +461,7 @@ export default function AdminProductFormFooterComponent({
       localImages,
       navigate,
       productForm.category.id,
+      productForm.details,
       productForm.id,
       productForm.mrp,
       productForm.name,
@@ -550,7 +517,6 @@ export default function AdminProductFormFooterComponent({
         } finally {
           setIsProcessing(false);
           setLocalDialog(null);
-          await commonPostSubmitImagesUpdater(productForm.id);
         }
       }
     }
@@ -564,7 +530,6 @@ export default function AdminProductFormFooterComponent({
     commonImagesDeletionHandler,
     setDialogComponent,
     navigate,
-    commonPostSubmitImagesUpdater,
   ]);
 
   const handleImagesUploadLocally = async (
