@@ -1,9 +1,9 @@
 import { Header } from '@/components';
 import { Box, Dialog, DialogContent } from '@mui/material';
-import { Swiper, SwiperClass, SwiperSlide } from 'swiper/react';
+import { Swiper, SwiperClass, SwiperRef, SwiperSlide } from 'swiper/react';
 import { FreeMode, Navigation, Thumbs } from 'swiper/modules';
 import { useParams } from 'react-router-dom';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRecoilValueLoadable, useSetRecoilState } from 'recoil';
 import { productIdSelector } from '@/recoil/selectors/productId';
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
@@ -24,6 +24,7 @@ export default function ProductDetailsPage() {
   );
 
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperClass | undefined>();
+  const mainSwiperRef = useRef<SwiperRef | null>(null);
   const setDialog = useSetRecoilState(selectedDialogAtom);
 
   const product =
@@ -67,6 +68,13 @@ export default function ProductDetailsPage() {
               thumbs={thumbsSwiper ? { swiper: thumbsSwiper } : undefined}
               onClick={onImageClick}
               initialSlide={swiper.activeIndex}
+              onSlideChange={(swiperInstance) => {
+                if (mainSwiperRef.current && mainSwiperRef.current.swiper) {
+                  mainSwiperRef.current.swiper.slideTo(
+                    swiperInstance.activeIndex
+                  );
+                }
+              }}
             >
               {product.images.map((item) => {
                 return (
@@ -109,7 +117,9 @@ export default function ProductDetailsPage() {
                             </Button>
                             <Button
                               variant="outlined"
-                              onClick={() => setDialog(null)}
+                              onClick={() => {
+                                setDialog(null);
+                              }}
                               sx={{
                                 minWidth: 0,
                               }}
@@ -156,6 +166,7 @@ export default function ProductDetailsPage() {
                 navigation
                 thumbs={thumbsSwiper ? { swiper: thumbsSwiper } : undefined}
                 onClick={onImageClick}
+                ref={mainSwiperRef}
               >
                 {product.images.map((item) => {
                   return (
@@ -174,7 +185,7 @@ export default function ProductDetailsPage() {
                 className={styles.swiperThumbs}
                 modules={[FreeMode, Navigation, Thumbs]}
                 spaceBetween={4}
-                slidesPerView="auto"
+                slidesPerView={3}
                 freeMode
                 watchSlidesProgress
                 onSwiper={setThumbsSwiper}
