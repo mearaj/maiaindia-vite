@@ -1,11 +1,16 @@
 import { Header } from '@/components';
-import { Box } from '@mui/material';
+import { Box, Dialog, DialogContent } from '@mui/material';
 import { Swiper, SwiperClass, SwiperSlide } from 'swiper/react';
 import { FreeMode, Navigation, Thumbs } from 'swiper/modules';
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
-import { useRecoilValueLoadable } from 'recoil';
+import { useRecoilValueLoadable, useSetRecoilState } from 'recoil';
 import { productIdSelector } from '@/recoil/selectors/productId';
+import { selectedDialogAtom } from '@/recoil/atoms/dialog';
+import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
+import { Add, Remove, RestartAlt } from '@mui/icons-material';
+import Button from '@mui/material/Button';
+import Close from '@mui/icons-material/Close';
 import ProductPrice from '@/components/Product/Price';
 import styles from './index.module.css';
 import AddUpdateButton from '@/components/Buttons/AddUpdate';
@@ -19,11 +24,120 @@ export default function ProductDetailsPage() {
   );
 
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperClass | undefined>();
+  const setDialog = useSetRecoilState(selectedDialogAtom);
 
   const product =
     recoilProductLoadable.state === 'hasValue' && recoilProductLoadable.contents
       ? recoilProductLoadable.contents
       : undefined;
+
+  const onImageClick = async (
+    swiper: SwiperClass,
+    _event: MouseEvent | TouchEvent | PointerEvent
+  ) => {
+    if (
+      product &&
+      product.images &&
+      swiper.activeIndex < product.images.length
+    ) {
+      const open = true;
+      setDialog(
+        <Dialog
+          open={open}
+          onClose={() => {
+            setDialog(null);
+          }}
+          fullScreen
+          sx={{ overflowX: 'hidden' }}
+        >
+          <DialogContent
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyItems: 'center',
+              padding: '0px',
+            }}
+          >
+            <Swiper
+              className={styles.swiperDialog}
+              modules={[FreeMode, Navigation, Thumbs]}
+              slidesPerView={1}
+              navigation
+              thumbs={thumbsSwiper ? { swiper: thumbsSwiper } : undefined}
+              onClick={onImageClick}
+              initialSlide={swiper.activeIndex}
+            >
+              {product.images.map((item) => {
+                return (
+                  <SwiperSlide key={item.url} className={styles.slideDialog}>
+                    <TransformWrapper
+                      initialScale={1}
+                      initialPositionX={0}
+                      initialPositionY={100}
+                    >
+                      {({ zoomIn, zoomOut, resetTransform }) => (
+                        <>
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              padding: '16px',
+                            }}
+                          >
+                            <Button
+                              variant="outlined"
+                              onClick={() => zoomIn()}
+                              sx={{ marginRight: '16px', minWidth: 0 }}
+                            >
+                              <Add />
+                            </Button>
+                            <Button
+                              variant="outlined"
+                              onClick={() => zoomOut()}
+                              sx={{ marginRight: '16px', minWidth: 0 }}
+                            >
+                              <Remove />
+                            </Button>
+                            <Button
+                              variant="outlined"
+                              onClick={() => resetTransform()}
+                              sx={{ marginRight: '16px', minWidth: 0 }}
+                            >
+                              <RestartAlt />
+                            </Button>
+                            <Button
+                              variant="outlined"
+                              onClick={() => setDialog(null)}
+                              sx={{
+                                minWidth: 0,
+                              }}
+                            >
+                              <Close />
+                            </Button>
+                          </Box>
+                          <TransformComponent>
+                            <img
+                              src={item.url}
+                              alt={recoilProductLoadable.contents.name}
+                              className={styles.imageDialog}
+                              placeholder="blur"
+                            />
+                          </TransformComponent>
+                        </>
+                      )}
+                    </TransformWrapper>
+                  </SwiperSlide>
+                );
+              })}
+            </Swiper>
+          </DialogContent>
+        </Dialog>
+      );
+    }
+  };
+
   return (
     <Box className={styles.layout}>
       <Header showBackIcon />
@@ -41,6 +155,7 @@ export default function ProductDetailsPage() {
                 slidesPerView={1}
                 navigation
                 thumbs={thumbsSwiper ? { swiper: thumbsSwiper } : undefined}
+                onClick={onImageClick}
               >
                 {product.images.map((item) => {
                   return (
