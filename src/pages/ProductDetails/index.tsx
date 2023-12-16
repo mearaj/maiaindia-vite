@@ -54,7 +54,6 @@ export default function ProductDetailsPage() {
             setDialog(null);
           }}
           fullScreen
-          sx={{ overflowX: 'hidden' }}
         >
           <DialogContent
             sx={{
@@ -81,6 +80,44 @@ export default function ProductDetailsPage() {
                 }
               }}
             >
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '16px',
+                  width: '100%',
+                  position: 'fixed',
+                  top: 0,
+                }}
+              >
+                <Button
+                  variant="outlined"
+                  sx={{ marginRight: '16px', minWidth: 0 }}
+                >
+                  <Add />
+                </Button>
+                <Button
+                  variant="outlined"
+                  sx={{ marginRight: '16px', minWidth: 0 }}
+                >
+                  <Remove />
+                </Button>
+                <Button
+                  variant="outlined"
+                  sx={{ marginRight: '16px', minWidth: 0 }}
+                >
+                  <RestartAlt />
+                </Button>
+                <Button
+                  variant="outlined"
+                  sx={{
+                    minWidth: 0,
+                  }}
+                >
+                  <CloseFullscreen />
+                </Button>
+              </Box>
               {product.images.map((item) => {
                 return (
                   <SwiperSlide key={item.url} className={styles.slideDialog}>
@@ -97,6 +134,8 @@ export default function ProductDetailsPage() {
                               alignItems: 'center',
                               justifyContent: 'center',
                               padding: '16px',
+                              width: '100%',
+                              opacity: 0,
                             }}
                           >
                             <Button

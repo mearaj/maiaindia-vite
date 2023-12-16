@@ -1,6 +1,7 @@
-import { Box, SxProps, Theme } from '@mui/material';
+import { Box, SxProps, Theme, Typography } from '@mui/material';
 
 import { Product } from '@/recoil/data/product';
+import { ReactNode } from 'react';
 
 export default function ProductPrice({
   sx,
@@ -9,56 +10,53 @@ export default function ProductPrice({
   sx?: SxProps<Theme>;
   product: Product;
 }) {
+  let discountComponent: ReactNode;
+  const discount = product.mrp - product.sp;
+  if (discount > 0 && product.mrp !== 0) {
+    const discountPercentage = ((discount / product.mrp) * 100).toFixed(0);
+    discountComponent = (
+      <Typography
+        sx={{
+          color: 'green',
+          fontWeight: 600,
+          marginRight: '6px',
+          fontSize: 'inherit',
+        }}
+        noWrap
+      >
+        {discountPercentage}% off
+      </Typography>
+    );
+  }
+
   return (
     <Box
       sx={{
+        fontSize: '14px',
         display: 'flex',
+        textAlign: 'center',
         flexWrap: 'wrap',
-        fontSize: '12px',
-        alignItems: 'center',
         justifyContent: 'center',
+        alignItems: 'center',
         ...sx,
       }}
     >
-      <Box sx={{ display: 'flex' }}>
-        <Box
-          sx={{
-            fontSize: '12px',
-          }}
-        >
-          ₹
-        </Box>
-        <Box
-          sx={{
-            fontSize: '20px',
-            fontWeight: '600',
-          }}
-        >
-          {product.sp}&nbsp;
-        </Box>
-      </Box>
-      <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
-        <Box
-          sx={{
-            fontSize: '14px',
-            fontWeight: '300',
-          }}
-        >
-          M.R.P.&nbsp;
-        </Box>
-        <Box sx={{ display: 'flex' }}>
-          <Box sx={{ fontSize: '12px' }}>₹</Box>
-          <Box
-            component="s"
-            sx={{
-              fontSize: '14px',
-              fontWeight: 300,
-            }}
-          >
-            {product.mrp}
-          </Box>
-        </Box>
-      </Box>
+      {discountComponent}
+      <Typography
+        component="s"
+        sx={{
+          fontSize: 'inherit',
+          marginRight: '6px',
+          opacity: 0.75,
+        }}
+      >
+        ₹{product.mrp}
+      </Typography>
+      <Typography
+        sx={{ fontWeight: '600', fontSize: 'inherit', marginRight: '6px' }}
+      >
+        ₹{product.sp}
+      </Typography>
     </Box>
   );
 }
