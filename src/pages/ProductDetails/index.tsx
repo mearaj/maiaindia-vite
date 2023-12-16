@@ -8,9 +8,14 @@ import { useRecoilValueLoadable, useSetRecoilState } from 'recoil';
 import { productIdSelector } from '@/recoil/selectors/productId';
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
-import { Add, Remove, RestartAlt } from '@mui/icons-material';
+import {
+  Add,
+  CloseFullscreen,
+  Fullscreen,
+  Remove,
+  RestartAlt,
+} from '@mui/icons-material';
 import Button from '@mui/material/Button';
-import Close from '@mui/icons-material/Close';
 import ProductPrice from '@/components/Product/Price';
 import styles from './index.module.css';
 import AddUpdateButton from '@/components/Buttons/AddUpdate';
@@ -124,7 +129,7 @@ export default function ProductDetailsPage() {
                                 minWidth: 0,
                               }}
                             >
-                              <Close />
+                              <CloseFullscreen />
                             </Button>
                           </Box>
                           <TransformComponent>
@@ -168,6 +173,30 @@ export default function ProductDetailsPage() {
                 onClick={onImageClick}
                 ref={mainSwiperRef}
               >
+                <Button
+                  variant="outlined"
+                  sx={{
+                    position: 'absolute',
+                    top: '0',
+                    right: '0',
+                    minWidth: 0,
+                  }}
+                  size="small"
+                >
+                  <Fullscreen />
+                </Button>
+                <Button
+                  variant="outlined"
+                  sx={{
+                    position: 'absolute',
+                    top: '0',
+                    left: '0',
+                    minWidth: 0,
+                  }}
+                  size="small"
+                >
+                  <Fullscreen />
+                </Button>
                 {product.images.map((item) => {
                   return (
                     <SwiperSlide key={item.url} className={styles.slide}>
