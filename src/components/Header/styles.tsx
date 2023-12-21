@@ -27,6 +27,7 @@ const iconStyles = (_: Theme) => ({
   height: '100%',
   width: 'auto',
   maxHeight: 'none',
+  color: '#CCC70D',
 });
 
 const logoIconButtonStyles = (_: Theme) => ({

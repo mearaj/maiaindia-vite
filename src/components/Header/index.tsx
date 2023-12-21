@@ -14,8 +14,8 @@ import {
 import ArrowBack from '@mui/icons-material/ArrowBackIos';
 import ShoppingCart from '@mui/icons-material/ShoppingCart';
 import { NavLink, useNavigate } from 'react-router-dom';
-import logoDarkGreen from '@/assets/images/logo-dark-green.png';
-import logoCircleDarkGreen from '@/assets/images/logo-circle-dark-green.png';
+import logoDarkGreen from '@/assets/images/logo-yellow.png';
+import logoCircleDarkGreen from '@/assets/images/logo-circle-yellow.png';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { menuAtom } from '@/recoil/atoms/menu';
 import { cartAtom } from '@/recoil/atoms/cart';
@@ -72,7 +72,7 @@ export default function Header({
         display: 'flex',
         height: `${theme.dimensions.appBarHeight}px`,
         width: '100%',
-        backgroundColor: 'white',
+        backgroundColor: '#155D28',
         ...sx,
       }}
     >
@@ -94,7 +94,7 @@ export default function Header({
                 <Box
                   src={logoImgSrc}
                   component="img"
-                  sx={styles.icon}
+                  sx={{ ...styles.icon, height: '42px' }}
                   alt="Logo"
                 />
               </Button>
