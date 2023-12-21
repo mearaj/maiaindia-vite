@@ -20,6 +20,10 @@ export default function AppThemeProvider({ children }: PropsWithChildren) {
     palette: {
       primary: {
         main: '#001900',
+        light: '#155D28',
+      },
+      secondary: {
+        main: '#CCC70D',
       },
     },
     dimensions: {

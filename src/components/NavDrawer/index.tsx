@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Box, Divider, IconButton, useTheme } from '@mui/material';
 import Close from '@mui/icons-material/Close';
-import logoDarkGreen from '@/assets/images/logo-dark-green.png';
+import logoDarkGreen from '@/assets/images/logo-yellow.png';
 import { useRecoilState } from 'recoil';
 import { menuAtom } from '@/recoil/atoms/menu';
 import NavLinks from '@/components/NavLinks';
@@ -165,7 +165,9 @@ export default function NavDrawer(_: DrawerProps) {
               setShowMenu(false);
             }}
           >
-            <Close sx={{ fontSize: '32px' }} />
+            <Close
+              sx={{ fontSize: '32px', color: theme.palette.secondary.main }}
+            />
           </IconButton>
         </Box>
       </Box>

@@ -20,6 +20,7 @@ const headerStyles = (theme: Theme) => ({
   alignItems: 'center',
   justifyContent: 'space-between',
   height: theme.dimensions.appBarHeight,
+  backgroundColor: theme.palette.primary.light,
   padding: '16px',
   width: '100%',
   boxShadow: theme.shadows[2],
