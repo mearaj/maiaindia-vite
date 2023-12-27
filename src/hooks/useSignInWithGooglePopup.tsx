@@ -21,6 +21,9 @@ export default function useSignInWithGooglePopup() {
       clearError();
       try {
         const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({
+          prompt: 'select_account',
+        });
         await signInWithPopup(appFirebaseAuth, provider);
       } catch (e) {
         if (e instanceof Error) {

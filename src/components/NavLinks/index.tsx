@@ -63,6 +63,7 @@ export default function NavLinks() {
               size="large"
               startIcon={<AddTask />}
               sx={linkButtonStyle}
+              color="primary"
             >
               Admin Orders
             </Button>

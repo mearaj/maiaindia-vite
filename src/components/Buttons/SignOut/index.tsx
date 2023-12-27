@@ -4,7 +4,6 @@ import { useRecoilState } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import { AuthState } from '@/recoil/atoms/user';
 import { appFirebaseAuth } from '@/firebase';
-import { signOut } from '@firebase/auth';
 import Loader from '@/components/Loader';
 
 export default function SignOutButton() {
@@ -27,7 +26,7 @@ export default function SignOutButton() {
     e.preventDefault();
     e.stopPropagation();
     setAuthState({ authState: AuthState.signingOut, userState });
-    await signOut(appFirebaseAuth);
+    await appFirebaseAuth.signOut();
   };
 
   if (!userState) {

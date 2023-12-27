@@ -72,7 +72,6 @@ export default function Header({
         display: 'flex',
         height: `${theme.dimensions.appBarHeight}px`,
         width: '100%',
-        backgroundColor: '#155D28',
         ...sx,
       }}
     >

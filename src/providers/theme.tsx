@@ -1,4 +1,4 @@
-import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
+import { alpha, createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import { PropsWithChildren } from 'react';
 
 declare module '@mui/material/styles' {
@@ -16,14 +16,37 @@ declare module '@mui/material/styles' {
 }
 
 export default function AppThemeProvider({ children }: PropsWithChildren) {
+  const primary = {
+    light: '#437D53',
+    main: '#155D28',
+    dark: '#001900',
+  };
+  const secondary = {
+    light: '#D6D23D',
+    main: '#CCC70D',
+    dark: '#8E8B09',
+  };
   const AppTheme = createTheme({
     palette: {
       primary: {
-        main: '#001900',
-        light: '#155D28',
+        ...primary,
+        contrastText: secondary.main,
       },
       secondary: {
-        main: '#CCC70D',
+        ...secondary,
+        contrastText: primary.main,
+      },
+      text: {
+        primary: alpha(primary.main, 0.87),
+        secondary: alpha(primary.main, 0.6),
+        disabled: alpha(primary.main, 0.38),
+      },
+      divider: alpha(primary.main, 0.16),
+    },
+    typography: {
+      fontFamily: 'Roboto',
+      allVariants: {
+        color: primary.dark,
       },
     },
     dimensions: {
