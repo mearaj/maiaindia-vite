@@ -146,7 +146,7 @@ export default function FooterComponent() {
       <Divider
         sx={{
           backgroundColor: alpha(theme.palette.secondary.main, 0.16),
-          marginBottom: '16px',
+          marginBottom: '4px',
         }}
       />
       <Box sx={{ display: 'flex', width: '100%', justifyContent: 'center' }}>

@@ -4,7 +4,7 @@ const footerStyle = (theme: Theme) => ({
   display: 'flex',
   flexDirection: 'column',
   backgroundColor: theme.palette.primary.main,
-  padding: '16px',
+  padding: '16px 16px 4px 16px',
   color: theme.palette.secondary.main,
 });
 
