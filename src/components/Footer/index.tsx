@@ -19,7 +19,7 @@ export default function FooterComponent() {
                 color="secondary"
                 fontSize="medium"
                 fontWeight="bolder"
-                lineHeight="1.1"
+                lineHeight="1.2"
               >
                 Categories
               </Typography>
@@ -35,7 +35,7 @@ export default function FooterComponent() {
             color="secondary"
             fontSize="medium"
             fontWeight="bolder"
-            lineHeight="1.1"
+            lineHeight="1.2"
           >
             Information
           </Typography>
@@ -73,7 +73,7 @@ export default function FooterComponent() {
             color="secondary"
             fontSize="medium"
             fontWeight="bold"
-            lineHeight="1.1"
+            lineHeight="1.2"
           >
             Contact Us
           </Typography>
@@ -111,7 +111,7 @@ export default function FooterComponent() {
             color="secondary"
             fontSize="medium"
             fontWeight="bold"
-            lineHeight="1.1"
+            lineHeight="1.2"
           >
             About Us
           </Typography>
@@ -133,17 +133,17 @@ export default function FooterComponent() {
             color="secondary"
             fontSize="medium"
             fontWeight="bold"
-            lineHeight="1.1"
+            lineHeight="1.2"
           >
             Our Location
           </Typography>
         </Box>
-        <Typography color="secondary" fontSize="small">
-          <address>
+        <Box style={styles.content}>
+          <Typography color="secondary" fontSize="small" component="address">
             10/1529, Kanchan Villa, Oswal Street, Near Shubhash Chowk, Gopipura,
             Surat, Gujarat, India 395001.
-          </address>
-        </Typography>
+          </Typography>
+        </Box>
       </Box>
       <Box style={{ ...styles.container, marginBottom: '8px' }}>
         <Typography
