@@ -131,7 +131,7 @@ export default function Header({
               >
                 <small>
                   {Object.keys(cart.items).reduce((prev, curr) => {
-                    return prev + cart.items[curr].quantity ?? 0;
+                    return prev + (cart.items[curr].quantity ?? 0);
                   }, 0)}
                 </small>
               </Box>
