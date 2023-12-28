@@ -1,9 +1,9 @@
 import { Header } from '@/components';
 import { Box, Dialog, DialogContent } from '@mui/material';
 import { Swiper, SwiperClass, SwiperRef, SwiperSlide } from 'swiper/react';
-import { FreeMode, Navigation, Thumbs } from 'swiper/modules';
+import { FreeMode, Navigation, Pagination, Thumbs } from 'swiper/modules';
 import { useParams } from 'react-router-dom';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useRecoilValueLoadable, useSetRecoilState } from 'recoil';
 import { productIdSelector } from '@/recoil/selectors/productId';
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
@@ -28,7 +28,6 @@ export default function ProductDetailsPage() {
     productIdSelector(params.id as string)
   );
 
-  const [thumbsSwiper, setThumbsSwiper] = useState<SwiperClass | undefined>();
   const mainSwiperRef = useRef<SwiperRef | null>(null);
   const setDialog = useSetRecoilState(selectedDialogAtom);
 
@@ -69,7 +68,6 @@ export default function ProductDetailsPage() {
               modules={[FreeMode, Navigation, Thumbs]}
               slidesPerView={1}
               navigation
-              thumbs={thumbsSwiper ? { swiper: thumbsSwiper } : undefined}
               onClick={onImageClick}
               initialSlide={swiper.activeIndex}
               onSlideChange={(swiperInstance) => {
@@ -202,76 +200,51 @@ export default function ProductDetailsPage() {
           recoilLoadable={recoilProductLoadable}
         >
           {product && product.images && product.images.length > 0 && (
-            <>
-              <Swiper
-                className={styles.swiper}
-                modules={[FreeMode, Navigation, Thumbs]}
-                slidesPerView={1}
-                navigation
-                thumbs={thumbsSwiper ? { swiper: thumbsSwiper } : undefined}
-                onClick={onImageClick}
-                ref={mainSwiperRef}
+            <Swiper
+              className={styles.swiper}
+              modules={[Pagination]}
+              slidesPerView={1}
+              onClick={onImageClick}
+              ref={mainSwiperRef}
+              pagination
+            >
+              <Button
+                variant="outlined"
+                sx={{
+                  position: 'absolute',
+                  top: '0',
+                  right: '0',
+                  minWidth: 0,
+                }}
+                size="small"
               >
-                <Button
-                  variant="outlined"
-                  sx={{
-                    position: 'absolute',
-                    top: '0',
-                    right: '0',
-                    minWidth: 0,
-                  }}
-                  size="small"
-                >
-                  <Fullscreen />
-                </Button>
-                <Button
-                  variant="outlined"
-                  sx={{
-                    position: 'absolute',
-                    top: '0',
-                    left: '0',
-                    minWidth: 0,
-                  }}
-                  size="small"
-                >
-                  <Fullscreen />
-                </Button>
-                {product.images.map((item) => {
-                  return (
-                    <SwiperSlide key={item.url} className={styles.slide}>
-                      <img
-                        src={item.url}
-                        alt={recoilProductLoadable.contents.name}
-                        className={styles.image}
-                        placeholder="blur"
-                      />
-                    </SwiperSlide>
-                  );
-                })}
-              </Swiper>
-              <Swiper
-                className={styles.swiperThumbs}
-                modules={[FreeMode, Navigation, Thumbs]}
-                spaceBetween={4}
-                slidesPerView={3}
-                freeMode
-                watchSlidesProgress
-                onSwiper={setThumbsSwiper}
+                <Fullscreen />
+              </Button>
+              <Button
+                variant="outlined"
+                sx={{
+                  position: 'absolute',
+                  top: '0',
+                  left: '0',
+                  minWidth: 0,
+                }}
+                size="small"
               >
-                {product.images.map((item) => {
-                  return (
-                    <SwiperSlide key={item.url} className={styles.thumbsSlide}>
-                      <img
-                        src={item.url}
-                        alt={recoilProductLoadable.contents.name}
-                        className={styles.thumbnailImage}
-                        placeholder="blur"
-                      />
-                    </SwiperSlide>
-                  );
-                })}
-              </Swiper>
-            </>
+                <Fullscreen />
+              </Button>
+              {product.images.map((item) => {
+                return (
+                  <SwiperSlide key={item.url} className={styles.slide}>
+                    <img
+                      src={item.url}
+                      alt={recoilProductLoadable.contents.name}
+                      className={styles.image}
+                      placeholder="blur"
+                    />
+                  </SwiperSlide>
+                );
+              })}
+            </Swiper>
           )}
         </RecoilLoadableComponent>
         {product && (

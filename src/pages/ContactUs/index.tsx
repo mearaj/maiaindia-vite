@@ -28,7 +28,7 @@ export default function ContactUsPage() {
       <Box sx={{ padding: '16px' }}>
         <Link
           component={NavLink}
-          to="https://api.whatsapp.com/send?phone=+919173169661&text=Hi"
+          to="https://api.whatsapp.com/send?phone=+919173169661"
         >
           <Button
             startIcon={<WhatsApp />}

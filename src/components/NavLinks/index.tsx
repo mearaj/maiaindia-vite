@@ -241,7 +241,7 @@ export default function NavLinks() {
               textOverflow: 'ellipsis',
             }}
           >
-            Cancellation And Refund Policies
+            Cancel/Refund Policy
           </Box>
         </Button>
       </Link>

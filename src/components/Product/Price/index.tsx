@@ -17,11 +17,11 @@ export default function ProductPrice({
     discountComponent = (
       <Typography
         sx={{
-          color: 'green',
           fontWeight: 600,
           marginRight: '6px',
           fontSize: 'inherit',
         }}
+        color="primary"
         noWrap
       >
         {discountPercentage}% off

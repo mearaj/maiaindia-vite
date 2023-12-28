@@ -5,8 +5,8 @@ import Close from '@mui/icons-material/Close';
 import logoDarkGreen from '@/assets/images/logo-yellow.png';
 import { useRecoilState } from 'recoil';
 import { menuAtom } from '@/recoil/atoms/menu';
+import CategoriesRadio from '@/components/Categories';
 import NavLinks from '@/components/NavLinks';
-import CategoriesAccordion from '@/components/Accordions/Categories';
 import useDimensions from '@/hooks/useDimensions';
 import UserComponent from '@/components/User';
 import createStyles from './styles';
@@ -184,7 +184,7 @@ export default function NavDrawer(_: DrawerProps) {
             margin: '16px 0px',
           }}
         />
-        <CategoriesAccordion />
+        <CategoriesRadio />
       </Box>
     </Box>
   );

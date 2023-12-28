@@ -28,6 +28,7 @@ export default function AppThemeProvider({ children }: PropsWithChildren) {
   };
   const AppTheme = createTheme({
     palette: {
+      mode: 'light',
       primary: {
         ...primary,
         contrastText: secondary.main,
@@ -37,9 +38,9 @@ export default function AppThemeProvider({ children }: PropsWithChildren) {
         contrastText: primary.main,
       },
       text: {
-        primary: alpha(primary.main, 0.87),
-        secondary: alpha(primary.main, 0.6),
-        disabled: alpha(primary.main, 0.38),
+        primary: primary.dark,
+        secondary: alpha(primary.dark, 0.6),
+        disabled: alpha(primary.dark, 0.38),
       },
       divider: alpha(primary.main, 0.16),
     },

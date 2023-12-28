@@ -32,6 +32,10 @@
 .swiper, .swiper:global(.swiper) {
     width: 100%;
     height: 60vh;
+
+    :global(.swiper-pagination) {
+        height: 24px;
+    }
 }
 
 .swiperDialog, .swiperDialog:global(.swiper) {
@@ -43,6 +47,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    height: calc(100% - 24px);
 }
 
 .slideDialog, .slideDialog:global(.swiper-slide) {
@@ -71,28 +76,6 @@
     max-height: calc(100%);
     max-width: calc(100%);
     margin: auto;
-}
-
-
-.swiperThumbs, .swiperThumbs:global(.swiper) {
-    width: 100%;
-    height: 20vh;
-}
-
-.thumbsSlide, .thumbsSlide:global(.swiper-slide) {
-    width: auto;
-    opacity: 0.4;
-}
-
-.thumbnailImage {
-    height: auto;
-    width: auto;
-    max-height: 100%;
-    max-width: 100%;
-}
-
-.thumbsSlide:global(.swiper-slide-thumb-active) {
-    opacity: 1;
 }
 
 .productDetails {
