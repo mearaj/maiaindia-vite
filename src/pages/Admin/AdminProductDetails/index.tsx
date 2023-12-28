@@ -61,14 +61,15 @@ export default function AdminProductDetailsPage() {
 
       if (shouldReset && product) {
         const newProductForm: ProductForm = {
-          details: product.details,
+          details: product.details ?? '',
           mrp: product.mrp,
           sp: product.sp,
           name: product.name,
           id: product.id,
           category:
             categories.find(
-              (eachCategory) => product?.id && eachCategory.id === product.id
+              (eachCategory) =>
+                product?.categoryID && eachCategory.id === product.categoryID
             ) ?? categories[categories.length - 1],
         };
         locallyUploadedImages.forEach((eachImage) =>
@@ -94,7 +95,7 @@ export default function AdminProductDetailsPage() {
     if (recoilProductValueLoadable.state === 'hasValue') {
       const newProduct = recoilProductValueLoadable.contents;
       const newProductForm: ProductForm = {
-        details: newProduct.details,
+        details: newProduct.details ?? '',
         mrp: newProduct.mrp,
         sp: newProduct.sp,
         name: newProduct.name,
@@ -102,7 +103,8 @@ export default function AdminProductDetailsPage() {
         category:
           categories.find(
             (eachCategory) =>
-              newProduct?.id && eachCategory.id === newProduct.id
+              newProduct?.categoryID &&
+              eachCategory.id === newProduct.categoryID
           ) ?? categories[categories.length - 1],
       };
       setProductFormState({

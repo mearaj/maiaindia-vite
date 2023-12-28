@@ -374,7 +374,7 @@ export default function AdminProductFormFooterComponent({
         currency: 'INR',
         mrp: productForm.mrp as number,
         sp: productForm.sp as number,
-        details: productForm.details,
+        details: productForm.details ?? '',
       };
       let modalContentPrompt:
         | string
@@ -443,7 +443,7 @@ export default function AdminProductFormFooterComponent({
             productID = productForm.id!;
           }
           navigate(`${appAbsoluteRoutes.adminProducts}/${productID}`);
-        } catch (_) {
+        } catch (e) {
           if (productForm.id !== null) {
             snackbarMsg = `Failed to update ${productForm.name} with ID ${productForm.id}`;
           } else {

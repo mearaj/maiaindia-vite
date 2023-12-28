@@ -20,7 +20,6 @@ const radioGroupStyle = (_: Theme) => ({
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fill, minmax(min-content,170px))',
   gridColumnGap: '16px',
-  marginLeft: '4px',
 });
 
 export default function createStyles(theme: Theme) {

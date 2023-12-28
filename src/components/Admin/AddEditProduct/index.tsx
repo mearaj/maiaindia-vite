@@ -62,12 +62,9 @@ export default function AddEditProductComponent() {
       },
     [productForm, setProductForm]
   );
-  const handleCategoryChange = useCallback(
-    (category: Category) => {
-      setProductForm({ ...productForm, category });
-    },
-    [productForm, setProductForm]
-  );
+  const handleCategoryChange = (category: Category) => {
+    setProductForm({ ...productForm, category });
+  };
 
   const disableForm = isProcessing || formMode === ProductFormModeState.read;
   let addEditCancelComponent: ReactNode = <Box>Add New Product</Box>;

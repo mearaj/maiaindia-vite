@@ -83,6 +83,7 @@ export default function CategoriesRadio({
                       color: theme.palette.secondary.main,
                       height: '28px',
                       width: '28px',
+                      marginLeft: '4px',
                     },
                   }}
                 />

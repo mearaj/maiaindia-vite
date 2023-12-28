@@ -143,7 +143,7 @@ export default function FooterComponent() {
           Surat, Gujarat, India 395001.
         </Typography>
       </Box>
-      <Box style={{ ...styles.container, marginBottom: '8px' }}>
+      <Box style={{ ...styles.container, marginBottom: '0px' }}>
         <Typography
           color="secondary"
           fontSize="small"
@@ -152,7 +152,7 @@ export default function FooterComponent() {
           <span style={{ fontWeight: 'bolder', fontSize: '24px' }}>
             &copy;&nbsp;
           </span>
-          2024 Maia Jewellery | Powered by PhonePe
+          2024 Maia Jewellery | Powered By Triton Enterprise
         </Typography>
       </Box>
     </Box>
