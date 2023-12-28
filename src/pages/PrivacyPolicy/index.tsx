@@ -1,5 +1,7 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Link, Typography } from '@mui/material';
+import { NavLink } from 'react-router-dom';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
+import { appAbsoluteRoutes } from '@/Router';
 
 export default function PrivacyPolicyPage() {
   const startParagraphs = [
@@ -347,11 +349,18 @@ export default function PrivacyPolicyPage() {
       </Typography>
       <Box sx={{ marginBottom: '16px' }}>
         <Box sx={{ marginBottom: '8px' }}>
-          We may update our Privacy Policy from time to time. Thus, we advise
-          you to review this page periodically for any changes. We will notify
-          you of any changes by posting the new Privacy Policy on this page.
-          These changes are effective immediately, after they are posted on this
-          page.
+          We may update our
+          <Link
+            component={NavLink}
+            to={appAbsoluteRoutes.privacyPolicy}
+            fontWeight="bold"
+          >
+            &nbsp;Privacy Policy&nbsp;
+          </Link>
+          from time to time. Thus, we advise you to review this page
+          periodically for any changes. We will notify you of any changes by
+          posting the new Privacy Policy on this page. These changes are
+          effective immediately, after they are posted on this page.
         </Box>
       </Box>
       <Typography
@@ -366,7 +375,14 @@ export default function PrivacyPolicyPage() {
       <Box sx={{ marginBottom: '16px' }}>
         <Box sx={{ marginBottom: '8px' }}>
           If you have any questions or suggestions about our Privacy Policy, do
-          not hesitate to contact us.
+          not hesitate to&nbsp;
+          <Link
+            component={NavLink}
+            to={appAbsoluteRoutes.contactUs}
+            fontWeight="bold"
+          >
+            Contact Us.
+          </Link>
         </Box>
       </Box>
     </CommonPageLayout>

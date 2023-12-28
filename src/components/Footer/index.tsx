@@ -94,10 +94,29 @@ export default function FooterComponent() {
           </Link>
         </Box>
       </Box>
+      <Box sx={styles.container}>
+        <Box sx={styles.contentTitle}>
+          <Typography color="secondary" fontSize="large" fontWeight="bold">
+            About Us
+          </Typography>
+        </Box>
+        <Box>
+          <Link
+            component={NavLink}
+            to={appAbsoluteRoutes.aboutUs}
+            color="secondary"
+            fontSize="small"
+          >
+            About Maia Jewellery
+          </Link>
+        </Box>
+      </Box>
       <Box style={styles.container}>
-        <Typography color="secondary" fontSize="large" fontWeight="bold">
-          Our Location
-        </Typography>
+        <Box style={styles.contentTitle}>
+          <Typography color="secondary" fontSize="large" fontWeight="bold">
+            Our Location
+          </Typography>
+        </Box>
         <address>
           10/1529, Kanchan Villa, Oswal Street, Near Shubhash Chowk, Gopipura,
           Surat, Gujarat, India 395001.
@@ -105,7 +124,7 @@ export default function FooterComponent() {
       </Box>
       <Box style={{ ...styles.container, marginBottom: '8px' }}>
         <Typography color="secondary" fontSize="small" fontWeight="bolder">
-          &copy; 2024 Maia Jewellery | Powered by PhonePay
+          &copy; 2024 Maia Jewellery | Powered by PhonePe
         </Typography>
       </Box>
     </Box>
