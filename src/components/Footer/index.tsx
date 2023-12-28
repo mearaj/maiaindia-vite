@@ -146,8 +146,15 @@ export default function FooterComponent() {
         </Typography>
       </Box>
       <Box style={{ ...styles.container, marginBottom: '8px' }}>
-        <Typography color="secondary" fontSize="small">
-          &copy; 2024 Maia Jewellery | Powered by PhonePe
+        <Typography
+          color="secondary"
+          fontSize="small"
+          sx={{ display: 'flex', alignItems: 'center' }}
+        >
+          <span style={{ fontWeight: 'bolder', fontSize: '24px' }}>
+            &copy;&nbsp;
+          </span>
+          2024 Maia Jewellery | Powered by PhonePe
         </Typography>
       </Box>
     </Box>
