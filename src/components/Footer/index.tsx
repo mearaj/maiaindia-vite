@@ -1,4 +1,4 @@
-import { Box, Link, Typography, useTheme } from '@mui/material';
+import { alpha, Box, Divider, Link, Typography, useTheme } from '@mui/material';
 import { NavLink } from 'react-router-dom';
 import createStyles from './styles';
 import { appAbsoluteRoutes } from '@/Router';
@@ -143,7 +143,13 @@ export default function FooterComponent() {
           Surat, Gujarat, India 395001.
         </Typography>
       </Box>
-      <Box style={{ ...styles.container, marginBottom: '0px' }}>
+      <Divider
+        sx={{
+          backgroundColor: alpha(theme.palette.secondary.main, 0.16),
+          marginBottom: '16px',
+        }}
+      />
+      <Box sx={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
         <Typography
           color="secondary"
           fontSize="small"
