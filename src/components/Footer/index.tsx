@@ -138,12 +138,10 @@ export default function FooterComponent() {
             Our Location
           </Typography>
         </Box>
-        <Box style={styles.content}>
-          <Typography color="secondary" fontSize="small" component="address">
-            10/1529, Kanchan Villa, Oswal Street, Near Shubhash Chowk, Gopipura,
-            Surat, Gujarat, India 395001.
-          </Typography>
-        </Box>
+        <Typography color="secondary" fontSize="small" component="address">
+          10/1529, Kanchan Villa, Oswal Street, Near Shubhash Chowk, Gopipura,
+          Surat, Gujarat, India 395001.
+        </Typography>
       </Box>
       <Box style={{ ...styles.container, marginBottom: '8px' }}>
         <Typography
