@@ -116,7 +116,7 @@ export default function FooterComponent() {
             About Us
           </Typography>
         </Box>
-        <Box>
+        <Box sx={styles.content}>
           <Link
             component={NavLink}
             to={appAbsoluteRoutes.aboutUs}

@@ -8,7 +8,7 @@ const footerStyle = (theme: Theme) => ({
   color: theme.palette.secondary.main,
 });
 
-const containerStyle = (_: Theme) => ({ marginBottom: '12px' });
+const containerStyle = (_: Theme) => ({ marginBottom: '16px' });
 const contentTitleStyle = (_: Theme) => ({});
 const contentStyle = (_: Theme) => ({
   display: 'grid',
@@ -18,7 +18,7 @@ const contentStyle = (_: Theme) => ({
 
 const radioGroupStyle = (_: Theme) => ({
   display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(min-content,80px))',
+  gridTemplateColumns: 'repeat(auto-fill, minmax(min-content,170px))',
   gridColumnGap: '16px',
   marginLeft: '4px',
 });
