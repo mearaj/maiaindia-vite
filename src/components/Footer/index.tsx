@@ -17,8 +17,9 @@ export default function FooterComponent() {
             <Box sx={styles.contentTitle}>
               <Typography
                 color="secondary"
-                fontSize="large"
+                fontSize="medium"
                 fontWeight="bolder"
+                lineHeight="1.1"
               >
                 Categories
               </Typography>
@@ -30,7 +31,12 @@ export default function FooterComponent() {
       </Box>
       <Box sx={styles.container}>
         <Box sx={styles.contentTitle}>
-          <Typography color="secondary" fontSize="large" fontWeight="bolder">
+          <Typography
+            color="secondary"
+            fontSize="medium"
+            fontWeight="bolder"
+            lineHeight="1.1"
+          >
             Information
           </Typography>
         </Box>
@@ -63,7 +69,12 @@ export default function FooterComponent() {
       </Box>
       <Box sx={styles.container}>
         <Box sx={styles.contentTitle}>
-          <Typography color="secondary" fontSize="large" fontWeight="bold">
+          <Typography
+            color="secondary"
+            fontSize="medium"
+            fontWeight="bold"
+            lineHeight="1.1"
+          >
             Contact Us
           </Typography>
         </Box>
@@ -96,7 +107,12 @@ export default function FooterComponent() {
       </Box>
       <Box sx={styles.container}>
         <Box sx={styles.contentTitle}>
-          <Typography color="secondary" fontSize="large" fontWeight="bold">
+          <Typography
+            color="secondary"
+            fontSize="medium"
+            fontWeight="bold"
+            lineHeight="1.1"
+          >
             About Us
           </Typography>
         </Box>
@@ -113,17 +129,24 @@ export default function FooterComponent() {
       </Box>
       <Box style={styles.container}>
         <Box style={styles.contentTitle}>
-          <Typography color="secondary" fontSize="large" fontWeight="bold">
+          <Typography
+            color="secondary"
+            fontSize="medium"
+            fontWeight="bold"
+            lineHeight="1.1"
+          >
             Our Location
           </Typography>
         </Box>
-        <address>
-          10/1529, Kanchan Villa, Oswal Street, Near Shubhash Chowk, Gopipura,
-          Surat, Gujarat, India 395001.
-        </address>
+        <Typography color="secondary" fontSize="small">
+          <address>
+            10/1529, Kanchan Villa, Oswal Street, Near Shubhash Chowk, Gopipura,
+            Surat, Gujarat, India 395001.
+          </address>
+        </Typography>
       </Box>
       <Box style={{ ...styles.container, marginBottom: '8px' }}>
-        <Typography color="secondary" fontSize="small" fontWeight="bolder">
+        <Typography color="secondary" fontSize="small">
           &copy; 2024 Maia Jewellery | Powered by PhonePe
         </Typography>
       </Box>
