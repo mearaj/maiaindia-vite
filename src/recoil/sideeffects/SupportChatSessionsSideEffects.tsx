@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import {
-  SupportChat,
   SupportChatMessage,
   supportChatsAtom,
   supportChatsMessagesAtom,
@@ -15,6 +14,7 @@ import {
   orderBy,
   query,
 } from '@firebase/firestore';
+import { SupportChat } from '@/recoil/data/supportChat';
 
 export default function SupportChatSessionsSideEffects() {
   const supportChats = useRecoilValue(supportChatsAtom);

@@ -3,9 +3,9 @@ import { recoilKeys } from '@/recoil/data/recoilKeys';
 import {
   selectedSupportChatAtom,
   selectedSupportChatUserAtom,
-  SupportChat,
   supportChatsAtom,
 } from '@/recoil/atoms/supportChat';
+import { SupportChat } from '@/recoil/data/supportChat';
 import { UserProfile } from '@/config';
 
 export const supportChatsFilteredByUserID = selectorFamily<

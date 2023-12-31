@@ -1,8 +1,4 @@
-import {
-  selectedSupportChatAtom,
-  SupportChat,
-  SupportChatNoID,
-} from '@/recoil/atoms/supportChat';
+import { selectedSupportChatAtom } from '@/recoil/atoms/supportChat';
 import Button from '@mui/material/Button';
 import { useState } from 'react';
 import {
@@ -20,6 +16,7 @@ import {
   selectedSupportChatUserSelector,
   supportChatsFilteredByUserID,
 } from '@/recoil/selectors/supportChat';
+import { SupportChat, SupportChatNoID } from '@/recoil/data/supportChat';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
 import { UserProfile } from '@/config';
 

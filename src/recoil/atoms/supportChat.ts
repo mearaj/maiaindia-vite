@@ -13,21 +13,8 @@ import {
 } from '@firebase/firestore';
 import { onAuthStateChanged } from '@firebase/auth';
 import { updateDocsSnapshots } from '@/misc';
+import { SupportChat } from '@/recoil/data/supportChat';
 import { UserProfile } from '@/config';
-
-export interface SupportChatNoID {
-  createdAt: FieldValue;
-  createdBy: string;
-  createdFor: string;
-  updatedAt: FieldValue;
-  queryLimit?: number; // to be used only by frontend
-}
-
-export interface SupportChat extends SupportChatNoID {
-  id: string;
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
-}
 
 const querySupportChatsSideEffects: AtomEffect<SupportChat[]> = ({
   setSelf,
