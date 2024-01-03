@@ -127,6 +127,7 @@ export default function Header({
                   right: '-1px',
                   fontWeight: 'bold',
                   zIndex: 1,
+                  color: theme.palette.secondary.main,
                 }}
               >
                 <small>

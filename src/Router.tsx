@@ -1,21 +1,28 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { userAtom } from '@/recoil/atoms';
+import { AuthState } from '@/recoil/atoms/user';
+import { Box } from '@mui/material';
+import { Loader } from '@/components';
+import { isAdminSelector } from '@/recoil/selectors/isAdmin';
+import AdminLiveChatPage from '@/pages/Admin/LiveChat';
 import ProfilePage from '@/pages/Profile';
 import CancellationRefundPolicy from '@/pages/CancellationRefundPolicy';
 import App from '@/App';
 import ProductsPage from '@/pages/Products';
 import ProductDetailsPage from '@/pages/ProductDetails';
-import LiveChatPage from '@/pages/LiveChat';
 import ContactUsPage from '@/pages/ContactUs';
 import CartPage from '@/pages/Cart';
 import { AdminHomePage } from '@/pages/Admin';
 import AdminOrdersPage from '@/pages/Admin/Orders';
 import AdminAddProductPage from '@/pages/Admin/AddProduct';
-import AuthRoutes from '@/Auth';
 import AboutUsPage from '@/pages/AboutUs';
 import TermsConditionsPage from '@/pages/TermsConditions';
 import PrivacyPolicyPage from '@/pages/PrivacyPolicy';
 import AdminProductsPage from '@/pages/Admin/Products';
 import AdminProductDetailsPage from '@/pages/Admin/AdminProductDetails';
+import CommonPageLayout from '@/components/Layouts/CommonPage';
+import SignInButton from '@/components/Buttons/SignIn';
 // Abs implies absolute
 
 const homeAbs = '/products';
@@ -35,8 +42,8 @@ export const appAbsoluteRoutes = {
   termsConditions: '/termsConditions',
   cancellationRefundPolicies: '/cancellationRefundPolicy',
   aboutUs: '/aboutUs',
-  liveChat: '/liveChat',
   adminHomeAbs,
+  adminLiveChat: '/admin/liveChat',
   adminProducts: '/admin/products',
   adminProductDetails: '/admin/products/:id',
   adminOrders: '/admin/orders',
@@ -56,8 +63,8 @@ export const appRelativeRoutes = {
   privacyPolicy: 'privacyPolicy',
   termsConditions: 'termsConditions',
   cancellationRefundPolicy: 'cancellationRefundPolicy',
-  liveChat: 'liveChat',
   adminHomeRelative, // relative to admin
+  adminLiveChat: 'liveChat',
   adminProducts: 'products', // relative to admin
   profile: 'profile',
   adminHome: 'home', // relative to admin
@@ -65,6 +72,56 @@ export const appRelativeRoutes = {
   adminProductsAdd: 'products/add', // relative to admin,
   adminProductDetails: 'products/:id', // relative to admin,
 };
+
+function AuthRoutes() {
+  const { authState, userState } = useRecoilValue(userAtom);
+  let text: string | null;
+  if (authState !== AuthState.idle) {
+    switch (authState) {
+      case AuthState.loading:
+        text = 'Loading...';
+        break;
+      case AuthState.signingIn:
+        text = 'Signing In...';
+        break;
+      case AuthState.signingOut:
+        text = 'Signing Out...';
+        break;
+      case AuthState.updatingProfile:
+        text = 'Updating Profile...';
+        break;
+      default:
+        text = null;
+    }
+    return (
+      <CommonPageLayout
+        sxBodyProps={{ justifyContent: 'center', alignItems: 'center' }}
+      >
+        <Box>{text}</Box>
+        <Loader />
+      </CommonPageLayout>
+    );
+  }
+  if (!userState) {
+    return (
+      <CommonPageLayout
+        sxBodyProps={{ justifyContent: 'center', alignItems: 'center' }}
+      >
+        <Box>Sign In required</Box>
+        <SignInButton />
+      </CommonPageLayout>
+    );
+  }
+  return <Outlet />;
+}
+
+function AdminRoutes() {
+  const isAdmin = useRecoilValue(isAdminSelector);
+  if (!isAdmin) {
+    return <Navigate to={appAbsoluteRoutes.home} replace />;
+  }
+  return <Outlet />;
+}
 
 export const router = createBrowserRouter([
   {
@@ -112,10 +169,6 @@ export const router = createBrowserRouter([
         element: <AuthRoutes />,
         children: [
           {
-            path: appRelativeRoutes.liveChat,
-            element: <LiveChatPage />,
-          },
-          {
             path: appRelativeRoutes.cart,
             element: <CartPage />,
           },
@@ -125,6 +178,7 @@ export const router = createBrowserRouter([
           },
           {
             path: appRelativeRoutes.admin,
+            element: <AdminRoutes />,
             children: [
               {
                 path: appRelativeRoutes.root,
@@ -149,6 +203,10 @@ export const router = createBrowserRouter([
               {
                 path: appRelativeRoutes.adminProductDetails,
                 element: <AdminProductDetailsPage />,
+              },
+              {
+                path: appRelativeRoutes.adminLiveChat,
+                element: <AdminLiveChatPage />,
               },
             ],
           },

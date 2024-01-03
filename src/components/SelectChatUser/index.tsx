@@ -1,12 +1,10 @@
 import { Box } from '@mui/material';
 import { useRecoilValue } from 'recoil';
 import { supportChatUsersAtom } from '@/recoil/atoms/supportChat';
-import { isAdminSelector } from '@/recoil/selectors/isAdmin';
 import SelectChatUserButton from '@/components/Buttons/SelectChatUser';
 
 export default function SelectChatUserComponent() {
   const supportChatUsers = useRecoilValue(supportChatUsersAtom);
-  const isAdmin = useRecoilValue(isAdminSelector);
 
   return (
     <Box
@@ -29,7 +27,7 @@ export default function SelectChatUserComponent() {
           marginBottom: '24px',
         }}
       >
-        {isAdmin ? 'Chat with customers.' : 'Chat with executives.'}
+        Chat with customers.
       </Box>
       {supportChatUsers.map((eachUser) => {
         return (

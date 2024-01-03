@@ -12,7 +12,6 @@ import {
   where,
 } from '@firebase/firestore';
 import { onAuthStateChanged } from '@firebase/auth';
-import { updateDocsSnapshots } from '@/misc';
 import { SupportChat } from '@/recoil/data/supportChat';
 import { UserProfile } from '@/config';
 
@@ -39,9 +38,42 @@ const querySupportChatsSideEffects: AtomEffect<SupportChat[]> = ({
     supportChatsSubscription = onSnapshot(
       supportChatsQuery,
       async (snapshot) => {
-        let supportChats: SupportChat[] = [...(await getPromise(node))];
-        supportChats = updateDocsSnapshots(snapshot, supportChats);
-        setSelf(supportChats);
+        if (snapshot.metadata.hasPendingWrites) {
+          return;
+        }
+        const snapDocs: SupportChat[] = [...(await getPromise(node))];
+        snapshot
+          .docChanges()
+          .forEach(
+            (change: { doc: { data?: any; id?: any }; type: string }) => {
+              const { id } = change.doc;
+              const foundIndex = snapDocs.findIndex(
+                (docItem) => docItem.id === id
+              );
+              const docItem = {
+                ...change.doc.data(),
+                id,
+              };
+              switch (change.type) {
+                case 'added':
+                case 'modified':
+                  if (foundIndex >= 0) {
+                    snapDocs[foundIndex] = docItem;
+                  } else {
+                    snapDocs.unshift(docItem);
+                  }
+                  break;
+                case 'removed':
+                  if (foundIndex >= 0) {
+                    snapDocs.splice(foundIndex, 1);
+                  }
+                  break;
+                default:
+                  break;
+              }
+            }
+          );
+        setSelf(snapDocs);
       }
     );
   });

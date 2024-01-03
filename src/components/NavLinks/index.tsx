@@ -104,6 +104,21 @@ export default function NavLinks() {
               Admin Add Product
             </Button>
           </Link>
+          <Link component={NavLink} to={appAbsoluteRoutes.adminLiveChat}>
+            <Button
+              fullWidth
+              variant={
+                isActiveByEqual([appAbsoluteRoutes.adminLiveChat], location)
+                  ? 'contained'
+                  : 'text'
+              }
+              size="large"
+              startIcon={<Message />}
+              sx={linkButtonStyle}
+            >
+              Live Chat
+            </Button>
+          </Link>
         </>
       )}
       {isAdmin && (
@@ -183,21 +198,6 @@ export default function NavLinks() {
           sx={linkButtonStyle}
         >
           Contact Us
-        </Button>
-      </Link>
-      <Link component={NavLink} to={appAbsoluteRoutes.liveChat}>
-        <Button
-          fullWidth
-          variant={
-            isActiveByEqual([appAbsoluteRoutes.liveChat], location)
-              ? 'contained'
-              : 'text'
-          }
-          size="large"
-          startIcon={<Message />}
-          sx={linkButtonStyle}
-        >
-          Live Chat
         </Button>
       </Link>
       <Link component={NavLink} to={appAbsoluteRoutes.aboutUs}>

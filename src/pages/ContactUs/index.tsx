@@ -46,7 +46,7 @@ export default function ContactUsPage() {
         </Box>
         <Link
           component={NavLink}
-          to={!userState ? '#' : appAbsoluteRoutes.liveChat}
+          to={!userState ? '#' : appAbsoluteRoutes.adminLiveChat}
         >
           <Button
             fullWidth

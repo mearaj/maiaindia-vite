@@ -19,7 +19,7 @@ import SelectSupportChatComponent from '@/components/SelectSupportChat';
 import SelectChatUserComponent from '@/components/SelectChatUser';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
 
-export default function LiveChatPage() {
+export default function AdminLiveChatPage() {
   const [textValue, setTextValue] = useState('');
   const ref = useRef<HTMLElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
