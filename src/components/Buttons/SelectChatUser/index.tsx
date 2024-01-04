@@ -3,7 +3,7 @@ import Button from '@mui/material/Button';
 import { Box } from '@mui/material';
 import { Comment } from '@mui/icons-material';
 import { selectedSupportChatUserSelector } from '@/recoil/selectors/supportChat';
-import { UserProfile } from '@/config';
+import { UserProfile } from '@/recoil/data/user';
 
 export default function SelectChatUserButton({
   supportChatUser,

@@ -1,7 +1,7 @@
 import { selector } from 'recoil';
 import { recoilKeys } from '@/recoil/data/recoilKeys';
 import { userAtom } from '@/recoil/atoms';
-import { isAdminUID } from '@/config';
+import { isAdminAtom } from '@/recoil/atoms/isAdmin';
 
 export const isAdminSelector = selector<boolean>({
   key: recoilKeys.isAdminSelector,
@@ -10,6 +10,6 @@ export const isAdminSelector = selector<boolean>({
     if (!userState || !userState.user || !userState.user.uid) {
       return false;
     }
-    return isAdminUID(userState.user.uid);
+    return get(isAdminAtom);
   },
 });

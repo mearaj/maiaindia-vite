@@ -5,7 +5,7 @@ import { appFirebaseAuth, appFirebaseStorage, appFirestore } from '@/firebase';
 import { FirebaseError } from '@firebase/util';
 import { getDownloadURL, ref, uploadBytes } from '@firebase/storage';
 import { doc, getDoc, setDoc } from '@firebase/firestore';
-import { UserProfile } from '@/config';
+import { AppUser, UserProfile } from '@/recoil/data/user';
 
 export enum AuthState {
   idle,
@@ -37,14 +37,6 @@ export const authStateEnumToString = (
   }
   return text;
 };
-
-export interface AppUser {
-  authState: AuthState;
-  userState: {
-    user: User;
-    profile: UserProfile;
-  } | null;
-}
 
 export const userPlaceholderUrl = `https://firebasestorage.googleapis.com/v0/b/maiaindia.appspot.com/o/images%2Fuser-placeholder.svg?alt=media`;
 export const userAtom = atom<AppUser>({
@@ -117,7 +109,6 @@ export const userAtom = atom<AppUser>({
               docRef,
               {
                 profile: {
-                  uid: userProfile.uid,
                   displayName: userProfile.displayName,
                   email: userProfile.email,
                 },

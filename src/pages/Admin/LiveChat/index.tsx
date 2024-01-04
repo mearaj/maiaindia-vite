@@ -9,15 +9,17 @@ import {
   SupportChatMessageNoID,
   supportChatsMessagesAtom,
 } from '@/recoil/atoms/supportChat';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil';
 import { appFirestore } from '@/firebase';
 import { addDoc, collection, serverTimestamp } from '@firebase/firestore';
 import { userAtom } from '@/recoil/atoms';
 import { userPlaceholderUrl } from '@/recoil/atoms/user';
-import { selectedSupportChatUserSelector } from '@/recoil/selectors/supportChat';
-import SelectSupportChatComponent from '@/components/SelectSupportChat';
-import SelectChatUserComponent from '@/components/SelectChatUser';
-import CommonPageLayout from '@/components/Layouts/CommonPage';
+import {
+  selectedSupportChatUserSelector,
+  supportChatUsersSessionsMapSelector,
+} from '@/recoil/selectors/supportChat';
+import SelectChatUserComponent from '@/components/Admin/SelectChatUser';
+import RecoilLoadablePageLayout from '@/components/Layouts/RecoilLoadablePage';
 
 export default function AdminLiveChatPage() {
   const [textValue, setTextValue] = useState('');
@@ -25,12 +27,13 @@ export default function AdminLiveChatPage() {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const activeSupportChatUser = useRecoilValue(selectedSupportChatUserSelector);
   const appUser = useRecoilValue(userAtom);
-
+  const supportChatUsersMapLoadable = useRecoilValueLoadable(
+    supportChatUsersSessionsMapSelector
+  );
   const [activeSupportChat, setActiveSupportChat] = useRecoilState(
     selectedSupportChatAtom
   );
   const supportChatMessages = useRecoilValue(supportChatsMessagesAtom);
-
   const handleSubmit = async () => {
     const textValueCurr = textValue.trim();
     if (textValueCurr.length === 0) {
@@ -54,7 +57,7 @@ export default function AdminLiveChatPage() {
       );
       const newMessage: SupportChatMessageNoID = {
         from: appUser.userState!.user!.uid,
-        to: activeSupportChatUser!.uid,
+        to: activeSupportChatUser!.uid!,
         attachments: null,
         updatedAt: serverTimestamp(),
         createdAt: serverTimestamp(),
@@ -64,22 +67,15 @@ export default function AdminLiveChatPage() {
     }
   };
 
-  if (!activeSupportChatUser) {
-    return (
-      <CommonPageLayout
-        sxBodyProps={{
-          alignItems: 'start',
-          justifyContent: 'start',
-          flexGrow: 0,
-        }}
-      >
-        <SelectChatUserComponent />
-      </CommonPageLayout>
-    );
-  }
-  if (!activeSupportChat) {
-    return <SelectSupportChatComponent supportUser={activeSupportChatUser} />;
-  }
+  const supportChatUsersMap = supportChatUsersMapLoadable.contents;
+
+  return (
+    <RecoilLoadablePageLayout recoilLoadable={supportChatUsersMapLoadable}>
+      <SelectChatUserComponent
+        supportChatUsersSessionsMap={supportChatUsersMap}
+      />
+    </RecoilLoadablePageLayout>
+  );
 
   const isMe = (supportChatMsg: SupportChatMessage) =>
     appUser &&

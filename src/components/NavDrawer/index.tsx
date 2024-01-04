@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Box, Divider, IconButton, useTheme } from '@mui/material';
-import Close from '@mui/icons-material/Close';
-import logoDarkGreen from '@/assets/images/logo-yellow.png';
+import { Box, Divider, useTheme } from '@mui/material';
 import { useRecoilState } from 'recoil';
 import { menuAtom } from '@/recoil/atoms/menu';
 import CategoriesRadio from '@/components/Categories';
@@ -10,6 +8,7 @@ import NavLinks from '@/components/NavLinks';
 import useDimensions from '@/hooks/useDimensions';
 import UserComponent from '@/components/User';
 import createStyles from './styles';
+import CommonHeader from '@/components/Layouts/CommonHeader';
 
 export interface DrawerProps {
   className?: string;
@@ -135,42 +134,11 @@ export default function NavDrawer(_: DrawerProps) {
       onMouseUp={onTouchEndOrOnMouseUp}
       role="presentation"
     >
-      <Box sx={styles.header}>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            height: '100%',
-          }}
-        >
-          <Box sx={{ height: '100%' }}>
-            <Box
-              component="img"
-              src={logoDarkGreen}
-              alt="logo"
-              sx={{ height: '100%', width: 'auto' }}
-            />
-          </Box>
-        </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            height: '100%',
-            flexShrink: '0',
-          }}
-        >
-          <IconButton
-            onClick={() => {
-              setShowMenu(false);
-            }}
-          >
-            <Close
-              sx={{ fontSize: '32px', color: theme.palette.secondary.main }}
-            />
-          </IconButton>
-        </Box>
-      </Box>
+      <CommonHeader
+        onCloseClick={() => {
+          setShowMenu(false);
+        }}
+      />
       <Box sx={styles.main}>
         <UserComponent />
         <Divider

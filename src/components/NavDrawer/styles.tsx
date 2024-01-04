@@ -15,17 +15,6 @@ const rootStyles = (theme: Theme) => ({
   boxShadow: theme.shadows[10],
 });
 
-const headerStyles = (theme: Theme) => ({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  height: theme.dimensions.appBarHeight,
-  backgroundColor: theme.palette.primary.main,
-  padding: '16px',
-  width: '100%',
-  boxShadow: theme.shadows[2],
-});
-
 const mainStyles = (_: Theme) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -39,12 +28,10 @@ const mainStyles = (_: Theme) => ({
 
 export default function createStyles(theme: Theme) {
   const root = rootStyles(theme);
-  const header = headerStyles(theme);
   const main = mainStyles(theme);
 
   return {
     root,
-    header,
     main,
   };
 }

@@ -24,9 +24,9 @@ import {
   UploadTask,
 } from '@firebase/storage';
 import { doc, getDoc, setDoc } from '@firebase/firestore';
+import { UserProfile } from '@/recoil/data/user';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
 import createStyles from './styles';
-import { UserProfile } from '@/config';
 import SnackbarDialog from '@/components/Dialogs/SnackBar';
 
 /*
@@ -168,7 +168,7 @@ export default function ProfilePage() {
 
   const handleSubmit = async () => {
     if (!shouldDisableSubmit()) {
-      const docRef = doc(appFirestore, 'users', userState!.profile.uid);
+      const docRef = doc(appFirestore, 'users', userState?.user!.uid!);
       let currentAppUserState = appUserState;
       if (userState!.profile.displayName !== profileState.displayName) {
         setProcessingState({

@@ -13,7 +13,8 @@ import {
 } from '@firebase/firestore';
 import { onAuthStateChanged } from '@firebase/auth';
 import { SupportChat } from '@/recoil/data/supportChat';
-import { UserProfile } from '@/config';
+
+import { UserProfile } from '@/recoil/data/user';
 
 const querySupportChatsSideEffects: AtomEffect<SupportChat[]> = ({
   setSelf,
