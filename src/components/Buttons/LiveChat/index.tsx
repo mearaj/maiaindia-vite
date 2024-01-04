@@ -1,6 +1,12 @@
 import { Chat } from '@mui/icons-material';
-import { Box, Card, Typography, useTheme } from '@mui/material';
-import Button from '@mui/material/Button';
+import {
+  alpha,
+  Box,
+  Card,
+  IconButton,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
@@ -8,12 +14,14 @@ import { useState } from 'react';
 import SignInRequiredDialog from '@/components/Dialogs/SignInRequired';
 import CommonHeader from '@/components/Layouts/CommonHeader';
 import SignInButton from '@/components/Buttons/SignIn';
+import useDimensions from '@/hooks/useDimensions';
 
 export default function LiveChatButton() {
   const theme = useTheme();
   const [liveChatState, setLiveChatState] = useState(false);
   const setActiveDialog = useSetRecoilState(selectedDialogAtom);
   const user = useRecoilValue(userAtom);
+  const dimensions = useDimensions();
 
   const onClickHandler = () => {
     if (!user.userState) {
@@ -24,33 +32,28 @@ export default function LiveChatButton() {
   };
 
   return (
-    <Button
-      color="secondary"
+    <Box
       sx={{
         position: 'fixed',
-        bottom: '32px',
+        bottom: '16px',
         right: '16px',
         minWidth: '0px',
         minHeight: '0px',
-        padding: '12px',
+        padding: '0px',
         borderRadius: '50%',
-        backgroundColor: theme.palette.primary.main,
-        '&:active,&:hover,&:focus': {
-          backgroundColor: theme.palette.primary.main,
-        },
+        display: 'flex',
         zIndex: theme.zIndex.appBar,
       }}
-      onClick={onClickHandler}
     >
       <Card
         sx={{
           padding: '0px',
-          bottom: '48px',
+          bottom: '60px',
           right: '8px',
-          height: liveChatState ? '100vh' : '0vh',
-          width: liveChatState ? '100vw' : '0vw',
-          maxHeight: `min(800px, calc(100vh - 150px))`,
-          maxWidth: 'min(600px, calc(100vw - 64px))',
+          height: liveChatState ? `${dimensions.height}px` : '0vh',
+          width: '100vw',
+          maxHeight: `min(800px, calc(${dimensions.height}px - 180px))`,
+          maxWidth: `min(600px, calc(${dimensions.width}px - 48px))`,
           display: 'flex',
           flexDirection: 'column',
           backgroundColor: 'white',
@@ -84,11 +87,23 @@ export default function LiveChatButton() {
           </Box>
         )}
       </Card>
-      <Chat
+      <IconButton
+        color="secondary"
+        onClick={onClickHandler}
         sx={{
-          fontSize: '32px',
+          padding: '12px',
+          backgroundColor: alpha(theme.palette.primary.main, 0.85),
+          '&:active,&:hover,&:focus': {
+            backgroundColor: alpha(theme.palette.primary.main, 0.85),
+          },
         }}
-      />
-    </Button>
+      >
+        <Chat
+          sx={{
+            fontSize: '32px',
+          }}
+        />
+      </IconButton>
+    </Box>
   );
 }

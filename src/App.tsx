@@ -4,6 +4,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { menuAtom } from '@/recoil/atoms/menu';
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
 import NavDrawer from '@/components/NavDrawer';
+import LiveChatButton from '@/components/Buttons/LiveChat';
 
 function App() {
   const location = useLocation();
@@ -22,6 +23,7 @@ function App() {
     <>
       <Outlet />
       <NavDrawer />
+      <LiveChatButton />
       {selectedDialog}
     </>
   );

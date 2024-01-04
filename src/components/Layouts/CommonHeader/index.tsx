@@ -7,12 +7,14 @@ import createStyles from './styles';
 
 export interface CommonHeaderProps {
   onCloseClick?: MouseEventHandler;
+  onMinimizeClick?: MouseEventHandler;
   centerComponent?: ReactNode;
 }
 
 export default function CommonHeader({
   onCloseClick,
   centerComponent,
+  onMinimizeClick,
 }: CommonHeaderProps) {
   const theme = useTheme();
   const styles = createStyles(theme);
@@ -37,7 +39,7 @@ export default function CommonHeader({
       </Box>
       {centerComponent}
       <Box sx={{ display: 'flex', flexShrink: 0 }}>
-        {onCloseClick && (
+        {onMinimizeClick && (
           <Box
             sx={{
               display: 'flex',
@@ -45,7 +47,7 @@ export default function CommonHeader({
               height: '100%',
             }}
           >
-            <IconButton onClick={onCloseClick}>
+            <IconButton onClick={onMinimizeClick}>
               <Minimize
                 sx={{ fontSize: '32px', color: theme.palette.secondary.main }}
               />
