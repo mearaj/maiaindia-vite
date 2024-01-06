@@ -1,7 +1,6 @@
 import { atom } from 'recoil';
 import { recoilKeys } from '@/recoil/data/recoilKeys';
 import { Cart, defaultPlaceholderCart } from '@/recoil/data/cart';
-import { userAtom } from '@/recoil/atoms/user';
 import { doc, onSnapshot, setDoc } from '@firebase/firestore';
 import { appFirebaseAuth, appFirestore } from '@/firebase';
 import { onAuthStateChanged, User } from '@firebase/auth';
@@ -37,14 +36,14 @@ export const cartAtom = atom<Cart>({
         setSelf(defaultPlaceholderCart);
       };
     },
-    ({ onSet, getPromise, setSelf }) => {
+    ({ onSet, setSelf }) => {
       onSet(async (localCart) => {
-        const { userState } = await getPromise(userAtom);
-        if (!userState) {
+        const user = appFirebaseAuth.currentUser;
+        if (!user) {
           setSelf(defaultPlaceholderCart);
           return;
         }
-        const userDocRef = doc(appFirestore, 'users', userState.user.uid);
+        const userDocRef = doc(appFirestore, 'users', user.uid);
         await setDoc(
           userDocRef,
           { cart: localCart },

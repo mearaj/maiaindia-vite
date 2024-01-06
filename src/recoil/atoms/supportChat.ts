@@ -84,10 +84,10 @@ export interface MessageAttachment extends MessageAttachmentNoID {
 }
 
 export interface SupportChatMessageNoID {
-  from: string | null;
+  from: string;
   to: string | null;
   text: string;
-  attachments: MessageAttachment[] | MessageAttachmentNoID | null;
+  attachments: MessageAttachment[] | MessageAttachmentNoID[] | null;
   createdAt: FieldValue | Timestamp;
   updatedAt: FieldValue | Timestamp;
 }

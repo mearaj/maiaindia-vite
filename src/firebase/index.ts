@@ -31,6 +31,8 @@ const appFirebaseStorage = getStorage(appFirebase);
 
 const appFirebaseRealtime = getDatabase(appFirebase);
 
+// setLogLevel('debug');
+
 export default appFirebase;
 
 export {

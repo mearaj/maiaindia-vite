@@ -13,7 +13,10 @@ import { SupportChatSession } from '@/recoil/data/supportChat';
 import {
   addDoc,
   collection,
+  getDocs,
   onSnapshot,
+  orderBy,
+  query,
   serverTimestamp,
 } from '@firebase/firestore';
 import { appFirestore } from '@/firebase';
@@ -39,17 +42,28 @@ export default function ChatRoomComponent({
       chatSession.id!,
       'supportChatMessages'
     );
-    return onSnapshot(messagesCollectionRef, (messagesSnapshot) => {
-      if (messagesSnapshot.metadata.hasPendingWrites) {
+    const queryRef = query(messagesCollectionRef, orderBy('createdAt', 'desc'));
+    let subscription = () => {};
+    getDocs(queryRef).then((docs) => {
+      if (docs.metadata.hasPendingWrites) {
         return;
       }
-      const messages = updateDocsSnapshots(
-        messagesSnapshot,
-        supportChatMessages
-      ) as SupportChatMessage[];
-      setSupportChatMessages([...messages]);
+      let previousMessages = docs.docs as unknown as SupportChatMessage[];
+      subscription = onSnapshot(queryRef, (messagesSnapshot) => {
+        if (messagesSnapshot.metadata.hasPendingWrites) {
+          return;
+        }
+        previousMessages = updateDocsSnapshots(
+          messagesSnapshot,
+          previousMessages
+        ) as SupportChatMessage[];
+        setSupportChatMessages([...previousMessages]);
+      });
     });
-  }, [chatSession.id, supportChatMessages]);
+    return () => {
+      subscription();
+    };
+  }, [chatSession.id]);
   const handleSubmit = async () => {
     const textValueCurr = textValue.trim();
     if (textValueCurr.length === 0) {
@@ -156,7 +170,6 @@ export default function ChatRoomComponent({
           wordBreak: 'break-word',
         }}
       >
-        {/* <Box sx={{ marginTop: 'auto', padding: '0 8px' }}> */}
         {supportChatMessages &&
           supportChatMessages.map((eachItem) => {
             const isMyMessage = isMe(eachItem);
@@ -203,7 +216,6 @@ export default function ChatRoomComponent({
               </Box>
             );
           })}
-        {/* </Box> */}
       </Box>
 
       <Box sx={{ display: 'flex', padding: '8px', alignItems: 'stretch' }}>
