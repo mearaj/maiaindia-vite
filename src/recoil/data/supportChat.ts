@@ -16,10 +16,10 @@ export interface SupportChat extends SupportChatNoID {
 }
 
 export interface SupportChatSession {
-  id?: string | null;
+  id?: string;
   customerID: string;
   status: 'open' | 'closed';
-  executiveID?: string | null;
+  executiveID: string | null;
   createdAt: Timestamp | FieldValue;
   updatedAt: Timestamp | FieldValue;
 }

@@ -1,10 +1,10 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
-import { AuthState } from '@/recoil/atoms/user';
 import { Box } from '@mui/material';
 import { Loader } from '@/components';
 import { isAdminSelector } from '@/recoil/selectors/isAdmin';
+import { AuthState } from '@/recoil/data/auth';
 import AdminLiveChatPage from '@/pages/Admin/LiveChat';
 import ProfilePage from '@/pages/Profile';
 import CancellationRefundPolicy from '@/pages/CancellationRefundPolicy';

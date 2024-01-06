@@ -2,8 +2,8 @@ import { Button } from '@mui/material';
 import React from 'react';
 import { useRecoilState } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
-import { AuthState } from '@/recoil/atoms/user';
 import { appFirebaseAuth } from '@/firebase';
+import { AuthState } from '@/recoil/data/auth';
 import Loader from '@/components/Loader';
 
 export default function SignOutButton() {

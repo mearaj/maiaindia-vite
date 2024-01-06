@@ -1,5 +1,6 @@
 import { User } from '@firebase/auth';
-import { AuthState } from '@/recoil/atoms/user';
+
+import { AuthState } from '@/recoil/data/auth';
 
 export interface UserProfile {
   email?: string | null;
@@ -15,3 +16,5 @@ export interface AppUser {
     profile: UserProfile;
   } | null;
 }
+
+export const userPlaceholderUrl = `https://firebasestorage.googleapis.com/v0/b/maiaindia.appspot.com/o/images%2Fuser-placeholder.svg?alt=media`;

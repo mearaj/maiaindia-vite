@@ -10,7 +10,6 @@ import {
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import Button from '@mui/material/Button';
-import { userPlaceholderUrl } from '@/recoil/atoms/user';
 import * as React from 'react';
 import { ReactNode, useRef, useState } from 'react';
 import { Edit } from '@mui/icons-material';
@@ -24,7 +23,7 @@ import {
   UploadTask,
 } from '@firebase/storage';
 import { doc, getDoc, setDoc } from '@firebase/firestore';
-import { UserProfile } from '@/recoil/data/user';
+import { userPlaceholderUrl, UserProfile } from '@/recoil/data/user';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
 import createStyles from './styles';
 import SnackbarDialog from '@/components/Dialogs/SnackBar';

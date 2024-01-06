@@ -1,5 +1,6 @@
 import { Location } from 'react-router-dom';
 import { Cart, defaultPlaceholderCart } from '@/recoil/data/cart';
+import { DocumentData, QuerySnapshot } from '@firebase/firestore';
 
 export const isActiveByEqual = (currentPaths: string[], location: Location) => {
   for (let i = 0; i < currentPaths.length; i += 1) {
@@ -52,4 +53,36 @@ export const mergeCartItems = (localCart: Cart, apiCart: Cart): Cart => {
     }
   });
   return cart;
+};
+
+export const updateDocsSnapshots = (
+  snapshot: QuerySnapshot,
+  snapDocs: DocumentData[]
+) => {
+  snapshot.docChanges().forEach((change) => {
+    const { id } = change.doc;
+    const foundIndex = snapDocs.findIndex((docItem) => docItem.id === id);
+    const docItem = {
+      ...change.doc.data(),
+      id,
+    };
+    switch (change.type) {
+      case 'added':
+      case 'modified':
+        if (foundIndex >= 0) {
+          snapDocs[foundIndex] = docItem;
+        } else {
+          snapDocs.unshift(docItem);
+        }
+        break;
+      case 'removed':
+        if (foundIndex >= 0) {
+          snapDocs.splice(foundIndex, 1);
+        }
+        break;
+      default:
+        break;
+    }
+  });
+  return snapDocs;
 };

@@ -6,39 +6,8 @@ import { FirebaseError } from '@firebase/util';
 import { getDownloadURL, ref, uploadBytes } from '@firebase/storage';
 import { doc, getDoc, setDoc } from '@firebase/firestore';
 import { AppUser, UserProfile } from '@/recoil/data/user';
+import { AuthState } from '@/recoil/data/auth';
 
-export enum AuthState {
-  idle,
-  loading,
-  signingIn,
-  signingOut,
-  updatingProfile,
-}
-
-export const authStateEnumToString = (
-  authStateEnum: AuthState
-): string | null => {
-  let text: string | null = null;
-  switch (authStateEnum) {
-    case AuthState.loading:
-      text = 'Loading...';
-      break;
-    case AuthState.signingIn:
-      text = 'Signing In...';
-      break;
-    case AuthState.signingOut:
-      text = 'Signing Out...';
-      break;
-    case AuthState.updatingProfile:
-      text = 'Updating Profile...';
-      break;
-    default:
-      text = null;
-  }
-  return text;
-};
-
-export const userPlaceholderUrl = `https://firebasestorage.googleapis.com/v0/b/maiaindia.appspot.com/o/images%2Fuser-placeholder.svg?alt=media`;
 export const userAtom = atom<AppUser>({
   key: recoilKeys.userAtom,
   dangerouslyAllowMutability: true,

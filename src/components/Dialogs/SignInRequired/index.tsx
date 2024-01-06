@@ -3,7 +3,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import React from 'react';
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
-import { authStateEnumToString } from '@/recoil/atoms/user';
+import { authStateEnumToString } from '@/recoil/data/auth';
 import SignInButton from '@/components/Buttons/SignIn';
 
 export default function SignInRequiredDialog() {

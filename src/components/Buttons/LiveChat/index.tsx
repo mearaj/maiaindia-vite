@@ -1,35 +1,117 @@
 import { Chat } from '@mui/icons-material';
-import {
-  alpha,
-  Box,
-  Card,
-  IconButton,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { alpha, Box, Card, IconButton, useTheme } from '@mui/material';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
+import { currentUserLastActiveChatSessionAtom } from '@/recoil/atoms/supportChat';
+import Button from '@mui/material/Button';
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  serverTimestamp,
+} from '@firebase/firestore';
+import { appFirestore } from '@/firebase';
 import SignInRequiredDialog from '@/components/Dialogs/SignInRequired';
 import CommonHeader from '@/components/Layouts/CommonHeader';
 import SignInButton from '@/components/Buttons/SignIn';
 import useDimensions from '@/hooks/useDimensions';
+import ChatRoomComponent from '@/components/ChatRoom';
 
+/*
+ * Steps
+ * 1. Check if the user is logged in, if not then show signInContainer and/or dialog.
+ * 2. Load all the supportChats for the currently logged-in user,
+ *    filter chat by status open, sort by updatedAt and extract the last chat.
+ * 3. If last chat exists, then continue with that chat else show create new session button.
+ * 4. If user clicks the create new session button, then create a new chat session and keep the
+ *    end chat option open for the user.
+ * */
 export default function LiveChatButton() {
   const theme = useTheme();
-  const [liveChatState, setLiveChatState] = useState(false);
+  const [isUIMaximized, setIsUIMaximized] = useState(false);
   const setActiveDialog = useSetRecoilState(selectedDialogAtom);
   const user = useRecoilValue(userAtom);
   const dimensions = useDimensions();
-
+  const lastActiveChatSession = useRecoilValue(
+    currentUserLastActiveChatSessionAtom
+  );
   const onClickHandler = () => {
     if (!user.userState) {
       setActiveDialog(<SignInRequiredDialog />);
       return;
     }
-    setLiveChatState(!liveChatState);
+    setIsUIMaximized(!isUIMaximized);
   };
+
+  const handleCreateNewSession = async () => {
+    const docRef = await addDoc(collection(appFirestore, 'supportChats'), {
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+      customerID: user.userState?.user.uid,
+      status: 'open',
+    });
+    await getDoc(doc(appFirestore, 'supportChats', docRef.id));
+  };
+
+  const centerStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%',
+    textAlign: 'center',
+  };
+  let mainComponent: ReactNode;
+  // If user is not logged in
+  if (!user.userState) {
+    mainComponent = (
+      <Box sx={centerStyle}>
+        <SignInButton />
+      </Box>
+    );
+  } else if (lastActiveChatSession != null) {
+    mainComponent = <ChatRoomComponent chatSession={lastActiveChatSession} />;
+  } else {
+    mainComponent = (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          overflowY: 'auto',
+          height: '100%',
+          padding: '16px',
+        }}
+      >
+        <Box
+          sx={{
+            textAlign: 'center',
+            fontSize: '20px',
+            fontWeight: 'bold',
+          }}
+        >
+          Maia India Customer Chat Service Welcomes You!
+        </Box>
+        <Box
+          sx={{
+            textAlign: 'center',
+            fontSize: '18px',
+            fontWeight: 'normal',
+          }}
+        >
+          It seems that you don&apos;t have any active chat session.
+          <br />
+          Kindly click the button below to start a new chat session.
+        </Box>
+        <Button variant="contained" onClick={handleCreateNewSession}>
+          Create New Session
+        </Button>
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -50,9 +132,9 @@ export default function LiveChatButton() {
           padding: '0px',
           bottom: '60px',
           right: '8px',
-          height: liveChatState ? `${dimensions.height}px` : '0vh',
+          height: isUIMaximized ? `${dimensions.height}px` : '0vh',
           width: '100vw',
-          maxHeight: `min(800px, calc(${dimensions.height}px - 180px))`,
+          maxHeight: `min(800px, calc(${dimensions.height}px - 140px))`,
           maxWidth: `min(600px, calc(${dimensions.width}px - 48px))`,
           display: 'flex',
           flexDirection: 'column',
@@ -60,32 +142,15 @@ export default function LiveChatButton() {
           position: 'absolute',
           transition: 'height 350ms,width 350ms',
         }}
-        onClick={(event) => {
-          event.preventDefault();
-          event.stopPropagation();
-        }}
       >
         <CommonHeader
           onCloseClick={() => {
-            setLiveChatState(!liveChatState);
+            setIsUIMaximized(!isUIMaximized);
           }}
         />
-        {!user.userState ? (
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: '100%',
-            }}
-          >
-            <SignInButton />
-          </Box>
-        ) : (
-          <Box>
-            <Typography> User is signed in</Typography>
-          </Box>
-        )}
+        <Box sx={{ height: `calc(100% - ${theme.dimensions.appBarHeight}px)` }}>
+          {mainComponent}
+        </Box>
       </Card>
       <IconButton
         color="secondary"

@@ -3,7 +3,8 @@ import { GoogleAuthProvider, signInWithPopup } from '@firebase/auth';
 import { useCallback, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
-import { AuthState } from '@/recoil/atoms/user';
+
+import { AuthState } from '@/recoil/data/auth';
 
 export default function useSignInWithGooglePopup() {
   const [error, setError] = useState<string | null>(null);

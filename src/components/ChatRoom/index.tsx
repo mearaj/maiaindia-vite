@@ -1,39 +1,55 @@
 import { Box, Card, InputAdornment, TextField } from '@mui/material';
-import { Header } from '@/components';
 import { Attachment, Send } from '@mui/icons-material';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
 import {
-  selectedSupportChatAtom,
   SupportChatMessage,
   SupportChatMessageNoID,
-  supportChatsMessagesAtom,
 } from '@/recoil/atoms/supportChat';
-import { useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil';
-import { appFirestore } from '@/firebase';
-import { addDoc, collection, serverTimestamp } from '@firebase/firestore';
+import { useRecoilValue } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
-import {
-  selectedSupportChatUserSelector,
-  supportChatUsersSessionsMapSelector,
-} from '@/recoil/selectors/supportChat';
 import { userPlaceholderUrl } from '@/recoil/data/user';
-import SelectChatUserComponent from '@/components/Admin/SelectChatUser';
-import RecoilLoadablePageLayout from '@/components/Layouts/RecoilLoadablePage';
+import { SupportChatSession } from '@/recoil/data/supportChat';
+import {
+  addDoc,
+  collection,
+  onSnapshot,
+  serverTimestamp,
+} from '@firebase/firestore';
+import { appFirestore } from '@/firebase';
+import { updateDocsSnapshots } from '@/misc';
 
-export default function AdminLiveChatPage() {
+export default function ChatRoomComponent({
+  chatSession,
+}: {
+  chatSession: SupportChatSession;
+}) {
   const [textValue, setTextValue] = useState('');
   const ref = useRef<HTMLElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const activeSupportChatUser = useRecoilValue(selectedSupportChatUserSelector);
   const appUser = useRecoilValue(userAtom);
-  const supportChatUsersMapLoadable = useRecoilValueLoadable(
-    supportChatUsersSessionsMapSelector
-  );
-  const [activeSupportChat, setActiveSupportChat] = useRecoilState(
-    selectedSupportChatAtom
-  );
-  const supportChatMessages = useRecoilValue(supportChatsMessagesAtom);
+  const [supportChatMessages, setSupportChatMessages] = useState<
+    SupportChatMessage[]
+  >([]);
+
+  useEffect(() => {
+    const messagesCollectionRef = collection(
+      appFirestore,
+      'supportChats',
+      chatSession.id!,
+      'supportChatMessages'
+    );
+    return onSnapshot(messagesCollectionRef, (messagesSnapshot) => {
+      if (messagesSnapshot.metadata.hasPendingWrites) {
+        return;
+      }
+      const messages = updateDocsSnapshots(
+        messagesSnapshot,
+        supportChatMessages
+      ) as SupportChatMessage[];
+      setSupportChatMessages([...messages]);
+    });
+  }, [chatSession.id, supportChatMessages]);
   const handleSubmit = async () => {
     const textValueCurr = textValue.trim();
     if (textValueCurr.length === 0) {
@@ -48,34 +64,22 @@ export default function AdminLiveChatPage() {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
     }
-    if (activeSupportChat) {
-      const collectionRef = collection(
-        appFirestore,
-        'supportChats',
-        activeSupportChat.id,
-        'supportChatMessages'
-      );
-      const newMessage: SupportChatMessageNoID = {
-        from: appUser.userState!.user!.uid,
-        to: activeSupportChatUser!.uid!,
-        attachments: null,
-        updatedAt: serverTimestamp(),
-        createdAt: serverTimestamp(),
-        text: textValueCurr,
-      };
-      await addDoc(collectionRef, newMessage);
-    }
+    const collectionRef = collection(
+      appFirestore,
+      'supportChats',
+      chatSession.id!,
+      'supportChatMessages'
+    );
+    const newMessage: SupportChatMessageNoID = {
+      from: appUser.userState!.user!.uid,
+      to: chatSession.executiveID ?? null,
+      attachments: null,
+      updatedAt: serverTimestamp(),
+      createdAt: serverTimestamp(),
+      text: textValueCurr,
+    };
+    await addDoc(collectionRef, newMessage);
   };
-
-  const supportChatUsersMap = supportChatUsersMapLoadable.contents;
-
-  return (
-    <RecoilLoadablePageLayout recoilLoadable={supportChatUsersMapLoadable}>
-      <SelectChatUserComponent
-        supportChatUsersSessionsMap={supportChatUsersMap}
-      />
-    </RecoilLoadablePageLayout>
-  );
 
   const isMe = (supportChatMsg: SupportChatMessage) =>
     appUser &&
@@ -139,12 +143,6 @@ export default function AdminLiveChatPage() {
         backgroundColor: '#E3F1E3',
       }}
     >
-      <Header
-        showBackIcon
-        onBackIconClick={() => {
-          setActiveSupportChat(null);
-        }}
-      />
       <Box
         ref={ref}
         sx={{
@@ -159,8 +157,8 @@ export default function AdminLiveChatPage() {
         }}
       >
         {/* <Box sx={{ marginTop: 'auto', padding: '0 8px' }}> */}
-        {supportChatMessages[activeSupportChat.id] &&
-          supportChatMessages[activeSupportChat.id].map((eachItem) => {
+        {supportChatMessages &&
+          supportChatMessages.map((eachItem) => {
             const isMyMessage = isMe(eachItem);
             return (
               <Box
@@ -173,7 +171,7 @@ export default function AdminLiveChatPage() {
               >
                 {!isMyMessage && (
                   <img
-                    src={activeSupportChatUser!.photoURL ?? userPlaceholderUrl}
+                    src={userPlaceholderUrl}
                     alt="profile"
                     style={{
                       height: '32px',

@@ -4,6 +4,7 @@ import { appFirebaseAuth, appFirestore } from '@/firebase';
 import {
   collection,
   FieldValue,
+  limit,
   onSnapshot,
   or,
   orderBy,
@@ -12,9 +13,10 @@ import {
   where,
 } from '@firebase/firestore';
 import { onAuthStateChanged } from '@firebase/auth';
-import { SupportChat } from '@/recoil/data/supportChat';
+import { SupportChat, SupportChatSession } from '@/recoil/data/supportChat';
 
 import { UserProfile } from '@/recoil/data/user';
+import { updateDocsSnapshots } from '@/misc';
 
 const querySupportChatsSideEffects: AtomEffect<SupportChat[]> = ({
   setSelf,
@@ -22,9 +24,10 @@ const querySupportChatsSideEffects: AtomEffect<SupportChat[]> = ({
   node,
 }) => {
   let supportChatsSubscription = () => {};
-  const authSubscription = onAuthStateChanged(appFirebaseAuth, async (user) => {
+  return onAuthStateChanged(appFirebaseAuth, async (user) => {
     if (user === null) {
       setSelf([]);
+      supportChatsSubscription();
       return;
     }
     const collectionReference = collection(appFirestore, 'supportChats');
@@ -42,46 +45,13 @@ const querySupportChatsSideEffects: AtomEffect<SupportChat[]> = ({
         if (snapshot.metadata.hasPendingWrites) {
           return;
         }
-        const snapDocs: SupportChat[] = [...(await getPromise(node))];
-        snapshot
-          .docChanges()
-          .forEach(
-            (change: { doc: { data?: any; id?: any }; type: string }) => {
-              const { id } = change.doc;
-              const foundIndex = snapDocs.findIndex(
-                (docItem) => docItem.id === id
-              );
-              const docItem = {
-                ...change.doc.data(),
-                id,
-              };
-              switch (change.type) {
-                case 'added':
-                case 'modified':
-                  if (foundIndex >= 0) {
-                    snapDocs[foundIndex] = docItem;
-                  } else {
-                    snapDocs.unshift(docItem);
-                  }
-                  break;
-                case 'removed':
-                  if (foundIndex >= 0) {
-                    snapDocs.splice(foundIndex, 1);
-                  }
-                  break;
-                default:
-                  break;
-              }
-            }
-          );
+        const snapDocs = updateDocsSnapshots(snapshot, [
+          ...(await getPromise(node)),
+        ]) as SupportChat[];
         setSelf(snapDocs);
       }
     );
   });
-  return () => {
-    supportChatsSubscription();
-    authSubscription();
-  };
 };
 
 export const supportChatsAtom = atom<SupportChat[]>({
@@ -114,8 +84,8 @@ export interface MessageAttachment extends MessageAttachmentNoID {
 }
 
 export interface SupportChatMessageNoID {
-  from: string;
-  to: string;
+  from: string | null;
+  to: string | null;
   text: string;
   attachments: MessageAttachment[] | MessageAttachmentNoID | null;
   createdAt: FieldValue | Timestamp;
@@ -137,3 +107,45 @@ export const supportChatsMessagesAtom = atom<SupportChatMessages>({
   key: recoilKeys.supportChatsMessagesAtom,
   default: {},
 });
+
+export const currentUserLastActiveChatSessionAtom =
+  atom<SupportChatSession | null>({
+    key: recoilKeys.currentUserLastActiveChatSessionAtom,
+    default: null,
+    effects: [
+      ({ setSelf }) => {
+        let lastActiveChatSubscription = () => {};
+        return onAuthStateChanged(appFirebaseAuth, async (user) => {
+          if (!user) {
+            setSelf(null);
+            lastActiveChatSubscription();
+            return;
+          }
+          const supportChatsQuery = query(
+            collection(appFirestore, 'supportChats'),
+            orderBy('updatedAt', 'desc'),
+            limit(1),
+            where('customerID', '==', user.uid),
+            where('status', '==', 'open')
+          );
+          lastActiveChatSubscription = onSnapshot(
+            supportChatsQuery,
+            async (supportChatsSnapshot) => {
+              if (supportChatsSnapshot.metadata.hasPendingWrites) {
+                return;
+              }
+              if (supportChatsSnapshot.empty) {
+                setSelf(null);
+                return;
+              }
+              const currentLastChatSession = {
+                ...(supportChatsSnapshot.docs[0].data() as SupportChatSession),
+                id: supportChatsSnapshot.docs[0].id,
+              };
+              setSelf(currentLastChatSession);
+            }
+          );
+        });
+      },
+    ],
+  });

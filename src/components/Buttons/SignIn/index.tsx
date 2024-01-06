@@ -2,7 +2,7 @@ import { Box, Button, ButtonProps, useTheme } from '@mui/material';
 import React from 'react';
 import { userAtom } from '@/recoil/atoms';
 import { useRecoilValue } from 'recoil';
-import { AuthState } from '@/recoil/atoms/user';
+import { AuthState } from '@/recoil/data/auth';
 import Loader from '@/components/Loader';
 import GoogleIcon from '@/icons/google-g';
 import createStyles from '@/components/Buttons/SignIn/styles';
