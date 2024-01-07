@@ -1,12 +1,13 @@
 import { Box, Button } from '@mui/material';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import AddToCartIcon from '@mui/icons-material/AddShoppingCart';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { userAtom } from '@/recoil/atoms';
 import { Product } from '@/recoil/data/product';
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
 import { Add, Remove } from '@mui/icons-material';
-import { getCartQuantity, setCartQuantity } from '@/misc';
+import { setCartQuantity } from '@/misc';
+import CircularProgress from '@mui/material/CircularProgress';
 import SignInRequiredDialog from '@/components/Dialogs/SignInRequired';
 
 interface AddUpdateButtonProps {
@@ -16,7 +17,8 @@ interface AddUpdateButtonProps {
 export default function AddUpdateButton({ product }: AddUpdateButtonProps) {
   const user = useRecoilValue(userAtom);
   const setActiveDialog = useSetRecoilState(selectedDialogAtom);
-  const quantity = getCartQuantity(user, product.id!);
+  const [quantity, setQuantity] = useState(0);
+  const [loading, setIsLoading] = useState(true);
 
   const handleCartIncrement = async (
     _e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -25,11 +27,12 @@ export default function AddUpdateButton({ product }: AddUpdateButtonProps) {
       setActiveDialog(<SignInRequiredDialog />);
       return;
     }
+    setIsLoading(true);
     const cartItems = user.userState.cart.items;
     const quantityAlt = cartItems[product.id!]
       ? cartItems[product.id!].quantity + 1
       : 1;
-    await setCartQuantity(user, product.id!, quantityAlt);
+    setCartQuantity(user, product.id!, quantityAlt);
   };
 
   const onDecrementClicked = async (
@@ -38,12 +41,18 @@ export default function AddUpdateButton({ product }: AddUpdateButtonProps) {
     if (!user.userState) {
       return;
     }
+    setIsLoading(true);
     const cartItems = user.userState.cart.items;
     const quantityAlt = cartItems[product.id!]
       ? cartItems[product.id!].quantity - 1
       : 0;
-    await setCartQuantity(user, product.id!, quantityAlt);
+    setCartQuantity(user, product.id!, quantityAlt);
   };
+
+  useEffect(() => {
+    setQuantity(user.userState?.cart.items[product.id!]?.quantity ?? 0);
+    setIsLoading(false);
+  }, [product.id, user.userState?.cart.items]);
 
   return (
     <Box
@@ -60,6 +69,7 @@ export default function AddUpdateButton({ product }: AddUpdateButtonProps) {
         fullWidth
         onClick={handleCartIncrement}
         sx={{ display: quantity < 1 ? 'flex' : 'none' }}
+        disabled={loading}
       >
         <AddToCartIcon
           sx={{
@@ -76,6 +86,7 @@ export default function AddUpdateButton({ product }: AddUpdateButtonProps) {
           minWidth: 0,
           padding: '4px',
         }}
+        disabled={loading}
         onClick={onDecrementClicked}
         variant="outlined"
       >
@@ -90,7 +101,7 @@ export default function AddUpdateButton({ product }: AddUpdateButtonProps) {
           fontSize: '22px',
         }}
       >
-        {quantity}
+        {loading ? <CircularProgress size="22px" /> : quantity}
       </Box>
       <Button
         sx={{
@@ -98,6 +109,7 @@ export default function AddUpdateButton({ product }: AddUpdateButtonProps) {
           minWidth: 0,
           padding: '4px',
         }}
+        disabled={loading}
         onClick={handleCartIncrement}
         variant="outlined"
       >
