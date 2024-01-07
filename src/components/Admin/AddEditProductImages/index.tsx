@@ -2,7 +2,6 @@ import { Box } from '@mui/material';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode, Navigation, Thumbs } from 'swiper/modules';
-import placeholderImage from '@/assets/images/placeholder.svg';
 import {
   productFormImagesForDeletionSelector,
   productFormImagesSelector,
@@ -49,7 +48,7 @@ export default function AddEditProductImagesComponent() {
         {filteredProductImages.length === 0 && localImages.length === 0 ? (
           <SwiperSlide className={styles.slide}>
             <img
-              src={placeholderImage}
+              src="/images/placeholder.svg"
               alt="Placeholder"
               className={styles.image}
               placeholder="blur"

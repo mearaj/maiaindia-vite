@@ -1,5 +1,4 @@
 import { Box } from '@mui/material';
-import imagePlaceholder from '@/assets/images/placeholder.svg';
 import { useRecoilValue } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import SignInButton from '@/components/Buttons/SignIn';
@@ -19,7 +18,7 @@ export default function UserComponent() {
         {userState && (
           <Box
             component="img"
-            src={userState.profile.photoURL ?? imagePlaceholder}
+            src={userState.profile.photoURL ?? '/images/placeholder.svg'}
             alt="user"
             sx={{ width: '60px', borderRadius: '50%', marginRight: '16px' }}
           />

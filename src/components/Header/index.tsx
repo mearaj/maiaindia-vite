@@ -14,8 +14,6 @@ import {
 import ArrowBack from '@mui/icons-material/ArrowBackIos';
 import ShoppingCart from '@mui/icons-material/ShoppingCart';
 import { NavLink, useNavigate } from 'react-router-dom';
-import logoDarkGreen from '@/assets/images/logo-yellow.png';
-import logoCircleDarkGreen from '@/assets/images/logo-circle-yellow.png';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { menuAtom } from '@/recoil/atoms/menu';
 import { userAtom } from '@/recoil/atoms';
@@ -60,9 +58,9 @@ export default function Header({
     setShowMenu(true);
   };
 
-  let logoImgSrc = logoCircleDarkGreen;
+  let logoImgSrc = '/images/logo-circle-yellow.png';
   if (dimensions.width >= 360) {
-    logoImgSrc = logoDarkGreen;
+    logoImgSrc = '/images/logo-yellow.png';
   }
 
   return (

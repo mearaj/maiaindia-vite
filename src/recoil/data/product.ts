@@ -1,6 +1,5 @@
 import { FieldValue, Timestamp } from '@firebase/firestore';
 import { Category } from '@/recoil/data/category';
-import placeholderImage from '@/assets/images/placeholder.svg';
 
 export interface ProductImage {
   name: string;
@@ -9,7 +8,7 @@ export interface ProductImage {
 
 export const defaultPlaceholderProductImage = {
   name: 'Placeholder',
-  url: placeholderImage,
+  url: '/images/placeholder.svg',
 };
 
 export interface Product {
