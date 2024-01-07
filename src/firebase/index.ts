@@ -4,6 +4,7 @@ import { getDatabase } from 'firebase/database';
 import { getAuth } from '@firebase/auth';
 import { getFirestore } from '@firebase/firestore';
 import { getStorage } from '@firebase/storage';
+import { getAnalytics, logEvent } from '@firebase/analytics';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -31,6 +32,10 @@ const appFirebaseStorage = getStorage(appFirebase);
 
 const appFirebaseRealtime = getDatabase(appFirebase);
 
+const appAnalytics = getAnalytics(appFirebase);
+
+logEvent(appAnalytics, 'notification_received');
+
 // setLogLevel('debug');
 
 export default appFirebase;
@@ -40,21 +45,5 @@ export {
   appFirebaseAuth,
   appFirebaseStorage,
   appFirebaseRealtime,
+  appAnalytics,
 };
-
-/*
- *  The following code is intended by the app developer, don't uncomment it.
- * */
-// allProucts fetched from backend and modified
-// const updateProducts = async () => {
-//   for await (const eachProduct of allProducts) {
-//     const productRef = doc(appFirestore, 'products', eachProduct.id);
-//     try {
-//       await setDoc(productRef, eachProduct);
-//       console.log('reacahed');
-//     } catch (e) {
-//       console.log(e);
-//     }
-//   }
-// };
-// updateProducts();
