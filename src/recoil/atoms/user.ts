@@ -3,13 +3,7 @@ import { recoilKeys } from '@/recoil/data/recoilKeys';
 import { onAuthStateChanged, User } from '@firebase/auth';
 import { appFirebaseAuth, appFirebaseStorage, appFirestore } from '@/firebase';
 import { getDownloadURL, ref, uploadBytes } from '@firebase/storage';
-import {
-  doc,
-  getDoc,
-  onSnapshot,
-  serverTimestamp,
-  setDoc,
-} from '@firebase/firestore';
+import { doc, onSnapshot, serverTimestamp, setDoc } from '@firebase/firestore';
 import { AppUser, UserProfile } from '@/recoil/data/user';
 import { AuthState } from '@/recoil/data/auth';
 import { Cart } from '@/recoil/data/cart';
@@ -33,7 +27,7 @@ export const userAtom = atom<AppUser>({
             if (userQuerySnapshot.metadata.hasPendingWrites) {
               return;
             }
-            const docSnapshot = await getDoc(docRef);
+            // const docSnapshot = await getDoc(docRef);
             const firebaseImageRef = ref(
               appFirebaseStorage,
               `users/${user.uid}/profile`
@@ -44,7 +38,7 @@ export const userAtom = atom<AppUser>({
             } catch (e) {
               console.log(e);
             }
-            if (!docSnapshot.exists()) {
+            if (!userQuerySnapshot.exists()) {
               const { displayName } = user;
               const { email } = user;
               if (!photoURL && user.photoURL) {
@@ -89,9 +83,9 @@ export const userAtom = atom<AppUser>({
                 authState: AuthState.idle,
                 userState: {
                   user,
-                  cart: docSnapshot.data().cart as Cart,
+                  cart: userQuerySnapshot.data().cart as Cart,
                   profile: {
-                    ...(docSnapshot.data().profile as UserProfile),
+                    ...(userQuerySnapshot.data().profile as UserProfile),
                     photoURL,
                     uid: user.uid,
                   },
