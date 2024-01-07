@@ -1,5 +1,4 @@
 import { Box, IconButton, useTheme } from '@mui/material';
-import logoDarkGreen from '@/assets/images/logo-yellow.png';
 import { MouseEventHandler, ReactNode } from 'react';
 import Close from '@mui/icons-material/Close';
 import { Minimize } from '@mui/icons-material';
@@ -31,7 +30,7 @@ export default function CommonHeader({
         <Box sx={{ height: '100%' }}>
           <Box
             component="img"
-            src={logoDarkGreen}
+            src="/images/logo-yellow.png"
             alt="logo"
             sx={{ height: '100%', width: 'auto' }}
           />
