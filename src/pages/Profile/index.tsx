@@ -7,7 +7,7 @@ import {
   OutlinedInput,
   useTheme,
 } from '@mui/material';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import Button from '@mui/material/Button';
 import * as React from 'react';
@@ -16,14 +16,9 @@ import { Edit } from '@mui/icons-material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
 import { appFirebaseStorage, appFirestore } from '@/firebase';
-import {
-  getDownloadURL,
-  ref,
-  uploadBytesResumable,
-  UploadTask,
-} from '@firebase/storage';
-import { doc, getDoc, setDoc } from '@firebase/firestore';
-import { userPlaceholderUrl, UserProfile } from '@/recoil/data/user';
+import { ref, uploadBytesResumable, UploadTask } from '@firebase/storage';
+import { doc, setDoc } from '@firebase/firestore';
+import { userPlaceholderUrl } from '@/recoil/data/user';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
 import createStyles from './styles';
 import SnackbarDialog from '@/components/Dialogs/SnackBar';
@@ -46,7 +41,7 @@ interface ProcessingState {
 }
 
 export default function ProfilePage() {
-  const [appUserState, setAppUserState] = useRecoilState(userAtom);
+  const appUserState = useRecoilValue(userAtom);
   const { userState } = appUserState!;
   const [editMode, setEditMode] = useState(false);
   const [profileState, setProfileState] = useState(userState!.profile);
@@ -168,7 +163,6 @@ export default function ProfilePage() {
   const handleSubmit = async () => {
     if (!shouldDisableSubmit()) {
       const docRef = doc(appFirestore, 'users', userState?.user!.uid!);
-      let currentAppUserState = appUserState;
       if (userState!.profile.displayName !== profileState.displayName) {
         setProcessingState({
           ...processingState,
@@ -181,17 +175,6 @@ export default function ProfilePage() {
             { mergeFields: ['profile.displayName'] }
           );
           showSnackbar('success', 'Successfully updated Display Name');
-          const docSnapshot = await getDoc(docRef);
-          currentAppUserState = {
-            ...currentAppUserState,
-            userState: {
-              user: userState!.user,
-              profile: {
-                ...(docSnapshot.data()?.profile as UserProfile),
-              },
-            },
-          };
-          setAppUserState(currentAppUserState);
         } catch (_e) {
           showSnackbar('error', 'Failed to update Display Name.');
         }
@@ -244,30 +227,6 @@ export default function ProfilePage() {
                   uploadingState: UploadingState.updatingUserProfile,
                   uploadProgress: 0,
                 });
-                try {
-                  const newPhotoURL = await getDownloadURL(
-                    uploadPhotoTask.current.snapshot.ref
-                  );
-                  currentAppUserState = {
-                    ...currentAppUserState,
-                    userState: {
-                      user: userState!.user,
-                      profile: {
-                        ...currentAppUserState.userState!.profile,
-                        photoURL: newPhotoURL,
-                      },
-                    },
-                  };
-                  setAppUserState(currentAppUserState);
-                  showSnackbar('success', 'Successfully updated profile');
-                } catch (_e) {
-                  showSnackbar(
-                    'error',
-                    `An error occurred during profile update ${
-                      _e instanceof Error ? _e.message : ''
-                    }`
-                  );
-                }
                 onCancelClick();
               }
             }

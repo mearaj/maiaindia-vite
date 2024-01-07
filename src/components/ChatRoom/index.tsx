@@ -19,8 +19,7 @@ import {
   query,
   serverTimestamp,
 } from '@firebase/firestore';
-import { appFirestore } from '@/firebase';
-import { updateDocsSnapshots } from '@/misc';
+import { appFirestore, updateDocsSnapshots } from '@/firebase';
 
 export default function ChatRoomComponent({
   chatSession,

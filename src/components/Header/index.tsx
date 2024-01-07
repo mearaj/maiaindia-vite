@@ -18,7 +18,7 @@ import logoDarkGreen from '@/assets/images/logo-yellow.png';
 import logoCircleDarkGreen from '@/assets/images/logo-circle-yellow.png';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { menuAtom } from '@/recoil/atoms/menu';
-import { cartAtom } from '@/recoil/atoms/cart';
+import { userAtom } from '@/recoil/atoms';
 import useDimensions from '@/hooks/useDimensions';
 import createStyles from './styles';
 
@@ -37,10 +37,10 @@ export default function Header({
 }: HeaderProps) {
   const dimensions = useDimensions();
   const [, setShowMenu] = useRecoilState(menuAtom);
-  const cart = useRecoilValue(cartAtom);
   const navigate = useNavigate();
   const theme = useTheme();
   const styles = createStyles(theme);
+  const user = useRecoilValue(userAtom);
   const handleBackIconClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (onBackIconClick) {
@@ -119,24 +119,33 @@ export default function Header({
             <Button sx={styles.iconButton}>
               <ShoppingCart sx={styles.icon} />
             </Button>
-            {cart.items && Object.keys(cart.items).length > 0 && (
-              <Box
-                sx={{
-                  position: 'absolute',
-                  top: '-1px',
-                  right: '-1px',
-                  fontWeight: 'bold',
-                  zIndex: 1,
-                  color: theme.palette.secondary.main,
-                }}
-              >
-                <small>
-                  {Object.keys(cart.items).reduce((prev, curr) => {
-                    return prev + (cart.items[curr].quantity ?? 0);
-                  }, 0)}
-                </small>
-              </Box>
-            )}
+            {user &&
+              user.userState &&
+              user.userState.cart.items &&
+              Object.keys(user.userState.cart.items).length > 0 && (
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: '-1px',
+                    right: '-1px',
+                    fontWeight: 'bold',
+                    zIndex: 1,
+                    color: theme.palette.secondary.main,
+                  }}
+                >
+                  <small>
+                    {Object.keys(user.userState.cart.items).reduce(
+                      (prev, curr) => {
+                        return (
+                          prev +
+                          (user.userState!.cart.items[curr].quantity ?? 0)
+                        );
+                      },
+                      0
+                    )}
+                  </small>
+                </Box>
+              )}
           </Link>
           <Button
             sx={styles.iconButton}

@@ -1,13 +1,12 @@
 import { Box, Button } from '@mui/material';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { cartAtom } from '@/recoil/atoms/cart';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import AddToCartIcon from '@mui/icons-material/AddShoppingCart';
 import React from 'react';
 import { userAtom } from '@/recoil/atoms';
 import { Product } from '@/recoil/data/product';
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
 import { Add, Remove } from '@mui/icons-material';
-import { cartQuantityByProductIDSelector } from '@/recoil/selectors/cart';
+import { getCartQuantity, setCartQuantity } from '@/misc';
 import SignInRequiredDialog from '@/components/Dialogs/SignInRequired';
 
 interface AddUpdateButtonProps {
@@ -15,35 +14,35 @@ interface AddUpdateButtonProps {
 }
 
 export default function AddUpdateButton({ product }: AddUpdateButtonProps) {
-  const cart = useRecoilValue(cartAtom);
   const user = useRecoilValue(userAtom);
   const setActiveDialog = useSetRecoilState(selectedDialogAtom);
-  const [quantity, setQuantity] = useRecoilState(
-    cartQuantityByProductIDSelector(product.id!)
-  );
+  const quantity = getCartQuantity(user, product.id!);
 
-  const handleCartIncrement = (
+  const handleCartIncrement = async (
     _e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     if (!user.userState) {
       setActiveDialog(<SignInRequiredDialog />);
       return;
     }
-    const cartItems = cart.items;
+    const cartItems = user.userState.cart.items;
     const quantityAlt = cartItems[product.id!]
       ? cartItems[product.id!].quantity + 1
       : 1;
-    setQuantity(quantityAlt);
+    await setCartQuantity(user, product.id!, quantityAlt);
   };
 
-  const onDecrementClicked = (
+  const onDecrementClicked = async (
     _e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
-    const cartItems = cart.items;
+    if (!user.userState) {
+      return;
+    }
+    const cartItems = user.userState.cart.items;
     const quantityAlt = cartItems[product.id!]
       ? cartItems[product.id!].quantity - 1
       : 0;
-    setQuantity(quantityAlt);
+    await setCartQuantity(user, product.id!, quantityAlt);
   };
 
   return (

@@ -1,16 +1,19 @@
 import { Box, useTheme } from '@mui/material';
 import { useRecoilValue } from 'recoil';
-import { cartAtom } from '@/recoil/atoms/cart';
+import { userAtom } from '@/recoil/atoms';
 import createStyles from './styles';
 import CartItemComponent from '@/components/CartItem';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
 
 export default function CartPage() {
-  const cart = useRecoilValue(cartAtom);
   const theme = useTheme();
   const styles = createStyles(theme);
+  const user = useRecoilValue(userAtom);
 
-  if (!cart.items || Object.keys(cart.items).length < 1) {
+  if (
+    !user.userState!.cart.items ||
+    Object.keys(user.userState!.cart.items).length < 1
+  ) {
     return (
       <CommonPageLayout
         sxBodyProps={{
@@ -27,7 +30,7 @@ export default function CartPage() {
   return (
     <CommonPageLayout sxRootProps={{ ...styles.root }}>
       <Box sx={styles.cartBody}>
-        {Object.keys(cart.items).map((productID) => {
+        {Object.keys(user.userState!.cart.items).map((productID) => {
           return <CartItemComponent key={productID} productId={productID} />;
         })}
       </Box>

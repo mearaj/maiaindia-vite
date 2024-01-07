@@ -1,10 +1,9 @@
 import { Box, Button, ButtonProps, SxProps, Theme } from '@mui/material';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { cartAtom } from '@/recoil/atoms/cart';
+import { useRecoilValue } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import { Delete } from '@mui/icons-material';
 import { Product } from '@/recoil/data/product';
-import { cartQuantityByProductIDSelector } from '@/recoil/selectors/cart';
+import { setCartQuantity } from '@/misc';
 
 interface RemoveButtonProps extends ButtonProps {
   product: Product;
@@ -16,18 +15,16 @@ export default function RemoveButton({
   sx,
   ...otherProps
 }: RemoveButtonProps) {
-  const cart = useRecoilValue(cartAtom);
   const user = useRecoilValue(userAtom);
-  const setQuantity = useSetRecoilState(
-    cartQuantityByProductIDSelector(product.id!)
-  );
 
-  const updateQuantity = (quantityAlt: number) => {
-    setQuantity(quantityAlt);
+  const updateQuantity = async (quantityAlt: number) => {
+    await setCartQuantity(user, product.id!, quantityAlt);
   };
-
-  const cartItems = cart.items;
-  if (!cartItems[product.id!] || cartItems[product.id!].quantity < 1 || !user) {
+  if (!user.userState) {
+    return null;
+  }
+  const cartItems = user.userState?.cart.items;
+  if (!cartItems[product.id!] || cartItems[product.id!].quantity < 1) {
     return null;
   }
   return (

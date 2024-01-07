@@ -2,7 +2,7 @@
 import { initializeApp } from 'firebase/app';
 import { getDatabase } from 'firebase/database';
 import { getAuth } from '@firebase/auth';
-import { getFirestore } from '@firebase/firestore';
+import { DocumentData, getFirestore, QuerySnapshot } from '@firebase/firestore';
 import { getStorage } from '@firebase/storage';
 import { getAnalytics, logEvent } from '@firebase/analytics';
 // TODO: Add SDKs for Firebase products that you want to use
@@ -24,26 +24,50 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const appFirebase = initializeApp(firebaseConfig);
+export const appFirebase = initializeApp(firebaseConfig);
 // const analytics = getAnalytics(firebaseApp);
-const appFirestore = getFirestore(appFirebase);
-const appFirebaseAuth = getAuth(appFirebase);
-const appFirebaseStorage = getStorage(appFirebase);
+export const appFirestore = getFirestore(appFirebase);
+export const appFirebaseAuth = getAuth(appFirebase);
+export const appFirebaseStorage = getStorage(appFirebase);
 
-const appFirebaseRealtime = getDatabase(appFirebase);
+export const appFirebaseRealtime = getDatabase(appFirebase);
 
-const appAnalytics = getAnalytics(appFirebase);
+export const appAnalytics = getAnalytics(appFirebase);
 
 logEvent(appAnalytics, 'notification_received');
 
 // setLogLevel('debug');
 
-export default appFirebase;
-
-export {
-  appFirestore,
-  appFirebaseAuth,
-  appFirebaseStorage,
-  appFirebaseRealtime,
-  appAnalytics,
+export const updateDocsSnapshots = (
+  snapshot: QuerySnapshot,
+  snapDocs: DocumentData[]
+) => {
+  snapshot.docChanges().forEach((change) => {
+    const { id } = change.doc;
+    const foundIndex = snapDocs.findIndex((docItem) => docItem.id === id);
+    const docItem = {
+      ...change.doc.data(),
+      id,
+    };
+    switch (change.type) {
+      case 'added':
+      case 'modified':
+        if (foundIndex >= 0) {
+          snapDocs[foundIndex] = docItem;
+        } else {
+          snapDocs.unshift(docItem);
+        }
+        break;
+      case 'removed':
+        if (foundIndex >= 0) {
+          snapDocs.splice(foundIndex, 1);
+        }
+        break;
+      default:
+        break;
+    }
+  });
+  return snapDocs;
 };
+
+export default appFirebase;

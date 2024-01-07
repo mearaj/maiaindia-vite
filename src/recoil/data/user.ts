@@ -1,12 +1,13 @@
 import { User } from '@firebase/auth';
 
 import { AuthState } from '@/recoil/data/auth';
+import { Cart } from '@/recoil/data/cart';
 
 export interface UserProfile {
-  email?: string | null;
+  email: string | null;
   uid?: string; // only required for frontend
-  displayName?: string | null;
-  photoURL?: string | null;
+  displayName: string | null;
+  photoURL?: string | null; // only required for frontend
 }
 
 export interface AppUser {
@@ -14,6 +15,7 @@ export interface AppUser {
   userState: {
     user: User;
     profile: UserProfile;
+    cart: Cart;
   } | null;
 }
 

@@ -1,6 +1,7 @@
 import { Location } from 'react-router-dom';
-import { Cart, defaultPlaceholderCart } from '@/recoil/data/cart';
-import { DocumentData, QuerySnapshot } from '@firebase/firestore';
+import { AppUser } from '@/recoil/data/user';
+import { doc, serverTimestamp, setDoc } from '@firebase/firestore';
+import { appFirestore } from '@/firebase';
 
 export const isActiveByEqual = (currentPaths: string[], location: Location) => {
   for (let i = 0; i < currentPaths.length; i += 1) {
@@ -23,66 +24,46 @@ export const isActiveByStartsWith = (
   return false;
 };
 
-export const mergeCartItems = (localCart: Cart, apiCart: Cart): Cart => {
-  const localCartKeys = Object.keys(localCart.items ?? {});
-  const apiCartKeys = Object.keys(apiCart.items ?? {});
-  if (localCartKeys.length === 0) {
-    return apiCart;
+export const getCartQuantity = (user: AppUser, productID: string) => {
+  if (!user.userState) {
+    return 0;
   }
-  if (apiCartKeys.length === 0) {
-    return localCart;
-  }
-  let cart: Cart = defaultPlaceholderCart;
-  const mergedKeys = [...localCartKeys, ...apiCartKeys];
-  const mergedUniqueKeys = mergedKeys.filter((eachKey, index, origArray) => {
-    return origArray.indexOf(eachKey) === index;
-  });
-  mergedUniqueKeys.forEach((eachKey) => {
-    let quantity = 0;
-    if (localCart.items[eachKey]) {
-      quantity = localCart.items[eachKey].quantity;
-    }
-    if (apiCart.items[eachKey]) {
-      quantity =
-        apiCart.items[eachKey].quantity > quantity
-          ? apiCart.items[eachKey].quantity
-          : quantity;
-    }
-    if (quantity > 0) {
-      cart = { ...cart, items: { ...cart.items, [eachKey]: { quantity } } };
-    }
-  });
-  return cart;
+  const cartItems = user.userState.cart.items;
+  return !cartItems[productID] || cartItems[productID].quantity < 1 || !user
+    ? 0
+    : cartItems[productID].quantity;
 };
 
-export const updateDocsSnapshots = (
-  snapshot: QuerySnapshot,
-  snapDocs: DocumentData[]
+export const setCartQuantity = async (
+  user: AppUser,
+  productID: string,
+  quantity: number
 ) => {
-  snapshot.docChanges().forEach((change) => {
-    const { id } = change.doc;
-    const foundIndex = snapDocs.findIndex((docItem) => docItem.id === id);
-    const docItem = {
-      ...change.doc.data(),
-      id,
+  if (!user.userState) {
+    return;
+  }
+  let { items } = user.userState.cart;
+  if (quantity < 1) {
+    const newCartItems = { ...items };
+    delete newCartItems[productID];
+    items = newCartItems;
+  } else {
+    items = {
+      ...items,
+      [productID]: {
+        quantity,
+      },
     };
-    switch (change.type) {
-      case 'added':
-      case 'modified':
-        if (foundIndex >= 0) {
-          snapDocs[foundIndex] = docItem;
-        } else {
-          snapDocs.unshift(docItem);
-        }
-        break;
-      case 'removed':
-        if (foundIndex >= 0) {
-          snapDocs.splice(foundIndex, 1);
-        }
-        break;
-      default:
-        break;
-    }
+  }
+  const docRef = doc(appFirestore, 'users', user.userState.user.uid);
+  await setDoc(docRef, {
+    profile: {
+      displayName: user.userState.profile.displayName,
+      email: user.userState.profile.email,
+    },
+    cart: {
+      items,
+      updatedAt: serverTimestamp(),
+    },
   });
-  return snapDocs;
 };

@@ -1,6 +1,6 @@
 import { atom, AtomEffect } from 'recoil';
 import { recoilKeys } from '@/recoil/data/recoilKeys';
-import { appFirebaseAuth, appFirestore } from '@/firebase';
+import { appFirebaseAuth, appFirestore, updateDocsSnapshots } from '@/firebase';
 import {
   collection,
   FieldValue,
@@ -16,7 +16,6 @@ import { onAuthStateChanged } from '@firebase/auth';
 import { SupportChat, SupportChatSession } from '@/recoil/data/supportChat';
 
 import { UserProfile } from '@/recoil/data/user';
-import { updateDocsSnapshots } from '@/misc';
 
 const querySupportChatsSideEffects: AtomEffect<SupportChat[]> = ({
   setSelf,

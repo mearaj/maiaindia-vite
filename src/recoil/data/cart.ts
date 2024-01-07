@@ -1,3 +1,5 @@
+import { FieldValue, Timestamp } from '@firebase/firestore';
+
 export interface CartItems {
   [productID: string]: {
     quantity: number;
@@ -6,7 +8,5 @@ export interface CartItems {
 
 export interface Cart {
   items: CartItems;
-  updatedAt: number;
+  updatedAt: Timestamp | FieldValue;
 }
-
-export const defaultPlaceholderCart: Cart = { items: {}, updatedAt: 0 };
