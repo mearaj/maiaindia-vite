@@ -1,20 +1,6 @@
 import { FieldValue, Timestamp } from '@firebase/firestore';
 import { UserProfile } from '@/recoil/data/user';
 
-export interface SupportChatNoID {
-  createdAt: FieldValue;
-  createdBy: string;
-  createdFor: string;
-  updatedAt: FieldValue;
-  queryLimit?: number; // to be used only by frontend
-}
-
-export interface SupportChat extends SupportChatNoID {
-  id: string;
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
-}
-
 export interface SupportChatSession {
   id?: string;
   customerID: string;
@@ -29,4 +15,28 @@ export interface SupportChatUsersSessionsMap {
     profile: UserProfile;
     sessions: SupportChatSession[];
   };
+}
+
+export interface MessageAttachmentNoID {
+  url: string;
+  mimeType: string;
+}
+
+export interface MessageAttachment extends MessageAttachmentNoID {
+  id: string;
+}
+
+export interface SupportChatMessageNoID {
+  from: string;
+  to: string | null;
+  text: string;
+  attachments: MessageAttachment[] | MessageAttachmentNoID[] | null;
+  createdAt: FieldValue | Timestamp;
+  updatedAt: FieldValue | Timestamp;
+}
+
+export interface SupportChatMessage extends SupportChatMessageNoID {
+  id: string;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
 }

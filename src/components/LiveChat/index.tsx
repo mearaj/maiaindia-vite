@@ -4,24 +4,12 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
 import { ReactNode } from 'react';
-import {
-  currentUserLastActiveChatSessionAtom,
-  currentUserLiveChatMaximizedAtom,
-} from '@/recoil/atoms/supportChat';
-import Button from '@mui/material/Button';
-import {
-  addDoc,
-  collection,
-  doc,
-  getDoc,
-  serverTimestamp,
-} from '@firebase/firestore';
-import { appFirestore } from '@/firebase';
+import { currentUserLiveChatMaximizedAtom } from '@/recoil/atoms/supportChat';
 import ChatTabsComponent from '@/components/LiveChat/ChatTabs';
 import SignInRequiredDialog from '@/components/Dialogs/SignInRequired';
 import SignInButton from '@/components/Buttons/SignIn';
 import useDimensions from '@/hooks/useDimensions';
-import CommonHeader from '@/components/Layouts/CommonHeader';
+import CommonHeader from '@/components/CommonHeader';
 
 export default function LiveChatButton() {
   const theme = useTheme();
@@ -31,25 +19,12 @@ export default function LiveChatButton() {
   const setActiveDialog = useSetRecoilState(selectedDialogAtom);
   const user = useRecoilValue(userAtom);
   const dimensions = useDimensions();
-  const lastActiveChatSession = useRecoilValue(
-    currentUserLastActiveChatSessionAtom
-  );
   const onClickHandler = () => {
     if (!user.userState) {
       setActiveDialog(<SignInRequiredDialog />);
       return;
     }
     setIsUIMaximized(!isUIMaximized);
-  };
-
-  const handleCreateNewSession = async () => {
-    const docRef = await addDoc(collection(appFirestore, 'supportChats'), {
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-      customerID: user.userState?.user.uid,
-      status: 'open',
-    });
-    await getDoc(doc(appFirestore, 'supportChats', docRef.id));
   };
 
   const centerStyle = {
@@ -63,53 +38,19 @@ export default function LiveChatButton() {
   // If user is not logged in
   if (!user.userState) {
     mainComponent = (
-      <Box sx={centerStyle}>
-        <SignInButton />
-      </Box>
-    );
-  } else if (lastActiveChatSession != null) {
-    mainComponent = <ChatTabsComponent chatSession={lastActiveChatSession} />;
-  } else {
-    mainComponent = (
-      <Box sx={{ height: '100%' }}>
-        <CommonHeader onMinimizeClick={() => setIsUIMaximized(false)} />
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            overflowY: 'auto',
-            height: '100%',
-            padding: '16px',
+      <Box sx={{ height: `calc(100% - ${theme.dimensions.appBarHeight}px)` }}>
+        <CommonHeader
+          onMinimizeClick={() => {
+            setIsUIMaximized(false);
           }}
-        >
-          <Box
-            sx={{
-              textAlign: 'center',
-              fontSize: '20px',
-              fontWeight: 'bold',
-            }}
-          >
-            Maia India Customer Chat Service Welcomes You!
-          </Box>
-          <Box
-            sx={{
-              textAlign: 'center',
-              fontSize: '18px',
-              fontWeight: 'normal',
-            }}
-          >
-            It seems that you don&apos;t have any active chat session.
-            <br />
-            Kindly click the button below to start a new chat session.
-          </Box>
-          <Button variant="contained" onClick={handleCreateNewSession}>
-            Create New Session
-          </Button>
+        />
+        <Box sx={centerStyle}>
+          <SignInButton />
         </Box>
       </Box>
     );
+  } else {
+    mainComponent = <ChatTabsComponent />;
   }
 
   return (
@@ -137,14 +78,12 @@ export default function LiveChatButton() {
           maxWidth: `min(600px, calc(${dimensions.width}px - 48px))`,
           display: 'flex',
           flexDirection: 'column',
-          backgroundColor: 'white',
+          backgroundColor: 'transparent',
           position: 'absolute',
           transition: 'height 350ms,width 350ms',
         }}
       >
-        <Box sx={{ height: `calc(100% - ${theme.dimensions.appBarHeight}px)` }}>
-          {mainComponent}
-        </Box>
+        {mainComponent}
       </Card>
       <IconButton
         color="secondary"

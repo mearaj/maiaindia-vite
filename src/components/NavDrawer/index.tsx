@@ -3,12 +3,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Box, Divider, useTheme } from '@mui/material';
 import { useRecoilState } from 'recoil';
 import { menuAtom } from '@/recoil/atoms/menu';
+import CommonHeader from '@/components/CommonHeader';
 import CategoriesRadio from '@/components/Categories';
 import NavLinks from '@/components/NavLinks';
 import useDimensions from '@/hooks/useDimensions';
 import UserComponent from '@/components/User';
 import createStyles from './styles';
-import CommonHeader from '@/components/Layouts/CommonHeader';
 
 export interface DrawerProps {
   className?: string;

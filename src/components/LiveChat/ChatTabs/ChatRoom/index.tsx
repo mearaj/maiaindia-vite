@@ -1,6 +1,8 @@
 import {
   Box,
   Card,
+  Dialog,
+  DialogContent,
   InputAdornment,
   TextField,
   Tooltip,
@@ -13,15 +15,15 @@ import Button from '@mui/material/Button';
 import {
   currentUserLastActiveChatSessionAtom,
   currentUserLastActiveChatSessionMessagesAtom,
-  SupportChatMessage,
-  SupportChatMessageNoID,
 } from '@/recoil/atoms/supportChat';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import { userPlaceholderSvgUrl } from '@/recoil/data/user';
 import {
   addDoc,
   collection,
+  doc,
+  getDoc,
   getDocs,
   onSnapshot,
   orderBy,
@@ -29,47 +31,111 @@ import {
   serverTimestamp,
 } from '@firebase/firestore';
 import { appFirestore, updateDocsSnapshots } from '@/firebase';
+import {
+  SupportChatMessage,
+  SupportChatMessageNoID,
+  SupportChatSession,
+} from '@/recoil/data/supportChat';
+import { selectedDialogAtom } from '@/recoil/atoms/dialog';
+import CircularProgress from '@mui/material/CircularProgress';
+import { FirebaseError } from '@firebase/util';
+import SnackbarDialog from '@/components/Dialogs/SnackBar';
 
 export default function ChatRoomComponent() {
   const [textValue, setTextValue] = useState('');
   const ref = useRef<HTMLElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const appUser = useRecoilValue(userAtom);
-  const chatSession = useRecoilValue(currentUserLastActiveChatSessionAtom);
+  const [chatSession, setChatSession] = useRecoilState(
+    currentUserLastActiveChatSessionAtom
+  );
   const [supportChatMessages, setSupportChatMessages] = useRecoilState(
     currentUserLastActiveChatSessionMessagesAtom
   );
+  const setDialog = useSetRecoilState(selectedDialogAtom);
   const theme = useTheme();
 
   useEffect(() => {
-    const messagesCollectionRef = collection(
-      appFirestore,
-      'supportChats',
-      chatSession!.id!,
-      'supportChatMessages'
-    );
-    const queryRef = query(messagesCollectionRef, orderBy('createdAt', 'desc'));
     let subscription = () => {};
-    getDocs(queryRef).then((docs) => {
-      if (docs.metadata.hasPendingWrites) {
-        return;
-      }
-      let previousMessages = docs.docs as unknown as SupportChatMessage[];
-      subscription = onSnapshot(queryRef, (messagesSnapshot) => {
-        if (messagesSnapshot.metadata.hasPendingWrites) {
-          return;
-        }
-        previousMessages = updateDocsSnapshots(
-          messagesSnapshot,
-          previousMessages
-        ) as SupportChatMessage[];
-        setSupportChatMessages([...previousMessages]);
+    if (chatSession && chatSession.id) {
+      const messagesCollectionRef = collection(
+        appFirestore,
+        'supportChats',
+        chatSession!.id!,
+        'supportChatMessages'
+      );
+      const queryRef = query(
+        messagesCollectionRef,
+        orderBy('createdAt', 'desc')
+      );
+      getDocs(queryRef).then((docs) => {
+        let previousMessages = docs.docs as unknown as SupportChatMessage[];
+        subscription = onSnapshot(queryRef, (messagesSnapshot) => {
+          if (messagesSnapshot.metadata.hasPendingWrites) {
+            return;
+          }
+          previousMessages = updateDocsSnapshots(
+            messagesSnapshot,
+            previousMessages
+          ) as SupportChatMessage[];
+          setSupportChatMessages([...previousMessages]);
+        });
       });
-    });
+    }
     return () => {
       subscription();
     };
   }, [chatSession, setSupportChatMessages]);
+
+  const createNewChatSession = async (): Promise<SupportChatSession | null> => {
+    const open = true;
+    let currentChatSession: SupportChatSession | null = null;
+    setDialog(
+      <Dialog open={open}>
+        <DialogContent>
+          <Box>Creating new chat session please wait!.</Box>
+          <CircularProgress />
+        </DialogContent>
+      </Dialog>
+    );
+    const collectionRef = collection(appFirestore, 'supportChats');
+    let errStr: string | null = null;
+    try {
+      const chatSessionIDRef = await addDoc(collectionRef, {
+        updatedAt: serverTimestamp(),
+        createdAt: serverTimestamp(),
+        status: 'open',
+        customerID: appUser.userState?.user.uid,
+        executiveID: null,
+      } as SupportChatSession);
+      const newChatSessionDoc = await getDoc(
+        doc(collectionRef, chatSessionIDRef.id)
+      );
+      currentChatSession = {
+        ...(newChatSessionDoc.data() as SupportChatSession),
+        id: newChatSessionDoc.id,
+      };
+      setChatSession(currentChatSession);
+      setSupportChatMessages([]);
+    } catch (e) {
+      if (e instanceof FirebaseError) {
+        errStr = e.message;
+      } else {
+        errStr = (e as any).toString();
+      }
+    }
+    if (errStr != null) {
+      setDialog(<SnackbarDialog severity="error" message={errStr} />);
+    } else {
+      setDialog(
+        <SnackbarDialog
+          severity="success"
+          message="Successfully created new chat session!"
+        />
+      );
+    }
+    return currentChatSession;
+  };
   const handleSubmit = async () => {
     const textValueCurr = textValue.trim();
     if (textValueCurr.length === 0) {
@@ -84,15 +150,23 @@ export default function ChatRoomComponent() {
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
     }
+    let currentChatSession = chatSession;
+    if (currentChatSession == null) {
+      currentChatSession = await createNewChatSession();
+      if (currentChatSession == null) {
+        return;
+      }
+    }
+
     const collectionRef = collection(
       appFirestore,
       'supportChats',
-      chatSession!.id!,
+      currentChatSession.id!,
       'supportChatMessages'
     );
     const newMessage: SupportChatMessageNoID = {
       from: appUser.userState!.user!.uid,
-      to: chatSession!.executiveID ?? null,
+      to: currentChatSession!.executiveID ?? null,
       attachments: null,
       updatedAt: serverTimestamp(),
       createdAt: serverTimestamp(),
@@ -116,6 +190,7 @@ export default function ChatRoomComponent() {
     borderTopRightRadius: '0',
     position: 'relative',
     overflow: 'visible',
+    whiteSpace: 'pre-wrap',
     '&::after': {
       content: '""',
       position: 'absolute',
@@ -139,6 +214,7 @@ export default function ChatRoomComponent() {
     borderTopRightRadius: '0',
     position: 'relative',
     overflow: 'visible',
+    whiteSpace: 'pre-wrap',
     '&::after': {
       content: '""',
       position: 'absolute',
@@ -260,8 +336,8 @@ export default function ChatRoomComponent() {
                 us and our executive will attend you or respond to your query.
               </Typography>
               <Typography sx={{ marginBottom: '8px' }}>
-                To end the chat session, you may click back icon on the top
-                left. Please be careful, ending chat session indicates your
+                To end the chat session, you may click close icon on the top
+                right. Please be careful, ending chat session indicates your
                 issue is resolved. You may alternatively just minimize the
                 window by clicking top right minimize icon or the main chat icon
                 at bottom

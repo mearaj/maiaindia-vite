@@ -1,15 +1,16 @@
-import { Box, IconButton, useTheme } from '@mui/material';
+import { Box, IconButton, SxProps, Theme, useTheme } from '@mui/material';
 import { MouseEventHandler, ReactNode } from 'react';
 import Close from '@mui/icons-material/Close';
-import { CloseFullscreen } from '@mui/icons-material';
+import { Minimize } from '@mui/icons-material';
 import ArrowBack from '@mui/icons-material/ArrowBackIos';
-import createStyles from './styles';
+import createStyles from '@/components/CommonHeader/styles';
 
 export interface CommonHeaderProps {
   onCloseClick?: MouseEventHandler;
   onMinimizeClick?: MouseEventHandler;
   centerComponent?: ReactNode;
   onBackIconClick?: () => void;
+  sx?: SxProps<Theme>;
 }
 
 export default function CommonHeader({
@@ -17,12 +18,13 @@ export default function CommonHeader({
   centerComponent,
   onMinimizeClick,
   onBackIconClick,
+  sx = {},
 }: CommonHeaderProps) {
   const theme = useTheme();
   const styles = createStyles(theme);
 
   return (
-    <Box sx={styles.header}>
+    <Box sx={{ ...styles.header, ...sx }}>
       <Box
         sx={{
           display: 'flex',
@@ -57,7 +59,7 @@ export default function CommonHeader({
             }}
           >
             <IconButton onClick={onMinimizeClick}>
-              <CloseFullscreen
+              <Minimize
                 sx={{ fontSize: '32px', color: theme.palette.secondary.main }}
               />
             </IconButton>
