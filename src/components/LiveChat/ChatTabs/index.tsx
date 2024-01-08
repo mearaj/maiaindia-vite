@@ -1,4 +1,3 @@
-import { SupportChatSession } from '@/recoil/data/supportChat';
 import { useState } from 'react';
 import {
   Box,
@@ -13,19 +12,19 @@ import {
 } from '@mui/material';
 import { Chat, Info } from '@mui/icons-material';
 import Button from '@mui/material/Button';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
-import { currentUserLiveChatMaximizedAtom } from '@/recoil/atoms/supportChat';
+import {
+  currentUserLastActiveChatSessionAtom,
+  currentUserLiveChatMaximizedAtom,
+} from '@/recoil/atoms/supportChat';
 import ChatRoomComponent from '@/components/LiveChat/ChatTabs/ChatRoom';
 import CommonHeader from '@/components/Layouts/CommonHeader';
 
-export default function ChatTabsComponent({
-  chatSession,
-}: {
-  chatSession: SupportChatSession;
-}) {
+export default function ChatTabsComponent() {
   const [tabIndex, setTabIndex] = useState(0);
   const setDialog = useSetRecoilState(selectedDialogAtom);
+  const chatSession = useRecoilValue(currentUserLastActiveChatSessionAtom);
   const [isUIMaximized, setIsUIMaximized] = useRecoilState(
     currentUserLiveChatMaximizedAtom
   );
@@ -119,7 +118,7 @@ export default function ChatTabsComponent({
             />
           </Tabs>
           {tabIndex === 0 ? (
-            <ChatRoomComponent chatSession={chatSession} />
+            <ChatRoomComponent />
           ) : (
             <Box sx={{ padding: '16px' }}>Index two</Box>
           )}

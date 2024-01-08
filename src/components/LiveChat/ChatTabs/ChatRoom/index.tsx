@@ -11,13 +11,14 @@ import { Attachment, Send } from '@mui/icons-material';
 import { useEffect, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
 import {
+  currentUserLastActiveChatSessionAtom,
+  currentUserLastActiveChatSessionMessagesAtom,
   SupportChatMessage,
   SupportChatMessageNoID,
 } from '@/recoil/atoms/supportChat';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import { userPlaceholderSvgUrl } from '@/recoil/data/user';
-import { SupportChatSession } from '@/recoil/data/supportChat';
 import {
   addDoc,
   collection,
@@ -29,25 +30,22 @@ import {
 } from '@firebase/firestore';
 import { appFirestore, updateDocsSnapshots } from '@/firebase';
 
-export default function ChatRoomComponent({
-  chatSession,
-}: {
-  chatSession: SupportChatSession;
-}) {
+export default function ChatRoomComponent() {
   const [textValue, setTextValue] = useState('');
   const ref = useRef<HTMLElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const appUser = useRecoilValue(userAtom);
-  const [supportChatMessages, setSupportChatMessages] = useState<
-    SupportChatMessage[]
-  >([]);
+  const chatSession = useRecoilValue(currentUserLastActiveChatSessionAtom);
+  const [supportChatMessages, setSupportChatMessages] = useRecoilState(
+    currentUserLastActiveChatSessionMessagesAtom
+  );
   const theme = useTheme();
 
   useEffect(() => {
     const messagesCollectionRef = collection(
       appFirestore,
       'supportChats',
-      chatSession.id!,
+      chatSession!.id!,
       'supportChatMessages'
     );
     const queryRef = query(messagesCollectionRef, orderBy('createdAt', 'desc'));
@@ -71,7 +69,7 @@ export default function ChatRoomComponent({
     return () => {
       subscription();
     };
-  }, [chatSession]);
+  }, [chatSession, setSupportChatMessages]);
   const handleSubmit = async () => {
     const textValueCurr = textValue.trim();
     if (textValueCurr.length === 0) {
@@ -89,12 +87,12 @@ export default function ChatRoomComponent({
     const collectionRef = collection(
       appFirestore,
       'supportChats',
-      chatSession.id!,
+      chatSession!.id!,
       'supportChatMessages'
     );
     const newMessage: SupportChatMessageNoID = {
       from: appUser.userState!.user!.uid,
-      to: chatSession.executiveID ?? null,
+      to: chatSession!.executiveID ?? null,
       attachments: null,
       updatedAt: serverTimestamp(),
       createdAt: serverTimestamp(),

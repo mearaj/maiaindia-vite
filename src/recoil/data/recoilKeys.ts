@@ -17,6 +17,8 @@ export const recoilKeys = {
   supportChatsMessagesAtom: 'supportChatsMessagesAtom',
   supportChatUsersSessionsMapSelector: 'supportChatUsersSessionsMapSelector',
   currentUserLastActiveChatSessionAtom: 'currentUserLastActiveChatSessionAtom',
+  currentUserLastActiveChatSessionMessagesAtom:
+    'currentUserLastActiveChatSessionMessagesAtom',
   currentUserLiveChatMaximizedAtom: 'currentUserLiveChatMaximizedAtom',
   chatSessionMessagesSelectorFamily: 'chatSessionMessagesSelectorFamily',
   currentUserChatMessagesAtomFamily: 'currentUserChatMessagesAtomFamily',

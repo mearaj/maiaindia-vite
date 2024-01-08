@@ -153,3 +153,10 @@ export const currentUserLastActiveChatSessionAtom =
       },
     ],
   });
+
+export const currentUserLastActiveChatSessionMessagesAtom = atom<
+  SupportChatMessage[]
+>({
+  key: recoilKeys.currentUserLastActiveChatSessionMessagesAtom,
+  default: [],
+});

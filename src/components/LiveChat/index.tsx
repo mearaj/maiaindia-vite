@@ -71,7 +71,7 @@ export default function LiveChatButton() {
     mainComponent = <ChatTabsComponent chatSession={lastActiveChatSession} />;
   } else {
     mainComponent = (
-      <>
+      <Box sx={{ height: '100%' }}>
         <CommonHeader onMinimizeClick={() => setIsUIMaximized(false)} />
         <Box
           sx={{
@@ -108,7 +108,7 @@ export default function LiveChatButton() {
             Create New Session
           </Button>
         </Box>
-      </>
+      </Box>
     );
   }
 
