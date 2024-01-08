@@ -1,10 +1,13 @@
 import { Chat } from '@mui/icons-material';
 import { alpha, Box, Card, IconButton, useTheme } from '@mui/material';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
-import { ReactNode, useState } from 'react';
-import { currentUserLastActiveChatSessionAtom } from '@/recoil/atoms/supportChat';
+import { ReactNode } from 'react';
+import {
+  currentUserLastActiveChatSessionAtom,
+  currentUserLiveChatMaximizedAtom,
+} from '@/recoil/atoms/supportChat';
 import Button from '@mui/material/Button';
 import {
   addDoc,
@@ -16,13 +19,15 @@ import {
 import { appFirestore } from '@/firebase';
 import ChatTabsComponent from '@/components/LiveChat/ChatTabs';
 import SignInRequiredDialog from '@/components/Dialogs/SignInRequired';
-import CommonHeader from '@/components/Layouts/CommonHeader';
 import SignInButton from '@/components/Buttons/SignIn';
 import useDimensions from '@/hooks/useDimensions';
+import CommonHeader from '@/components/Layouts/CommonHeader';
 
 export default function LiveChatButton() {
   const theme = useTheme();
-  const [isUIMaximized, setIsUIMaximized] = useState(false);
+  const [isUIMaximized, setIsUIMaximized] = useRecoilState(
+    currentUserLiveChatMaximizedAtom
+  );
   const setActiveDialog = useSetRecoilState(selectedDialogAtom);
   const user = useRecoilValue(userAtom);
   const dimensions = useDimensions();
@@ -66,41 +71,44 @@ export default function LiveChatButton() {
     mainComponent = <ChatTabsComponent chatSession={lastActiveChatSession} />;
   } else {
     mainComponent = (
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          overflowY: 'auto',
-          height: '100%',
-          padding: '16px',
-        }}
-      >
+      <>
+        <CommonHeader onMinimizeClick={() => setIsUIMaximized(false)} />
         <Box
           sx={{
-            textAlign: 'center',
-            fontSize: '20px',
-            fontWeight: 'bold',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            overflowY: 'auto',
+            height: '100%',
+            padding: '16px',
           }}
         >
-          Maia India Customer Chat Service Welcomes You!
+          <Box
+            sx={{
+              textAlign: 'center',
+              fontSize: '20px',
+              fontWeight: 'bold',
+            }}
+          >
+            Maia India Customer Chat Service Welcomes You!
+          </Box>
+          <Box
+            sx={{
+              textAlign: 'center',
+              fontSize: '18px',
+              fontWeight: 'normal',
+            }}
+          >
+            It seems that you don&apos;t have any active chat session.
+            <br />
+            Kindly click the button below to start a new chat session.
+          </Box>
+          <Button variant="contained" onClick={handleCreateNewSession}>
+            Create New Session
+          </Button>
         </Box>
-        <Box
-          sx={{
-            textAlign: 'center',
-            fontSize: '18px',
-            fontWeight: 'normal',
-          }}
-        >
-          It seems that you don&apos;t have any active chat session.
-          <br />
-          Kindly click the button below to start a new chat session.
-        </Box>
-        <Button variant="contained" onClick={handleCreateNewSession}>
-          Create New Session
-        </Button>
-      </Box>
+      </>
     );
   }
 
@@ -134,30 +142,6 @@ export default function LiveChatButton() {
           transition: 'height 350ms,width 350ms',
         }}
       >
-        <CommonHeader
-          onBackIconClick={lastActiveChatSession != null ? () => {} : undefined}
-          onMinimizeClick={
-            lastActiveChatSession != null
-              ? () => {
-                  setIsUIMaximized(!isUIMaximized);
-                }
-              : undefined
-          }
-          centerComponent={
-            lastActiveChatSession != null ? (
-              <Box
-                sx={{
-                  color: theme.palette.secondary.main,
-                  display: 'flex',
-                  justifyContent: 'center',
-                  fontSize: '18px',
-                }}
-              >
-                Customer Support
-              </Box>
-            ) : undefined
-          }
-        />
         <Box sx={{ height: `calc(100% - ${theme.dimensions.appBarHeight}px)` }}>
           {mainComponent}
         </Box>

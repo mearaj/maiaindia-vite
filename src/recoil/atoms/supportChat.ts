@@ -107,6 +107,11 @@ export const supportChatsMessagesAtom = atom<SupportChatMessages>({
   default: {},
 });
 
+export const currentUserLiveChatMaximizedAtom = atom<boolean>({
+  key: recoilKeys.currentUserLiveChatMaximizedAtom,
+  default: false,
+});
+
 export const currentUserLastActiveChatSessionAtom =
   atom<SupportChatSession | null>({
     key: recoilKeys.currentUserLastActiveChatSessionAtom,

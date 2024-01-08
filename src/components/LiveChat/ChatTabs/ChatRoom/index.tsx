@@ -258,8 +258,8 @@ export default function ChatRoomComponent({
                 presence status and other details.
               </Typography>
               <Typography sx={{ marginBottom: '8px' }}>
-                In case of unavailability, you can still message us and our
-                executive will attend you.
+                In case of our executives unavailability, you can still message
+                us and our executive will attend you or respond to your query.
               </Typography>
               <Typography sx={{ marginBottom: '8px' }}>
                 To end the chat session, you may click back icon on the top
@@ -268,7 +268,9 @@ export default function ChatRoomComponent({
                 window by clicking top right minimize icon or the main chat icon
                 at bottom
               </Typography>
-              <Typography>You may type your query below.</Typography>
+              <Typography>
+                You may type your query at the bottom of this window.
+              </Typography>
             </Box>
           </Box>
         )}
