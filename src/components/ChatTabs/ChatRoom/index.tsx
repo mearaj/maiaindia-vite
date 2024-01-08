@@ -1,4 +1,12 @@
-import { Box, Card, InputAdornment, TextField } from '@mui/material';
+import {
+  Box,
+  Card,
+  InputAdornment,
+  TextField,
+  Tooltip,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import { Attachment, Send } from '@mui/icons-material';
 import { useEffect, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
@@ -33,6 +41,7 @@ export default function ChatRoomComponent({
   const [supportChatMessages, setSupportChatMessages] = useState<
     SupportChatMessage[]
   >([]);
+  const theme = useTheme();
 
   useEffect(() => {
     const messagesCollectionRef = collection(
@@ -62,7 +71,7 @@ export default function ChatRoomComponent({
     return () => {
       subscription();
     };
-  }, [chatSession.id]);
+  }, [chatSession]);
   const handleSubmit = async () => {
     const textValueCurr = textValue.trim();
     if (textValueCurr.length === 0) {
@@ -160,7 +169,10 @@ export default function ChatRoomComponent({
         ref={ref}
         sx={{
           display: 'flex',
-          flexDirection: 'column-reverse',
+          flexDirection:
+            supportChatMessages && supportChatMessages.length > 0
+              ? 'column-reverse'
+              : 'column',
           flexShrink: 1,
           flexGrow: 1,
           padding: '8px 16px',
@@ -169,7 +181,7 @@ export default function ChatRoomComponent({
           wordBreak: 'break-word',
         }}
       >
-        {supportChatMessages &&
+        {supportChatMessages && supportChatMessages.length > 0 ? (
           supportChatMessages.map((eachItem) => {
             const isMyMessage = isMe(eachItem);
             return (
@@ -214,7 +226,12 @@ export default function ChatRoomComponent({
                 )}
               </Box>
             );
-          })}
+          })
+        ) : (
+          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Box>sss</Box>
+          </Box>
+        )}
       </Box>
 
       <Box sx={{ display: 'flex', padding: '8px', alignItems: 'stretch' }}>
@@ -227,6 +244,7 @@ export default function ChatRoomComponent({
           }}
           value={textValue}
           inputRef={inputRef}
+          placeholder="Type messages here..."
           sx={{
             '.MuiInputBase-input': {
               paddingLeft: '6px',
@@ -251,17 +269,30 @@ export default function ChatRoomComponent({
                   justifyContent: 'flex-end',
                 }}
               >
-                <Button
-                  color="inherit"
-                  sx={{
-                    minWidth: '0',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '0px',
+                <Tooltip
+                  title={<Typography color="secondary">Coming soon</Typography>}
+                  placement="left"
+                  componentsProps={{
+                    tooltip: {
+                      sx: {
+                        backgroundColor: theme.palette.primary.main,
+                        color: theme.palette.secondary.main,
+                      },
+                    },
                   }}
                 >
-                  <Attachment />
-                </Button>
+                  <Button
+                    color="inherit"
+                    sx={{
+                      minWidth: '0',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '0px',
+                    }}
+                  >
+                    <Attachment />
+                  </Button>
+                </Tooltip>
               </InputAdornment>
             ),
           }}
@@ -270,7 +301,7 @@ export default function ChatRoomComponent({
           sx={{
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'flex-end',
+            justifyContent: 'center',
             alignItems: 'center',
             minWidth: '0',
             padding: '0 6px',
@@ -283,8 +314,8 @@ export default function ChatRoomComponent({
               padding: '6px',
               minWidth: '0',
               minHeight: '0',
-              borderRadius: '50%',
               lineHeight: 1,
+              borderRadius: '50%',
             }}
           >
             <Send sx={{ fontSize: '24px' }} />

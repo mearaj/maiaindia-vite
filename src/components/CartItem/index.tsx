@@ -77,9 +77,10 @@ export default function CartItemComponent({
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
+                alignItems: 'stretch',
               }}
             >
-              <Box>
+              <Box sx={{ textAlign: 'center' }}>
                 <Box sx={{ marginBottom: '0' }}>{product.name}</Box>
                 <ProductPrice sx={{ marginBottom: '4px' }} product={product} />
               </Box>
@@ -94,7 +95,7 @@ export default function CartItemComponent({
                 <RemoveButton
                   product={product}
                   variant="text"
-                  sx={{ marginBottom: '8px', height: '34px' }}
+                  sx={{ marginBottom: '0px', height: '34px' }}
                 />
               </Box>
             </Box>

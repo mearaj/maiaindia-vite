@@ -18,17 +18,8 @@ import SignInRequiredDialog from '@/components/Dialogs/SignInRequired';
 import CommonHeader from '@/components/Layouts/CommonHeader';
 import SignInButton from '@/components/Buttons/SignIn';
 import useDimensions from '@/hooks/useDimensions';
-import ChatRoomComponent from '@/components/ChatRoom';
+import ChatTabsComponent from '@/components/ChatTabs';
 
-/*
- * Steps
- * 1. Check if the user is logged in, if not then show signInContainer and/or dialog.
- * 2. Load all the supportChats for the currently logged-in user,
- *    filter chat by status open, sort by updatedAt and extract the last chat.
- * 3. If last chat exists, then continue with that chat else show create new session button.
- * 4. If user clicks the create new session button, then create a new chat session and keep the
- *    end chat option open for the user.
- * */
 export default function LiveChatButton() {
   const theme = useTheme();
   const [isUIMaximized, setIsUIMaximized] = useState(false);
@@ -72,7 +63,7 @@ export default function LiveChatButton() {
       </Box>
     );
   } else if (lastActiveChatSession != null) {
-    mainComponent = <ChatRoomComponent chatSession={lastActiveChatSession} />;
+    mainComponent = <ChatTabsComponent chatSession={lastActiveChatSession} />;
   } else {
     mainComponent = (
       <Box
@@ -147,6 +138,21 @@ export default function LiveChatButton() {
           onCloseClick={() => {
             setIsUIMaximized(!isUIMaximized);
           }}
+          onBackIconClick={lastActiveChatSession != null ? () => {} : undefined}
+          centerComponent={
+            lastActiveChatSession != null ? (
+              <Box
+                sx={{
+                  color: theme.palette.secondary.main,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  fontSize: '18px',
+                }}
+              >
+                Customer Support
+              </Box>
+            ) : undefined
+          }
         />
         <Box sx={{ height: `calc(100% - ${theme.dimensions.appBarHeight}px)` }}>
           {mainComponent}

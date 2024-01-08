@@ -44,7 +44,7 @@ export default function RemoveButton({
         sx={{
           height: '32px',
           width: 'auto',
-          marginRight: '4px',
+          marginRight: '2px',
         }}
       />
       <Box sx={{ fontSize: '14px' }}>Remove</Box>

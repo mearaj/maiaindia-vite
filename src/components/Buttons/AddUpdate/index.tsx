@@ -17,7 +17,9 @@ interface AddUpdateButtonProps {
 export default function AddUpdateButton({ product }: AddUpdateButtonProps) {
   const user = useRecoilValue(userAtom);
   const setActiveDialog = useSetRecoilState(selectedDialogAtom);
-  const [quantity, setQuantity] = useState(0);
+  const [quantity, setQuantity] = useState(
+    user.userState?.cart.items[product.id!]?.quantity ?? 0
+  );
   const [loading, setIsLoading] = useState(true);
 
   const handleCartIncrement = async (
@@ -69,16 +71,21 @@ export default function AddUpdateButton({ product }: AddUpdateButtonProps) {
         fullWidth
         onClick={handleCartIncrement}
         sx={{ display: quantity < 1 ? 'flex' : 'none' }}
-        disabled={loading}
       >
-        <AddToCartIcon
-          sx={{
-            height: '32px',
-            width: 'auto',
-            marginRight: '4px',
-          }}
-        />
-        <Box sx={{ fontSize: '16px' }}>Add</Box>
+        {quantity < 1 && loading ? (
+          <CircularProgress size="22px" />
+        ) : (
+          <>
+            <AddToCartIcon
+              sx={{
+                height: '32px',
+                width: 'auto',
+                marginRight: '4px',
+              }}
+            />
+            <Box sx={{ fontSize: '16px' }}>Add</Box>
+          </>
+        )}
       </Button>
       <Button
         sx={{
@@ -86,7 +93,6 @@ export default function AddUpdateButton({ product }: AddUpdateButtonProps) {
           minWidth: 0,
           padding: '4px',
         }}
-        disabled={loading}
         onClick={onDecrementClicked}
         variant="outlined"
       >
@@ -109,7 +115,6 @@ export default function AddUpdateButton({ product }: AddUpdateButtonProps) {
           minWidth: 0,
           padding: '4px',
         }}
-        disabled={loading}
         onClick={handleCartIncrement}
         variant="outlined"
       >

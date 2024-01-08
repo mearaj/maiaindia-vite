@@ -23,11 +23,11 @@ const sectionRightStyles = (th: Theme) => ({
   justifyContent: 'flex-end',
 });
 
-const iconStyles = (_: Theme) => ({
+const iconStyles = (theme: Theme) => ({
   height: '100%',
   width: 'auto',
   maxHeight: 'none',
-  color: '#CCC70D',
+  color: theme.palette.secondary.main,
 });
 
 const logoIconButtonStyles = (_: Theme) => ({
