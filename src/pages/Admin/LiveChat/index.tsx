@@ -17,7 +17,7 @@ import {
   selectedSupportChatUserSelector,
   supportChatUsersSessionsMapSelector,
 } from '@/recoil/selectors/supportChat';
-import { userPlaceholderUrl } from '@/recoil/data/user';
+import { userPlaceholderSvgUrl } from '@/recoil/data/user';
 import SelectChatUserComponent from '@/components/Admin/SelectChatUser';
 import RecoilLoadablePageLayout from '@/components/Layouts/RecoilLoadablePage';
 
@@ -173,7 +173,9 @@ export default function AdminLiveChatPage() {
               >
                 {!isMyMessage && (
                   <img
-                    src={activeSupportChatUser!.photoURL ?? userPlaceholderUrl}
+                    src={
+                      activeSupportChatUser!.photoURL ?? userPlaceholderSvgUrl
+                    }
                     alt="profile"
                     style={{
                       height: '32px',
@@ -190,7 +192,8 @@ export default function AdminLiveChatPage() {
                 {isMyMessage && appUser.userState && (
                   <img
                     src={
-                      appUser.userState.profile.photoURL ?? userPlaceholderUrl
+                      appUser.userState.profile.photoURL ??
+                      userPlaceholderSvgUrl
                     }
                     alt="profile"
                     style={{

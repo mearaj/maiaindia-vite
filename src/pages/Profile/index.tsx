@@ -18,7 +18,7 @@ import { selectedDialogAtom } from '@/recoil/atoms/dialog';
 import { appFirebaseStorage, appFirestore } from '@/firebase';
 import { ref, uploadBytesResumable, UploadTask } from '@firebase/storage';
 import { doc, setDoc } from '@firebase/firestore';
-import { userPlaceholderUrl } from '@/recoil/data/user';
+import { userPlaceholderSvgUrl } from '@/recoil/data/user';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
 import createStyles from './styles';
 import SnackbarDialog from '@/components/Dialogs/SnackBar';
@@ -372,7 +372,7 @@ export default function ProfilePage() {
               marginRight: '16px',
               borderRadius: '50%',
             }}
-            src={profileState?.photoURL ?? userPlaceholderUrl}
+            src={profileState?.photoURL ?? userPlaceholderSvgUrl}
             alt={profileState?.displayName ?? 'N/A'}
             id="profilePicture"
           />

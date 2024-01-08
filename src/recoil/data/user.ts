@@ -19,4 +19,5 @@ export interface AppUser {
   } | null;
 }
 
-export const userPlaceholderUrl = `https://firebasestorage.googleapis.com/v0/b/maiaindia.appspot.com/o/images%2Fuser-placeholder.svg?alt=media`;
+export const userPlaceholderSvgUrl = `/images/user-placeholder.svg`;
+export const userPlaceholderPngUrl = `/images/user-placeholder.png`;

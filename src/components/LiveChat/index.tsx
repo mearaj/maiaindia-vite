@@ -14,11 +14,11 @@ import {
   serverTimestamp,
 } from '@firebase/firestore';
 import { appFirestore } from '@/firebase';
+import ChatTabsComponent from '@/components/LiveChat/ChatTabs';
 import SignInRequiredDialog from '@/components/Dialogs/SignInRequired';
 import CommonHeader from '@/components/Layouts/CommonHeader';
 import SignInButton from '@/components/Buttons/SignIn';
 import useDimensions from '@/hooks/useDimensions';
-import ChatTabsComponent from '@/components/ChatTabs';
 
 export default function LiveChatButton() {
   const theme = useTheme();
@@ -135,10 +135,14 @@ export default function LiveChatButton() {
         }}
       >
         <CommonHeader
-          onCloseClick={() => {
-            setIsUIMaximized(!isUIMaximized);
-          }}
           onBackIconClick={lastActiveChatSession != null ? () => {} : undefined}
+          onMinimizeClick={
+            lastActiveChatSession != null
+              ? () => {
+                  setIsUIMaximized(!isUIMaximized);
+                }
+              : undefined
+          }
           centerComponent={
             lastActiveChatSession != null ? (
               <Box

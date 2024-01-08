@@ -1,7 +1,7 @@
 import { Box, IconButton, useTheme } from '@mui/material';
 import { MouseEventHandler, ReactNode } from 'react';
 import Close from '@mui/icons-material/Close';
-import { Minimize } from '@mui/icons-material';
+import { CloseFullscreen } from '@mui/icons-material';
 import ArrowBack from '@mui/icons-material/ArrowBackIos';
 import createStyles from './styles';
 
@@ -57,7 +57,7 @@ export default function CommonHeader({
             }}
           >
             <IconButton onClick={onMinimizeClick}>
-              <Minimize
+              <CloseFullscreen
                 sx={{ fontSize: '32px', color: theme.palette.secondary.main }}
               />
             </IconButton>

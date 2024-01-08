@@ -2,7 +2,7 @@ import { SupportChatSession } from '@/recoil/data/supportChat';
 import { useState } from 'react';
 import { Box, Tab, Tabs, Typography } from '@mui/material';
 import { Chat, Info } from '@mui/icons-material';
-import ChatRoomComponent from '@/components/ChatTabs/ChatRoom';
+import ChatRoomComponent from '@/components/LiveChat/ChatTabs/ChatRoom';
 
 export default function ChatTabsComponent({
   chatSession,
