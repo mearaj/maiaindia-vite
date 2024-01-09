@@ -35,7 +35,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { FirebaseError, uuidv4 } from '@firebase/util';
 import SnackbarDialog from '@/components/Dialogs/SnackBar';
 
-export default function ChatRoomComponent() {
+export default function CustomerChatRoomComponent() {
   const [textValue, setTextValue] = useState('');
   const ref = useRef<HTMLElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);

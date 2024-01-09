@@ -191,7 +191,7 @@ export default function ProfilePage() {
           });
           const firebaseImageRef = ref(
             appFirebaseStorage,
-            `users/${profileState!.uid}/profile`
+            `users/${profileState!.id}/profile`
           );
           uploadPhotoTask.current = uploadBytesResumable(
             firebaseImageRef,

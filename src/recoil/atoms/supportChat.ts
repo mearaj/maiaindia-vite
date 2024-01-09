@@ -1,8 +1,15 @@
 import { atom } from 'recoil';
 import { recoilKeys } from '@/recoil/data/recoilKeys';
-import { appFirebaseAuth, appFirestore } from '@/firebase';
+import {
+  appFirebaseAuth,
+  appFirebaseStorage,
+  appFirestore,
+  updateDocsSnapshots,
+} from '@/firebase';
 import {
   collection,
+  doc,
+  getDoc,
   limit,
   onSnapshot,
   orderBy,
@@ -11,17 +18,10 @@ import {
 } from '@firebase/firestore';
 import { onAuthStateChanged } from '@firebase/auth';
 import { SupportChatSession } from '@/recoil/data/supportChat';
-
+import { userAtom } from '@/recoil/atoms/user';
+import { isAdminAtom } from '@/recoil/atoms/admin';
+import { getDownloadURL, ref } from '@firebase/storage';
 import { UserProfile } from '@/recoil/data/user';
-
-export const supportChatUsersAtom = atom<UserProfile[]>({
-  key: recoilKeys.supportChatUsersAtom,
-  default: [],
-});
-export const selectedSupportChatUserAtom = atom<UserProfile | null>({
-  key: recoilKeys.selectedSupportChatUserAtom,
-  default: null,
-});
 
 export const currentUserLiveChatMaximizedAtom = atom<boolean>({
   key: recoilKeys.currentUserLiveChatMaximizedAtom,
@@ -33,7 +33,7 @@ export const currentUserLastActiveChatSessionAtom =
     key: recoilKeys.currentUserLastActiveChatSessionAtom,
     default: null,
     effects: [
-      ({ setSelf }) => {
+      ({ setSelf, getPromise }) => {
         let lastActiveChatSubscription = () => {};
         return onAuthStateChanged(appFirebaseAuth, async (user) => {
           if (!user) {
@@ -62,6 +62,32 @@ export const currentUserLastActiveChatSessionAtom =
                 ...(supportChatsSnapshot.docs[0].data() as SupportChatSession),
                 id: supportChatsSnapshot.docs[0].id,
               };
+              currentLastChatSession.customerProfile = (
+                await getPromise(userAtom)
+              ).userState!.profile;
+              if (
+                currentLastChatSession.executiveID &&
+                !currentLastChatSession.executiveProfile
+              ) {
+                const executiveProfileRef = doc(
+                  appFirestore,
+                  'users',
+                  currentLastChatSession.executiveID
+                );
+                const executiveDocSnapshot = await getDoc(executiveProfileRef);
+                if (executiveDocSnapshot.exists()) {
+                  const photoUrlRef = ref(
+                    appFirebaseStorage,
+                    `users/${currentLastChatSession.executiveID}/profile`
+                  );
+                  const photoURL = await getDownloadURL(photoUrlRef);
+                  currentLastChatSession.executiveProfile = {
+                    ...(executiveDocSnapshot.data().profile as UserProfile),
+                    photoURL,
+                    id: currentLastChatSession.executiveID,
+                  };
+                }
+              }
               setSelf(currentLastChatSession);
             }
           );
@@ -69,3 +95,81 @@ export const currentUserLastActiveChatSessionAtom =
       },
     ],
   });
+
+export const adminSupportChatSessions = atom<SupportChatSession[]>({
+  key: recoilKeys.adminSupportChatSessions,
+  default: [],
+  effects: [
+    ({ setSelf, getPromise, node }) => {
+      const supportChatsQuery = query(
+        collection(appFirestore, 'supportChats'),
+        orderBy('updatedAt', 'desc'),
+        where('status', '==', 'open')
+      );
+      return onSnapshot(supportChatsQuery, async (supportChatsSnapshot) => {
+        if (supportChatsSnapshot.metadata.hasPendingWrites) {
+          return;
+        }
+        const user = await getPromise(userAtom);
+        const isAdmin = await getPromise(isAdminAtom);
+        const isValid =
+          user.userState && isAdmin && !supportChatsSnapshot.empty;
+        if (!isValid) {
+          setSelf([]);
+          return;
+        }
+        const prevSupportChatSessions = [...(await getPromise(node))];
+        const newSupportChatSessions = updateDocsSnapshots(
+          supportChatsSnapshot,
+          prevSupportChatSessions
+        ) as SupportChatSession[];
+        for await (const eachSupportChat of newSupportChatSessions) {
+          if (!eachSupportChat.customerProfile) {
+            const customerProfileRef = doc(
+              appFirestore,
+              'users',
+              eachSupportChat.customerID
+            );
+            const customerDocSnapshot = await getDoc(customerProfileRef);
+            if (customerDocSnapshot.exists()) {
+              const photoUrlRef = ref(
+                appFirebaseStorage,
+                `users/${customerDocSnapshot.id}/profile`
+              );
+              const photoURL = await getDownloadURL(photoUrlRef);
+              eachSupportChat.customerProfile = {
+                ...(customerDocSnapshot.data().profile as UserProfile),
+                photoURL,
+                id: eachSupportChat.customerID,
+              };
+            }
+          }
+          if (
+            !eachSupportChat.executiveProfile &&
+            eachSupportChat.executiveID
+          ) {
+            const executiveProfileRef = doc(
+              appFirestore,
+              'users',
+              eachSupportChat.executiveID
+            );
+            const executiveDocSnapshot = await getDoc(executiveProfileRef);
+            if (executiveDocSnapshot.exists()) {
+              const photoUrlRef = ref(
+                appFirebaseStorage,
+                `users/${eachSupportChat.executiveID}/profile`
+              );
+              const photoURL = await getDownloadURL(photoUrlRef);
+              eachSupportChat.executiveProfile = {
+                ...(executiveDocSnapshot.data().profile as UserProfile),
+                photoURL,
+                id: eachSupportChat.executiveID,
+              };
+            }
+          }
+        }
+        setSelf(newSupportChatSessions);
+      });
+    },
+  ],
+});

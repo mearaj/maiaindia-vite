@@ -74,7 +74,7 @@ export const userAtom = atom<AppUser>({
                   profile: {
                     ...profileToSet,
                     photoURL,
-                    uid: user.uid,
+                    id: user.uid,
                   },
                 },
               });
@@ -87,7 +87,7 @@ export const userAtom = atom<AppUser>({
                   profile: {
                     ...(userQuerySnapshot.data().profile as UserProfile),
                     photoURL,
-                    uid: user.uid,
+                    id: user.uid,
                   },
                 },
               });

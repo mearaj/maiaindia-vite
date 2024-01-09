@@ -25,9 +25,10 @@ import { appFirestore } from '@/firebase';
 import { FirebaseError } from '@firebase/util';
 import { SupportChatSession } from '@/recoil/data/supportChat';
 import { userAtom } from '@/recoil/atoms';
+import CustomerChatRoomComponent from '@/components/LiveChat/ChatTabs/CustomerChatRoom';
 import CommonHeader from '@/components/CommonHeader';
-import ChatRoomComponent from '@/components/LiveChat/ChatTabs/ChatRoom';
 import SnackbarDialog from '@/components/Dialogs/SnackBar';
+import ChatDetailsComponent from '@/components/LiveChat/ChatTabs/ChatDetails';
 
 export default function ChatTabsComponent() {
   const [tabIndex, setTabIndex] = useState(0);
@@ -89,6 +90,7 @@ export default function ChatTabsComponent() {
       }
     } finally {
       setChatSession(null);
+      setIsUIMaximized(false);
     }
     if (err) {
       setDialog(<SnackbarDialog severity="error" message={err} />);
@@ -187,13 +189,9 @@ export default function ChatTabsComponent() {
             />
           </Tabs>
           {tabIndex === 0 ? (
-            <ChatRoomComponent />
+            <CustomerChatRoomComponent />
           ) : (
-            <Box
-              sx={{ padding: '16px', backgroundColor: 'white', height: '100%' }}
-            >
-              Index two
-            </Box>
+            <ChatDetailsComponent />
           )}
         </Box>
       </Box>

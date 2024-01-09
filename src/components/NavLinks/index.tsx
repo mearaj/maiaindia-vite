@@ -16,11 +16,11 @@ import ShoppingCart from '@mui/icons-material/ShoppingCart';
 import { isActiveByEqual, isActiveByStartsWith } from '@/misc';
 
 import { useRecoilValue } from 'recoil';
-import { isAdminSelector } from '@/recoil/selectors/isAdmin';
+import { isAdminAtom } from '@/recoil/atoms/admin';
 import { appAbsoluteRoutes } from '@/Router';
 
 export default function NavLinks() {
-  const isAdmin = useRecoilValue(isAdminSelector);
+  const isAdmin = useRecoilValue(isAdminAtom);
   const location = useLocation();
 
   const linkButtonStyle: SxProps<Theme> = {

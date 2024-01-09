@@ -3,8 +3,8 @@ import { useRecoilValue } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import { Box } from '@mui/material';
 import { Loader } from '@/components';
-import { isAdminSelector } from '@/recoil/selectors/isAdmin';
 import { AuthState } from '@/recoil/data/auth';
+import { isAdminAtom } from '@/recoil/atoms/admin';
 import AdminLiveChatPage from '@/pages/Admin/LiveChat';
 import ProfilePage from '@/pages/Profile';
 import CancellationRefundPolicy from '@/pages/CancellationRefundPolicy';
@@ -116,7 +116,7 @@ function AuthRoutes() {
 }
 
 function AdminRoutes() {
-  const isAdmin = useRecoilValue(isAdminSelector);
+  const isAdmin = useRecoilValue(isAdminAtom);
   if (!isAdmin) {
     return <Navigate to={appAbsoluteRoutes.home} replace />;
   }

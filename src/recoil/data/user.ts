@@ -5,7 +5,7 @@ import { Cart } from '@/recoil/data/cart';
 
 export interface UserProfile {
   email: string | null;
-  uid?: string; // only required for frontend
+  id?: string; // only required for frontend
   displayName: string | null;
   photoURL?: string | null; // only required for frontend
 }
