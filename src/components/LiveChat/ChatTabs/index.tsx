@@ -17,7 +17,6 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
 import {
   currentUserLastActiveChatSessionAtom,
-  currentUserLastActiveChatSessionMessagesAtom,
   currentUserLiveChatMaximizedAtom,
 } from '@/recoil/atoms/supportChat';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -33,9 +32,8 @@ import SnackbarDialog from '@/components/Dialogs/SnackBar';
 export default function ChatTabsComponent() {
   const [tabIndex, setTabIndex] = useState(0);
   const setDialog = useSetRecoilState(selectedDialogAtom);
-  const chatSession = useRecoilValue(currentUserLastActiveChatSessionAtom);
-  const [supportChatMessages, setSupportChatMessages] = useRecoilState(
-    currentUserLastActiveChatSessionMessagesAtom
+  const [chatSession, setChatSession] = useRecoilState(
+    currentUserLastActiveChatSessionAtom
   );
   const currentUser = useRecoilValue(userAtom);
   const [isUIMaximized, setIsUIMaximized] = useRecoilState(
@@ -43,10 +41,13 @@ export default function ChatTabsComponent() {
   );
 
   const deleteOrCloseCurrentSession = async () => {
-    const isNotEmpty = supportChatMessages && supportChatMessages.length > 0;
-    let action: 'close' | 'delete' = 'delete';
-    if (isNotEmpty) {
-      action = 'close';
+    const isEmpty =
+      !chatSession ||
+      !chatSession.messages ||
+      chatSession.messages.length === 0;
+    let action: 'close' | 'delete' = 'close';
+    if (isEmpty) {
+      action = 'delete';
     }
     const open = true;
     let text = 'Closing current chat session';
@@ -87,7 +88,7 @@ export default function ChatTabsComponent() {
         err = 'Failed to close current chat session.';
       }
     } finally {
-      setSupportChatMessages([]);
+      setChatSession(null);
     }
     if (err) {
       setDialog(<SnackbarDialog severity="error" message={err} />);

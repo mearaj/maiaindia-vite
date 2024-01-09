@@ -8,6 +8,7 @@ export interface SupportChatSession {
   executiveID: string | null;
   createdAt: Timestamp | FieldValue;
   updatedAt: Timestamp | FieldValue;
+  messages: SupportChatMessage[];
 }
 
 export interface SupportChatUsersSessionsMap {
@@ -17,26 +18,18 @@ export interface SupportChatUsersSessionsMap {
   };
 }
 
-export interface MessageAttachmentNoID {
+export interface MessageAttachment {
   url: string;
   mimeType: string;
-}
-
-export interface MessageAttachment extends MessageAttachmentNoID {
   id: string;
 }
 
-export interface SupportChatMessageNoID {
+export interface SupportChatMessage {
   from: string;
   to: string | null;
   text: string;
-  attachments: MessageAttachment[] | MessageAttachmentNoID[] | null;
-  createdAt: FieldValue | Timestamp;
-  updatedAt: FieldValue | Timestamp;
-}
-
-export interface SupportChatMessage extends SupportChatMessageNoID {
-  id: string;
+  attachments: MessageAttachment[];
   createdAt: Timestamp;
   updatedAt: Timestamp;
+  id: string;
 }
