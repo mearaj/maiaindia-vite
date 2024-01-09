@@ -10,10 +10,7 @@ import {
   where,
 } from '@firebase/firestore';
 import { onAuthStateChanged } from '@firebase/auth';
-import {
-  SupportChatMessage,
-  SupportChatSession,
-} from '@/recoil/data/supportChat';
+import { SupportChatSession } from '@/recoil/data/supportChat';
 
 import { UserProfile } from '@/recoil/data/user';
 
@@ -72,10 +69,3 @@ export const currentUserLastActiveChatSessionAtom =
       },
     ],
   });
-
-export const currentUserLastActiveChatSessionMessagesAtom = atom<
-  SupportChatMessage[]
->({
-  key: recoilKeys.currentUserLastActiveChatSessionMessagesAtom,
-  default: [],
-});

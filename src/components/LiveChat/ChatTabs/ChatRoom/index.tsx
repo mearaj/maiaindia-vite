@@ -12,10 +12,7 @@ import {
 import { Attachment, Send } from '@mui/icons-material';
 import { useEffect, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
-import {
-  currentUserLastActiveChatSessionAtom,
-  currentUserLastActiveChatSessionMessagesAtom,
-} from '@/recoil/atoms/supportChat';
+import { currentUserLastActiveChatSessionAtom } from '@/recoil/atoms/supportChat';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import { userPlaceholderSvgUrl } from '@/recoil/data/user';
@@ -24,21 +21,18 @@ import {
   collection,
   doc,
   getDoc,
-  getDocs,
-  onSnapshot,
-  orderBy,
-  query,
   serverTimestamp,
+  setDoc,
+  Timestamp,
 } from '@firebase/firestore';
-import { appFirestore, updateDocsSnapshots } from '@/firebase';
+import { appFirestore } from '@/firebase';
 import {
   SupportChatMessage,
-  SupportChatMessageNoID,
   SupportChatSession,
 } from '@/recoil/data/supportChat';
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
 import CircularProgress from '@mui/material/CircularProgress';
-import { FirebaseError } from '@firebase/util';
+import { FirebaseError, uuidv4 } from '@firebase/util';
 import SnackbarDialog from '@/components/Dialogs/SnackBar';
 
 export default function ChatRoomComponent() {
@@ -49,47 +43,12 @@ export default function ChatRoomComponent() {
   const [chatSession, setChatSession] = useRecoilState(
     currentUserLastActiveChatSessionAtom
   );
-  const [supportChatMessages, setSupportChatMessages] = useRecoilState(
-    currentUserLastActiveChatSessionMessagesAtom
-  );
   const setDialog = useSetRecoilState(selectedDialogAtom);
   const theme = useTheme();
 
-  useEffect(() => {
-    let subscription = () => {};
-    if (chatSession && chatSession.id) {
-      const messagesCollectionRef = collection(
-        appFirestore,
-        'supportChats',
-        chatSession!.id!,
-        'supportChatMessages'
-      );
-      const queryRef = query(
-        messagesCollectionRef,
-        orderBy('createdAt', 'desc')
-      );
-      getDocs(queryRef).then((docs) => {
-        let previousMessages = docs.docs as unknown as SupportChatMessage[];
-        subscription = onSnapshot(queryRef, (messagesSnapshot) => {
-          if (messagesSnapshot.metadata.hasPendingWrites) {
-            return;
-          }
-          previousMessages = updateDocsSnapshots(
-            messagesSnapshot,
-            previousMessages
-          ) as SupportChatMessage[];
-          setSupportChatMessages([...previousMessages]);
-        });
-      });
-    }
-    return () => {
-      subscription();
-    };
-  }, [chatSession, setSupportChatMessages]);
-
   const createNewChatSession = async (): Promise<SupportChatSession | null> => {
     const open = true;
-    let currentChatSession: SupportChatSession | null = null;
+    let newChatSession: SupportChatSession | null = null;
     setDialog(
       <Dialog open={open}>
         <DialogContent>
@@ -106,17 +65,17 @@ export default function ChatRoomComponent() {
         createdAt: serverTimestamp(),
         status: 'open',
         customerID: appUser.userState?.user.uid,
+        messages: [],
         executiveID: null,
       } as SupportChatSession);
       const newChatSessionDoc = await getDoc(
         doc(collectionRef, chatSessionIDRef.id)
       );
-      currentChatSession = {
+      newChatSession = {
         ...(newChatSessionDoc.data() as SupportChatSession),
         id: newChatSessionDoc.id,
       };
-      setChatSession(currentChatSession);
-      setSupportChatMessages([]);
+      setChatSession(newChatSession);
     } catch (e) {
       if (e instanceof FirebaseError) {
         errStr = e.message;
@@ -134,7 +93,7 @@ export default function ChatRoomComponent() {
         />
       );
     }
-    return currentChatSession;
+    return newChatSession;
   };
   const handleSubmit = async () => {
     const textValueCurr = textValue.trim();
@@ -142,11 +101,6 @@ export default function ChatRoomComponent() {
       return;
     }
     setTextValue('');
-    setTimeout(() => {
-      if (ref && ref.current) {
-        ref.current.scrollTop = ref.current.scrollHeight;
-      }
-    });
     if (inputRef && inputRef.current) {
       inputRef.current.focus();
     }
@@ -158,22 +112,39 @@ export default function ChatRoomComponent() {
       }
     }
 
-    const collectionRef = collection(
-      appFirestore,
-      'supportChats',
-      currentChatSession.id!,
-      'supportChatMessages'
-    );
-    const newMessage: SupportChatMessageNoID = {
+    const docRef = doc(appFirestore, 'supportChats', currentChatSession.id!);
+    const newMessage: SupportChatMessage = {
       from: appUser.userState!.user!.uid,
       to: currentChatSession!.executiveID ?? null,
-      attachments: null,
-      updatedAt: serverTimestamp(),
-      createdAt: serverTimestamp(),
+      attachments: [],
+      updatedAt: Timestamp.now(),
+      createdAt: Timestamp.now(),
       text: textValueCurr,
+      id: uuidv4(),
     };
-    await addDoc(collectionRef, newMessage);
+    await setDoc(docRef, {
+      messages: [...currentChatSession.messages, newMessage],
+      customerID: appUser.userState!.user.uid,
+      status: 'open',
+      createdAt: currentChatSession.createdAt,
+      updatedAt: serverTimestamp(),
+      executiveID: currentChatSession.executiveID ?? null,
+    } as SupportChatSession);
   };
+
+  useEffect(() => {
+    if (ref && ref.current) {
+      if (
+        chatSession &&
+        chatSession.messages &&
+        chatSession.messages.length > 0
+      ) {
+        ref.current?.scrollTo(0, (ref.current?.scrollHeight ?? 0) + 48);
+      } else {
+        ref.current?.scrollTo(0, 0);
+      }
+    }
+  }, [chatSession]);
 
   const isMe = (supportChatMsg: SupportChatMessage) =>
     appUser &&
@@ -243,10 +214,7 @@ export default function ChatRoomComponent() {
         ref={ref}
         sx={{
           display: 'flex',
-          flexDirection:
-            supportChatMessages && supportChatMessages.length > 0
-              ? 'column-reverse'
-              : 'column',
+          flexDirection: 'column',
           flexShrink: 1,
           flexGrow: 1,
           padding: '8px 16px',
@@ -255,8 +223,8 @@ export default function ChatRoomComponent() {
           wordBreak: 'break-word',
         }}
       >
-        {supportChatMessages && supportChatMessages.length > 0 ? (
-          supportChatMessages.map((eachItem) => {
+        {chatSession?.messages && chatSession?.messages.length > 0 ? (
+          chatSession?.messages.map((eachItem, index) => {
             const isMyMessage = isMe(eachItem);
             return (
               <Box
@@ -265,6 +233,7 @@ export default function ChatRoomComponent() {
                   display: 'flex',
                   width: '100%',
                   justifyContent: isMyMessage ? 'flex-end' : 'flex-start',
+                  marginTop: index === 0 ? 'auto' : 'unset',
                 }}
               >
                 {!isMyMessage && (
