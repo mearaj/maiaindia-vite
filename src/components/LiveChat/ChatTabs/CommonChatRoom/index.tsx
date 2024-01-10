@@ -12,8 +12,7 @@ import {
 import { Attachment, Send } from '@mui/icons-material';
 import { useEffect, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
-import { currentUserLastActiveChatSessionAtom } from '@/recoil/atoms/supportChat';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { SetterOrUpdater, useRecoilValue, useSetRecoilState } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import { userPlaceholderSvgUrl } from '@/recoil/data/user';
 import {
@@ -33,16 +32,22 @@ import {
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
 import CircularProgress from '@mui/material/CircularProgress';
 import { FirebaseError, uuidv4 } from '@firebase/util';
+import ChatRoomGreetingsComponent from '@/components/LiveChat/ChatTabs/ChatRoomGreetings';
 import SnackbarDialog from '@/components/Dialogs/SnackBar';
 
-export default function CustomerChatRoomComponent() {
+export default function CommonChatRoomComponent({
+  isAdminUI = false,
+  chatSession,
+  setChatSession,
+}: {
+  isAdminUI?: boolean;
+  chatSession: SupportChatSession | null;
+  setChatSession: SetterOrUpdater<SupportChatSession | null>;
+}) {
   const [textValue, setTextValue] = useState('');
   const ref = useRef<HTMLElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const appUser = useRecoilValue(userAtom);
-  const [chatSession, setChatSession] = useRecoilState(
-    currentUserLastActiveChatSessionAtom
-  );
   const setDialog = useSetRecoilState(selectedDialogAtom);
   const theme = useTheme();
 
@@ -106,6 +111,9 @@ export default function CustomerChatRoomComponent() {
     }
     let currentChatSession = chatSession;
     if (currentChatSession == null) {
+      if (isAdminUI) {
+        return;
+      }
       currentChatSession = await createNewChatSession();
       if (currentChatSession == null) {
         return;
@@ -223,100 +231,55 @@ export default function CustomerChatRoomComponent() {
           wordBreak: 'break-word',
         }}
       >
-        {chatSession?.messages && chatSession?.messages.length > 0 ? (
-          chatSession?.messages.map((eachItem, index) => {
-            const isMyMessage = isMe(eachItem);
-            return (
-              <Box
-                key={eachItem.id}
-                sx={{
-                  display: 'flex',
-                  width: '100%',
-                  justifyContent: isMyMessage ? 'flex-end' : 'flex-start',
-                  marginTop: index === 0 ? 'auto' : 'unset',
-                }}
-              >
-                {!isMyMessage && (
-                  <img
-                    src={userPlaceholderSvgUrl}
-                    alt="profile"
-                    style={{
-                      height: '32px',
-                      width: '32px',
-                      borderRadius: '50%',
-                      marginTop: '18px',
-                      marginRight: '12px',
-                    }}
-                  />
-                )}
-                <Card sx={isMyMessage ? myCardStyle : youTriangleStyle}>
-                  {eachItem.text}
-                </Card>
-                {isMyMessage && appUser.userState && (
-                  <img
-                    src={
-                      appUser.userState.profile.photoURL ??
-                      userPlaceholderSvgUrl
-                    }
-                    alt="profile"
-                    style={{
-                      height: '32px',
-                      width: '32px',
-                      borderRadius: '50%',
-                      marginTop: '18px',
-                      marginLeft: '12px',
-                    }}
-                  />
-                )}
-              </Box>
-            );
-          })
-        ) : (
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              padding: '16px',
-            }}
-          >
-            <Box sx={{ height: '80px', marginBottom: '16px' }}>
-              <img src={userPlaceholderSvgUrl} alt="Executive" height="100%" />
-            </Box>
-            <Box>
-              <Typography
-                sx={{
-                  fontSize: '24px',
-                  fontWeight: 'bold',
-                  textAlign: 'center',
-                }}
-              >
-                Hi,
-              </Typography>
-              <Typography sx={{ marginBottom: '8px' }}>
-                We are glad to assist you.
-              </Typography>
-              <Typography sx={{ marginBottom: '8px' }}>
-                At any time, on the top right tab section you can view our
-                presence status and other details.
-              </Typography>
-              <Typography sx={{ marginBottom: '8px' }}>
-                In case of our executives unavailability, you can still message
-                us and our executive will attend you or respond to your query.
-              </Typography>
-              <Typography sx={{ marginBottom: '8px' }}>
-                To end the chat session, you may click close icon on the top
-                right. Please be careful, ending chat session indicates your
-                issue is resolved. You may alternatively just minimize the
-                window by clicking top right minimize icon or the main chat icon
-                at bottom
-              </Typography>
-              <Typography>
-                You may type your query at the bottom of this window.
-              </Typography>
-            </Box>
-          </Box>
-        )}
+        {chatSession?.messages && chatSession?.messages.length > 0
+          ? chatSession?.messages.map((eachItem, index) => {
+              const isMyMessage = isMe(eachItem);
+              return (
+                <Box
+                  key={eachItem.id}
+                  sx={{
+                    display: 'flex',
+                    width: '100%',
+                    justifyContent: isMyMessage ? 'flex-end' : 'flex-start',
+                    marginTop: index === 0 ? 'auto' : 'unset',
+                  }}
+                >
+                  {!isMyMessage && (
+                    <img
+                      src={userPlaceholderSvgUrl}
+                      alt="profile"
+                      style={{
+                        height: '32px',
+                        width: '32px',
+                        borderRadius: '50%',
+                        marginTop: '18px',
+                        marginRight: '12px',
+                      }}
+                    />
+                  )}
+                  <Card sx={isMyMessage ? myCardStyle : youTriangleStyle}>
+                    {eachItem.text}
+                  </Card>
+                  {isMyMessage && appUser.userState && (
+                    <img
+                      src={
+                        appUser.userState.profile.photoURL ??
+                        userPlaceholderSvgUrl
+                      }
+                      alt="profile"
+                      style={{
+                        height: '32px',
+                        width: '32px',
+                        borderRadius: '50%',
+                        marginTop: '18px',
+                        marginLeft: '12px',
+                      }}
+                    />
+                  )}
+                </Box>
+              );
+            })
+          : !isAdminUI && <ChatRoomGreetingsComponent />}
       </Box>
 
       <Box sx={{ display: 'flex', padding: '8px', alignItems: 'stretch' }}>

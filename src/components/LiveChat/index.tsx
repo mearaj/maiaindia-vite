@@ -4,7 +4,10 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
 import { ReactNode } from 'react';
-import { currentUserLiveChatMaximizedAtom } from '@/recoil/atoms/supportChat';
+import {
+  adminActiveChatSessionAtom,
+  currentUserLiveChatMaximizedAtom,
+} from '@/recoil/atoms/supportChat';
 import ChatTabsComponent from '@/components/LiveChat/ChatTabs';
 import SignInRequiredDialog from '@/components/Dialogs/SignInRequired';
 import SignInButton from '@/components/Buttons/SignIn';
@@ -16,6 +19,7 @@ export default function LiveChatButton() {
   const [isUIMaximized, setIsUIMaximized] = useRecoilState(
     currentUserLiveChatMaximizedAtom
   );
+  const activeAdminChatSession = useRecoilValue(adminActiveChatSessionAtom);
   const setActiveDialog = useSetRecoilState(selectedDialogAtom);
   const user = useRecoilValue(userAtom);
   const dimensions = useDimensions();
@@ -72,7 +76,7 @@ export default function LiveChatButton() {
           padding: '0px',
           bottom: '60px',
           right: '8px',
-          height: isUIMaximized ? `${dimensions.height}px` : '0vh',
+          height: `${dimensions.height}px`,
           width: '100vw',
           maxHeight: `min(800px, calc(${dimensions.height}px - 140px))`,
           maxWidth: `min(600px, calc(${dimensions.width}px - 48px))`,
@@ -80,7 +84,9 @@ export default function LiveChatButton() {
           flexDirection: 'column',
           backgroundColor: 'transparent',
           position: 'absolute',
-          transition: 'height 350ms,width 350ms',
+          visibility: isUIMaximized ? 'visible' : 'hidden',
+          opacity: isUIMaximized ? 1 : 0,
+          transition: 'visibility 250ms,opacity 250ms',
         }}
       >
         {mainComponent}
@@ -90,6 +96,9 @@ export default function LiveChatButton() {
         onClick={onClickHandler}
         sx={{
           padding: '12px',
+          visibility: !activeAdminChatSession ? 'visible' : 'hidden',
+          opacity: !activeAdminChatSession ? 1 : 0,
+          transition: 'visibility 250ms,opacity 250ms',
           backgroundColor: alpha(theme.palette.primary.main, 0.85),
           '&:active,&:hover,&:focus': {
             backgroundColor: alpha(theme.palette.primary.main, 0.85),

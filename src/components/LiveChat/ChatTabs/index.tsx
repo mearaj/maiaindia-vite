@@ -25,7 +25,7 @@ import { appFirestore } from '@/firebase';
 import { FirebaseError } from '@firebase/util';
 import { SupportChatSession } from '@/recoil/data/supportChat';
 import { userAtom } from '@/recoil/atoms';
-import CustomerChatRoomComponent from '@/components/LiveChat/ChatTabs/CustomerChatRoom';
+import CommonChatRoomComponent from '@/components/LiveChat/ChatTabs/CommonChatRoom';
 import CommonHeader from '@/components/CommonHeader';
 import SnackbarDialog from '@/components/Dialogs/SnackBar';
 import ChatDetailsComponent from '@/components/LiveChat/ChatTabs/ChatDetails';
@@ -189,7 +189,10 @@ export default function ChatTabsComponent() {
             />
           </Tabs>
           {tabIndex === 0 ? (
-            <CustomerChatRoomComponent />
+            <CommonChatRoomComponent
+              setChatSession={setChatSession}
+              chatSession={chatSession}
+            />
           ) : (
             <ChatDetailsComponent />
           )}

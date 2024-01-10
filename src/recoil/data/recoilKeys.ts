@@ -10,6 +10,7 @@ export const recoilKeys = {
   isAdminAtom: 'isAdminAtom',
   adminUsersAtom: 'adminUsersAtom',
   currentUserLastActiveChatSessionAtom: 'currentUserLastActiveChatSessionAtom',
+  adminActiveChatSessionAtom: 'adminActiveChatSessionAtom',
   currentUserLastActiveChatSessionMessagesAtom:
     'currentUserLastActiveChatSessionMessagesAtom',
   currentUserLiveChatMaximizedAtom: 'currentUserLiveChatMaximizedAtom',

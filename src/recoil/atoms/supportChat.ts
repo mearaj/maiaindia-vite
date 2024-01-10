@@ -173,3 +173,8 @@ export const adminSupportChatSessions = atom<SupportChatSession[]>({
     },
   ],
 });
+
+export const adminActiveChatSessionAtom = atom<SupportChatSession | null>({
+  key: recoilKeys.adminActiveChatSessionAtom,
+  default: null,
+});
