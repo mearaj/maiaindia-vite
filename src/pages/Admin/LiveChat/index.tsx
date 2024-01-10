@@ -3,18 +3,20 @@ import {
   adminActiveChatSessionAtom,
   adminSupportChatSessions,
 } from '@/recoil/atoms/supportChat';
-import { Box } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import { useEffect } from 'react';
 import { Timestamp } from '@firebase/firestore';
-import CommonPageLayout from '@/components/Layouts/CommonPage';
 import ChatCustomerCardComponent from '@/components/Admin/ChatCustomerCard';
 import CommonChatRoomComponent from '@/components/LiveChat/ChatTabs/CommonChatRoom';
+import AdminLiveChatPageHeader from '@/pages/Admin/LiveChat/header';
 
 export default function AdminLiveChatPage() {
   const supportChatSessions = useRecoilValue(adminSupportChatSessions);
   const [activeLiveChatSession, setActiveLiveChatSession] = useRecoilState(
     adminActiveChatSessionAtom
   );
+  const theme = useTheme();
+
   useEffect(() => {
     const found = supportChatSessions.find(
       (eachSession) => eachSession.id === activeLiveChatSession?.id
@@ -33,20 +35,11 @@ export default function AdminLiveChatPage() {
   }, [activeLiveChatSession, setActiveLiveChatSession, supportChatSessions]);
 
   return (
-    <CommonPageLayout
-      headerProps={{
-        onBackIconClick:
-          activeLiveChatSession != null
-            ? () => {
-                setActiveLiveChatSession(null);
-              }
-            : undefined,
-        showBackIcon: activeLiveChatSession != null,
-      }}
-    >
+    <Box sx={{ height: '100%' }}>
+      <AdminLiveChatPageHeader />
       <Box
         sx={{
-          height: `100%`,
+          height: `calc(100% - ${theme.dimensions.appBarHeight}px)`,
         }}
       >
         {supportChatSessions.length < 1 && (
@@ -77,6 +70,6 @@ export default function AdminLiveChatPage() {
             );
           })}
       </Box>
-    </CommonPageLayout>
+    </Box>
   );
 }
