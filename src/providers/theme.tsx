@@ -5,12 +5,14 @@ declare module '@mui/material/styles' {
   interface Theme {
     dimensions: {
       appBarHeight: number;
+      chatButtonHeight: number;
     };
   }
 
   interface ThemeOptions {
     dimensions: {
       appBarHeight: number;
+      chatButtonHeight: number;
     };
   }
 }
@@ -52,6 +54,7 @@ export default function AppThemeProvider({ children }: PropsWithChildren) {
     },
     dimensions: {
       appBarHeight: 60,
+      chatButtonHeight: 56,
     },
   });
   return (

@@ -20,7 +20,7 @@ export default function CommonPageLayout({
 }: CommonPageLayoutProps) {
   const theme = useTheme();
 
-  const styles = createStyles(theme);
+  const styles = createStyles(theme, showHeader);
   const rootStyles = { ...styles.root, ...sxRootProps };
   const bodyStyles = { ...styles.body, ...sxBodyProps };
 

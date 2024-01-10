@@ -2,30 +2,23 @@ import { SxProps, Theme } from '@mui/material';
 
 const rootStyles = (_: Theme): SxProps<Theme> => {
   return {
-    display: 'flex',
-    flexDirection: 'column',
     height: '100%',
     width: '100%',
     overflowY: 'auto',
-    justifyContent: 'flex-start',
-    alignItems: 'stretch',
   };
 };
 
-const bodyStyles = (_: Theme): SxProps<Theme> => {
+const bodyStyles = (theme: Theme, showHeader: boolean): SxProps<Theme> => {
   return {
-    display: 'flex',
-    flexDirection: 'column',
-    flexShrink: 0,
-    flexGrow: 1,
-    alignItems: 'stretch',
-    justifyContent: 'flex-start',
+    height: showHeader
+      ? `calc(100% - ${theme.dimensions.appBarHeight}px)`
+      : '100%',
   };
 };
 
-export default function createStyles(theme: Theme) {
+export default function createStyles(theme: Theme, showHeader: boolean) {
   const root = rootStyles(theme);
-  const body = bodyStyles(theme);
+  const body = bodyStyles(theme, showHeader);
   return {
     root,
     body,

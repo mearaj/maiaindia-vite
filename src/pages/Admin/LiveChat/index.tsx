@@ -4,6 +4,8 @@ import {
   adminSupportChatSessions,
 } from '@/recoil/atoms/supportChat';
 import { Box } from '@mui/material';
+import { useEffect } from 'react';
+import { Timestamp } from '@firebase/firestore';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
 import ChatCustomerCardComponent from '@/components/Admin/ChatCustomerCard';
 import CommonChatRoomComponent from '@/components/LiveChat/ChatTabs/CommonChatRoom';
@@ -13,6 +15,23 @@ export default function AdminLiveChatPage() {
   const [activeLiveChatSession, setActiveLiveChatSession] = useRecoilState(
     adminActiveChatSessionAtom
   );
+  useEffect(() => {
+    const found = supportChatSessions.find(
+      (eachSession) => eachSession.id === activeLiveChatSession?.id
+    );
+    if (!found && activeLiveChatSession != null) {
+      setActiveLiveChatSession(null);
+    } else if (
+      found &&
+      activeLiveChatSession != null &&
+      !(found.updatedAt as Timestamp).isEqual(
+        activeLiveChatSession.updatedAt as Timestamp
+      )
+    ) {
+      setActiveLiveChatSession(found);
+    }
+  }, [activeLiveChatSession, setActiveLiveChatSession, supportChatSessions]);
+
   return (
     <CommonPageLayout
       headerProps={{
@@ -25,13 +44,18 @@ export default function AdminLiveChatPage() {
         showBackIcon: activeLiveChatSession != null,
       }}
     >
-      <Box sx={{ height: '100%' }}>
+      <Box
+        sx={{
+          height: `100%`,
+        }}
+      >
         {supportChatSessions.length < 1 && (
           <Box
             sx={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              height: '100%',
             }}
           >
             No active chat sessions.
@@ -44,7 +68,6 @@ export default function AdminLiveChatPage() {
             isAdminUI
           />
         )}
-
         {!activeLiveChatSession &&
           supportChatSessions.map((eachSession) => {
             return (

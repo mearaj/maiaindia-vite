@@ -130,14 +130,23 @@ export default function CommonChatRoomComponent({
       text: textValueCurr,
       id: uuidv4(),
     };
-    await setDoc(docRef, {
+    if (isAdminUI) {
+      newMessage.to = currentChatSession.customerID;
+    }
+    const updatedChatSession = {
       messages: [...currentChatSession.messages, newMessage],
-      customerID: appUser.userState!.user.uid,
+      customerID: currentChatSession.customerID,
       status: 'open',
       createdAt: currentChatSession.createdAt,
       updatedAt: serverTimestamp(),
       executiveID: currentChatSession.executiveID ?? null,
-    } as SupportChatSession);
+      id: currentChatSession.id,
+    } as SupportChatSession;
+    if (isAdminUI) {
+      updatedChatSession.executiveID = appUser.userState!.user.uid;
+    }
+    await setDoc(docRef, updatedChatSession);
+    setChatSession(updatedChatSession);
   };
 
   useEffect(() => {
@@ -234,6 +243,14 @@ export default function CommonChatRoomComponent({
         {chatSession?.messages && chatSession?.messages.length > 0
           ? chatSession?.messages.map((eachItem, index) => {
               const isMyMessage = isMe(eachItem);
+              const myImage: string | null =
+                appUser.userState?.profile.photoURL ?? null;
+              let yourImage: string | null =
+                chatSession.executiveProfile?.photoURL ?? null;
+              if (isAdminUI) {
+                yourImage = chatSession.customerProfile?.photoURL ?? null;
+              }
+
               return (
                 <Box
                   key={eachItem.id}
@@ -246,7 +263,7 @@ export default function CommonChatRoomComponent({
                 >
                   {!isMyMessage && (
                     <img
-                      src={userPlaceholderSvgUrl}
+                      src={yourImage ?? userPlaceholderSvgUrl}
                       alt="profile"
                       style={{
                         height: '32px',
@@ -262,10 +279,7 @@ export default function CommonChatRoomComponent({
                   </Card>
                   {isMyMessage && appUser.userState && (
                     <img
-                      src={
-                        appUser.userState.profile.photoURL ??
-                        userPlaceholderSvgUrl
-                      }
+                      src={myImage ?? userPlaceholderSvgUrl}
                       alt="profile"
                       style={{
                         height: '32px',

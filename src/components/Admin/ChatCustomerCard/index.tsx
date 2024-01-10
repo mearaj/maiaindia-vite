@@ -31,6 +31,7 @@ export default function ChatCustomerCardComponent({
               width: '50px',
               borderRadius: '50%',
               marginRight: '8px',
+              flexShrink: 0,
             }}
           >
             <img

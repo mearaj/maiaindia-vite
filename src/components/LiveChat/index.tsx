@@ -4,22 +4,21 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { userAtom } from '@/recoil/atoms';
 import { selectedDialogAtom } from '@/recoil/atoms/dialog';
 import { ReactNode } from 'react';
-import {
-  adminActiveChatSessionAtom,
-  currentUserLiveChatMaximizedAtom,
-} from '@/recoil/atoms/supportChat';
+import { currentUserLiveChatMaximizedAtom } from '@/recoil/atoms/supportChat';
+import { useLocation } from 'react-router-dom';
 import ChatTabsComponent from '@/components/LiveChat/ChatTabs';
 import SignInRequiredDialog from '@/components/Dialogs/SignInRequired';
 import SignInButton from '@/components/Buttons/SignIn';
 import useDimensions from '@/hooks/useDimensions';
 import CommonHeader from '@/components/CommonHeader';
+import { appAbsoluteRoutes } from '@/Router';
 
 export default function LiveChatButton() {
   const theme = useTheme();
   const [isUIMaximized, setIsUIMaximized] = useRecoilState(
     currentUserLiveChatMaximizedAtom
   );
-  const activeAdminChatSession = useRecoilValue(adminActiveChatSessionAtom);
+  const location = useLocation();
   const setActiveDialog = useSetRecoilState(selectedDialogAtom);
   const user = useRecoilValue(userAtom);
   const dimensions = useDimensions();
@@ -96,9 +95,12 @@ export default function LiveChatButton() {
         onClick={onClickHandler}
         sx={{
           padding: '12px',
-          visibility: !activeAdminChatSession ? 'visible' : 'hidden',
-          opacity: !activeAdminChatSession ? 1 : 0,
-          transition: 'visibility 250ms,opacity 250ms',
+          height: `${theme.dimensions.chatButtonHeight}px`,
+          width: `${theme.dimensions.chatButtonHeight}px`,
+          display:
+            location.pathname !== appAbsoluteRoutes.adminLiveChat
+              ? 'inline-flex'
+              : 'none',
           backgroundColor: alpha(theme.palette.primary.main, 0.85),
           '&:active,&:hover,&:focus': {
             backgroundColor: alpha(theme.palette.primary.main, 0.85),
