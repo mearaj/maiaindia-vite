@@ -1,5 +1,4 @@
 import * as React from 'react';
-import MenuSharp from '@mui/icons-material/MenuSharp';
 import {
   AppBar,
   Box,
@@ -12,11 +11,11 @@ import {
   useTheme,
 } from '@mui/material';
 import ArrowBack from '@mui/icons-material/ArrowBackIos';
-import ShoppingBagSharp from '@mui/icons-material/ShoppingBagSharp';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { menuAtom } from '@/recoil/atoms/menu';
 import { userAtom } from '@/recoil/atoms';
+import { LocalMallTwoTone, WidgetsTwoTone } from '@mui/icons-material';
 import createStyles from './styles';
 import { appAbsoluteRoutes } from '@/Router';
 import FullLogoButton from '@/components/Buttons/FullLogo';
@@ -105,7 +104,7 @@ export default function Header({
             to="/cart"
           >
             <Button sx={styles.iconButton}>
-              <ShoppingBagSharp sx={styles.icon} />
+              <LocalMallTwoTone sx={styles.icon} />
             </Button>
             {user &&
               user.userState &&
@@ -139,7 +138,7 @@ export default function Header({
             sx={styles.iconButton}
             onClick={() => handleInteractionItemClick()}
           >
-            <MenuSharp sx={styles.icon} />
+            <WidgetsTwoTone sx={styles.icon} />
           </Button>
         </Box>
       </Toolbar>

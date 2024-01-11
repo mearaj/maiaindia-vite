@@ -4,7 +4,7 @@ import { Box, Button, IconButton, Typography, useTheme } from '@mui/material';
 import { menuAtom } from '@/recoil/atoms';
 import ArrowBack from '@mui/icons-material/ArrowBackIos';
 import Close from '@mui/icons-material/Close';
-import MenuSharp from '@mui/icons-material/MenuSharp';
+import { WidgetsTwoTone } from '@mui/icons-material';
 import HeaderLayout from '@/components/Layouts/Header';
 import { useChatSessionEffects } from '@/hooks/useChatSession';
 import FullLogoButton from '@/components/Buttons/FullLogo';
@@ -88,7 +88,7 @@ export default function AdminLiveChatPageHeader() {
             }}
             onClick={() => setShowMenu(true)}
           >
-            <MenuSharp
+            <WidgetsTwoTone
               sx={{
                 height: '100%',
                 maxHeight: 'none',

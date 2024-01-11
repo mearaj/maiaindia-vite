@@ -11,9 +11,9 @@ import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 import {
   Add,
   CloseFullscreen,
-  Fullscreen,
   Remove,
   RestartAlt,
+  SearchTwoTone,
 } from '@mui/icons-material';
 import Button from '@mui/material/Button';
 import ProductPrice from '@/components/Product/Price';
@@ -218,7 +218,7 @@ export default function ProductDetailsPage() {
                 }}
                 size="small"
               >
-                <Fullscreen />
+                <SearchTwoTone />
               </Button>
               <Button
                 variant="outlined"
@@ -230,7 +230,7 @@ export default function ProductDetailsPage() {
                 }}
                 size="small"
               >
-                <Fullscreen />
+                <SearchTwoTone />
               </Button>
               {product.images.map((item) => {
                 return (

@@ -16,6 +16,7 @@ import {
   ContactPhone,
   ExpandMore,
   Home,
+  LocalMallTwoTone,
   Message,
   ShoppingBag,
 } from '@mui/icons-material';
@@ -24,7 +25,6 @@ import PolicyIcon from '@mui/icons-material/Policy';
 import ProfileIcon from '@mui/icons-material/AccountCircle';
 import TermsConditions from '@mui/icons-material/Article';
 import { NavLink, useLocation } from 'react-router-dom';
-import ShoppingBagSharp from '@mui/icons-material/ShoppingBagSharp';
 import { isActiveByEqual, isActiveByStartsWith } from '@/misc';
 
 import { useRecoilValue } from 'recoil';
@@ -149,7 +149,7 @@ export default function NavLinks() {
               : 'text'
           }
           size="large"
-          startIcon={<ShoppingBagSharp />}
+          startIcon={<LocalMallTwoTone />}
           sx={linkButtonStyle}
         >
           Cart
