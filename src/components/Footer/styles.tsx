@@ -9,11 +9,25 @@ const footerStyle = (theme: Theme) => ({
 });
 
 const containerStyle = (_: Theme) => ({ marginBottom: '16px' });
-const contentTitleStyle = (_: Theme) => ({});
+const contentTitleStyle = (_: Theme) => ({
+  marginBottom: '2px',
+});
 const contentStyle = (_: Theme) => ({
   display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(min-content,170px))',
+  gridTemplateColumns: 'repeat(auto-fill, minmax(min-content,200px))',
   gridColumnGap: '16px',
+});
+
+const iconsContainerStyle = (_: Theme) => ({
+  display: 'flex',
+  alignItems: 'center',
+});
+
+const iconContainerStyle = (_: Theme) => ({
+  backgroundColor: 'transparent',
+  borderRadius: '8px',
+  display: 'inline-flex',
+  marginRight: '16px',
 });
 
 const radioGroupStyle = (_: Theme) => ({
@@ -27,6 +41,8 @@ export default function createStyles(theme: Theme) {
   const container = containerStyle(theme);
   const contentTitle = contentTitleStyle(theme);
   const content = contentStyle(theme);
+  const iconsContainer = iconsContainerStyle(theme);
+  const iconContainer = iconContainerStyle(theme);
   const radioGroup = radioGroupStyle(theme);
 
   return {
@@ -34,6 +50,8 @@ export default function createStyles(theme: Theme) {
     container,
     contentTitle,
     content,
+    iconsContainer,
+    iconContainer,
     radioGroup,
   };
 }

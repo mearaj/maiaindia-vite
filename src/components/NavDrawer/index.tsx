@@ -146,13 +146,18 @@ export default function NavDrawer(_: DrawerProps) {
             margin: '16px 0',
           }}
         />
+        <CategoriesRadio />
+        <Divider
+          sx={{
+            margin: '16px 0px',
+          }}
+        />
         <NavLinks />
         <Divider
           sx={{
             margin: '16px 0px',
           }}
         />
-        <CategoriesRadio />
       </Box>
     </Box>
   );

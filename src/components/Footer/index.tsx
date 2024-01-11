@@ -3,6 +3,10 @@ import { NavLink } from 'react-router-dom';
 import createStyles from './styles';
 import { appAbsoluteRoutes } from '@/Router';
 import CategoriesRadio from '@/components/Categories';
+import FacebookIcon from '@/icons/facebookIcon';
+import InstagramIcon from '@/icons/instagramIcon';
+import YoutubeIcon from '@/icons/youtubeIcon';
+import PinIcon from '@/icons/pinIcon';
 
 export default function FooterComponent() {
   const theme = useTheme();
@@ -17,9 +21,8 @@ export default function FooterComponent() {
             <Box sx={styles.contentTitle}>
               <Typography
                 color="secondary"
-                fontSize="medium"
+                fontSize="large"
                 fontWeight="bolder"
-                lineHeight="1.2"
               >
                 Categories
               </Typography>
@@ -31,12 +34,7 @@ export default function FooterComponent() {
       </Box>
       <Box sx={styles.container}>
         <Box sx={styles.contentTitle}>
-          <Typography
-            color="secondary"
-            fontSize="medium"
-            fontWeight="bolder"
-            lineHeight="1.2"
-          >
+          <Typography color="secondary" fontSize="large" fontWeight="bolder">
             Information
           </Typography>
         </Box>
@@ -45,7 +43,7 @@ export default function FooterComponent() {
             component={NavLink}
             to={appAbsoluteRoutes.privacyPolicy}
             color="secondary"
-            fontSize="small"
+            fontSize="medium"
           >
             Privacy Policy
           </Link>
@@ -53,7 +51,7 @@ export default function FooterComponent() {
             component={NavLink}
             to={appAbsoluteRoutes.cancellationRefundPolicies}
             color="secondary"
-            fontSize="small"
+            fontSize="medium"
           >
             Cancellation & Refund Policy
           </Link>
@@ -61,7 +59,7 @@ export default function FooterComponent() {
             component={NavLink}
             to={appAbsoluteRoutes.cancellationRefundPolicies}
             color="secondary"
-            fontSize="small"
+            fontSize="medium"
           >
             Terms & Conditions
           </Link>
@@ -69,12 +67,7 @@ export default function FooterComponent() {
       </Box>
       <Box sx={styles.container}>
         <Box sx={styles.contentTitle}>
-          <Typography
-            color="secondary"
-            fontSize="medium"
-            fontWeight="bold"
-            lineHeight="1.2"
-          >
+          <Typography color="secondary" fontSize="large" fontWeight="bold">
             Contact Us
           </Typography>
         </Box>
@@ -83,7 +76,7 @@ export default function FooterComponent() {
             component={NavLink}
             to={appAbsoluteRoutes.contactUs}
             color="secondary"
-            fontSize="small"
+            fontSize="medium"
           >
             WhatsApp / Live Chat
           </Link>
@@ -91,7 +84,7 @@ export default function FooterComponent() {
             component={NavLink}
             to="tel:+91-9173169661"
             color="secondary"
-            fontSize="small"
+            fontSize="medium"
           >
             Mobile: +91-9173169661
           </Link>
@@ -99,7 +92,7 @@ export default function FooterComponent() {
             component={NavLink}
             to="mailto:proud@maiaindia.com"
             color="secondary"
-            fontSize="small"
+            fontSize="medium"
           >
             Email: proud@maiaindia.com
           </Link>
@@ -107,12 +100,7 @@ export default function FooterComponent() {
       </Box>
       <Box sx={styles.container}>
         <Box sx={styles.contentTitle}>
-          <Typography
-            color="secondary"
-            fontSize="medium"
-            fontWeight="bold"
-            lineHeight="1.2"
-          >
+          <Typography color="secondary" fontSize="large" fontWeight="bold">
             About Us
           </Typography>
         </Box>
@@ -121,24 +109,86 @@ export default function FooterComponent() {
             component={NavLink}
             to={appAbsoluteRoutes.aboutUs}
             color="secondary"
-            fontSize="small"
+            fontSize="medium"
           >
             About Maia Jewellery
           </Link>
         </Box>
       </Box>
-      <Box style={styles.container}>
-        <Box style={styles.contentTitle}>
-          <Typography
+      <Box sx={styles.container}>
+        <Box sx={{ ...styles.contentTitle, marginBottom: '4px' }}>
+          <Typography color="secondary" fontSize="large" fontWeight="bold">
+            Social Links
+          </Typography>
+        </Box>
+        <Box sx={styles.iconsContainer}>
+          <Link
+            component={NavLink}
+            to="https://www.instagram.com/_maiaindia_?igsh=MTg4bHA5eDM0eWk3NA=="
             color="secondary"
             fontSize="medium"
-            fontWeight="bold"
-            lineHeight="1.2"
+            target="_blank"
+            sx={{ padding: '0px' }}
           >
+            <Box sx={{ ...styles.iconContainer }}>
+              <FacebookIcon fontSize="32px" />
+            </Box>
+          </Link>
+          <Link
+            component={NavLink}
+            to="https://www.facebook.com/profile.php?id=100093529567691&mibextid=hIlR13"
+            color="secondary"
+            fontSize="medium"
+            target="_blank"
+          >
+            <Box sx={{ ...styles.iconContainer }}>
+              <InstagramIcon fontSize="32px" />
+            </Box>
+          </Link>
+          <Link
+            component={NavLink}
+            to="https://youtube.com/@maiaindia?si=4uJcIbZDMPhIJR-1"
+            color="secondary"
+            fontSize="medium"
+            target="_blank"
+          >
+            <Box
+              sx={{
+                ...styles.iconContainer,
+              }}
+            >
+              <YoutubeIcon fontSize="32px" />
+            </Box>
+          </Link>
+          <Link
+            component={NavLink}
+            to="https://pin.it/yPnIzzf"
+            color="secondary"
+            fontSize="medium"
+            target="_blank"
+          >
+            <Box
+              sx={{
+                ...styles.iconContainer,
+              }}
+            >
+              <PinIcon fontSize="32px" />
+            </Box>
+          </Link>
+        </Box>
+      </Box>
+      <Box style={styles.container}>
+        <Box style={styles.contentTitle}>
+          <Typography color="secondary" fontSize="large" fontWeight="bold">
             Our Location
           </Typography>
         </Box>
-        <Typography color="secondary" fontSize="small" component="address">
+        <Typography
+          color="secondary"
+          fontSize="medium"
+          component="address"
+          fontStyle="normal"
+        >
           10/1529, Kanchan Villa, Oswal Street, Near Shubhash Chowk, Gopipura,
           Surat, Gujarat, India 395001.
         </Typography>
@@ -152,10 +202,10 @@ export default function FooterComponent() {
       <Box sx={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
         <Typography
           color="secondary"
-          fontSize="small"
+          fontSize="medium"
           sx={{ display: 'flex', alignItems: 'center' }}
         >
-          <span style={{ fontWeight: 'bolder', fontSize: '24px' }}>
+          <span style={{ fontWeight: 'bolder', fontSize: '32px' }}>
             &copy;&nbsp;
           </span>
           2024 Maia Jewellery | Powered By Triton Enterprise

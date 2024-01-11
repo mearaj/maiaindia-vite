@@ -4,7 +4,7 @@ import { userAtom } from '@/recoil/atoms';
 import { useRecoilValue } from 'recoil';
 import { AuthState } from '@/recoil/data/auth';
 import Loader from '@/components/Loader';
-import GoogleIcon from '@/icons/google-g';
+import GoogleIcon from '@/icons/googleG';
 import createStyles from '@/components/Buttons/SignIn/styles';
 import useSignInWithGooglePopup from '@/hooks/useSignInWithGooglePopup';
 
