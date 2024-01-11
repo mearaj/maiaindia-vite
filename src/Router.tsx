@@ -105,7 +105,12 @@ function AuthRoutes() {
   if (!userState) {
     return (
       <CommonPageLayout
-        sxBodyProps={{ justifyContent: 'center', alignItems: 'center' }}
+        sxBodyProps={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'column',
+        }}
       >
         <Box>Sign In required</Box>
         <SignInButton />

@@ -55,7 +55,10 @@ export default function CancellationRefundPolicy() {
   ];
 
   return (
-    <CommonPageLayout sxBodyProps={{ padding: '16px' }}>
+    <CommonPageLayout
+      sxBodyProps={{ padding: '16px' }}
+      headerProps={{ showBackIcon: true }}
+    >
       <Typography
         variant="h4"
         sx={{ textAlign: 'center', marginBottom: '16px' }}

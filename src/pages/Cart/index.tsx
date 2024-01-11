@@ -21,6 +21,9 @@ export default function CartPage() {
           alignItems: 'center',
           justifyContent: 'center',
         }}
+        headerProps={{
+          showBackIcon: true,
+        }}
       >
         Your cart is empty!
       </CommonPageLayout>
@@ -28,7 +31,12 @@ export default function CartPage() {
   }
 
   return (
-    <CommonPageLayout sxRootProps={{ ...styles.root }}>
+    <CommonPageLayout
+      headerProps={{
+        showBackIcon: true,
+      }}
+      sxRootProps={{ ...styles.root }}
+    >
       <Box sx={styles.cartBody}>
         {Object.keys(user.userState!.cart.items).map((productID) => {
           return <CartItemComponent key={productID} productId={productID} />;

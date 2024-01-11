@@ -10,7 +10,6 @@ import ChatTabsComponent from '@/components/LiveChat/ChatTabs';
 import SignInRequiredDialog from '@/components/Dialogs/SignInRequired';
 import SignInButton from '@/components/Buttons/SignIn';
 import useDimensions from '@/hooks/useDimensions';
-import CommonHeader from '@/components/CommonHeader';
 import { appAbsoluteRoutes } from '@/Router';
 
 export default function LiveChatButton() {
@@ -42,11 +41,6 @@ export default function LiveChatButton() {
   if (!user.userState) {
     mainComponent = (
       <Box sx={{ height: `calc(100% - ${theme.dimensions.appBarHeight}px)` }}>
-        <CommonHeader
-          onMinimizeClick={() => {
-            setIsUIMaximized(false);
-          }}
-        />
         <Box sx={centerStyle}>
           <SignInButton />
         </Box>

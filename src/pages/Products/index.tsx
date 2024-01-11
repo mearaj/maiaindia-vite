@@ -7,7 +7,7 @@ import RecoilLoadableComponent from '@/components/Layouts/RecoilLoadableComponen
 import CommonPageLayout from '@/components/Layouts/CommonPage';
 import FooterComponent from '@/components/Footer';
 
-export default function AdminProductsPage() {
+export default function ProductsPage() {
   const recoilValueLoadable = useRecoilValueLoadable(productsSelector);
 
   return (

@@ -3,12 +3,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Box, Divider, useTheme } from '@mui/material';
 import { useRecoilState } from 'recoil';
 import { menuAtom } from '@/recoil/atoms/menu';
-import CommonHeader from '@/components/CommonHeader';
+import LiveChatHeader from '@/components/LiveChat/ChatHeader';
 import CategoriesRadio from '@/components/Categories';
 import NavLinks from '@/components/NavLinks';
 import useDimensions from '@/hooks/useDimensions';
 import UserComponent from '@/components/User';
 import createStyles from './styles';
+import FullLogoButton from '@/components/Buttons/FullLogo';
 
 export interface DrawerProps {
   className?: string;
@@ -134,10 +135,15 @@ export default function NavDrawer(_: DrawerProps) {
       onMouseUp={onTouchEndOrOnMouseUp}
       role="presentation"
     >
-      <CommonHeader
+      <LiveChatHeader
         onCloseClick={() => {
           setShowMenu(false);
         }}
+        leftComponent={
+          <Box sx={{ padding: '8px 0px' }}>
+            <FullLogoButton logoHeight="32px" />
+          </Box>
+        }
       />
       <Box sx={styles.main}>
         <UserComponent />

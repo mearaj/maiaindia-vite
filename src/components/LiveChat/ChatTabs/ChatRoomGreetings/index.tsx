@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import { userPlaceholderSvgUrl } from '@/recoil/data/user';
+import maiaLogo from '@/images/logo-circle-dark-green.png';
 
 export default function ChatRoomGreetingsComponent() {
   return (
@@ -11,8 +11,8 @@ export default function ChatRoomGreetingsComponent() {
         padding: '16px',
       }}
     >
-      <Box sx={{ height: '80px', marginBottom: '16px' }}>
-        <img src={userPlaceholderSvgUrl} alt="Executive" height="100%" />
+      <Box sx={{ height: '80px', marginBottom: '16px', width: 'auto' }}>
+        <img src={maiaLogo} alt="Executive" height="100%" />
       </Box>
       <Box>
         <Typography

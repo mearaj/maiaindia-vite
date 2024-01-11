@@ -2,22 +2,19 @@ import { Box, IconButton, SxProps, Theme, useTheme } from '@mui/material';
 import { MouseEventHandler, ReactNode } from 'react';
 import Close from '@mui/icons-material/Close';
 import { Minimize } from '@mui/icons-material';
-import ArrowBack from '@mui/icons-material/ArrowBackIos';
-import createStyles from '@/components/CommonHeader/styles';
+import createStyles from '@/components/LiveChat/ChatHeader/styles';
 
 export interface CommonHeaderProps {
   onCloseClick?: MouseEventHandler;
   onMinimizeClick?: MouseEventHandler;
-  centerComponent?: ReactNode;
-  onBackIconClick?: () => void;
+  leftComponent?: ReactNode;
   sx?: SxProps<Theme>;
 }
 
-export default function CommonHeader({
+export default function LiveChatHeader({
   onCloseClick,
-  centerComponent,
+  leftComponent,
   onMinimizeClick,
-  onBackIconClick,
   sx = {},
 }: CommonHeaderProps) {
   const theme = useTheme();
@@ -33,22 +30,8 @@ export default function CommonHeader({
           flexShrink: 0,
         }}
       >
-        <Box sx={{ height: '100%', flexShrink: 0, display: 'flex' }}>
-          {onBackIconClick ? (
-            <IconButton sx={styles.backIconButton} onClick={onBackIconClick}>
-              <ArrowBack style={styles.icon} />
-            </IconButton>
-          ) : (
-            <Box
-              component="img"
-              src="/images/logo-yellow.png"
-              alt="logo"
-              sx={{ height: '100%', width: 'auto', padding: '8px 0px' }}
-            />
-          )}
-        </Box>
+        {leftComponent}
       </Box>
-      {centerComponent}
       <Box sx={{ display: 'flex', flexShrink: 0 }}>
         {onMinimizeClick && (
           <Box

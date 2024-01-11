@@ -6,8 +6,8 @@ import {
   currentUserLastActiveChatSessionAtom,
   currentUserLiveChatMaximizedAtom,
 } from '@/recoil/atoms/supportChat';
+import LiveChatHeader from '@/components/LiveChat/ChatHeader';
 import CommonChatRoomComponent from '@/components/LiveChat/ChatTabs/CommonChatRoom';
-import CommonHeader from '@/components/CommonHeader';
 import ChatDetailsComponent from '@/components/LiveChat/ChatTabs/ChatDetails';
 import { useChatSessionEffects } from '@/hooks/useChatSession';
 
@@ -28,13 +28,13 @@ export default function ChatTabsComponent() {
   const theme = useTheme();
   return (
     <Box sx={{ height: '100%' }}>
-      <CommonHeader
-        sx={{ backgroundColor: alpha(theme.palette.primary.main, 0.45) }}
+      <LiveChatHeader
+        sx={{ backgroundColor: alpha(theme.palette.primary.main, 0.7) }}
         onCloseClick={chatSessionEffects.promptOnBackClick}
         onMinimizeClick={() => {
           setIsUIMaximized(!isUIMaximized);
         }}
-        centerComponent={
+        leftComponent={
           <Box
             sx={{
               color: theme.palette.secondary.main,

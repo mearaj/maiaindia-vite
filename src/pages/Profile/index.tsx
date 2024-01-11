@@ -316,6 +316,9 @@ export default function ProfilePage() {
         alignItems: 'stretch',
         padding: '16px',
       }}
+      headerProps={{
+        showBackIcon: true,
+      }}
     >
       {getUploadProgressContainer()}
       <Box

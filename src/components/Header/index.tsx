@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Menu from '@mui/icons-material/Menu';
-import Diamond from '@mui/icons-material/Diamond';
 import {
   AppBar,
   Box,
@@ -9,6 +8,7 @@ import {
   SxProps,
   Theme,
   Toolbar,
+  Typography,
   useTheme,
 } from '@mui/material';
 import ArrowBack from '@mui/icons-material/ArrowBackIos';
@@ -17,10 +17,9 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { menuAtom } from '@/recoil/atoms/menu';
 import { userAtom } from '@/recoil/atoms';
-import useDimensions from '@/hooks/useDimensions';
 import createStyles from './styles';
-
 import { appAbsoluteRoutes } from '@/Router';
+import FullLogoButton from '@/components/Buttons/FullLogo';
 
 export interface HeaderProps {
   showBackIcon?: boolean;
@@ -33,7 +32,7 @@ export default function Header({
   onBackIconClick,
   sx,
 }: HeaderProps) {
-  const dimensions = useDimensions();
+  // const dimensions = useDimensions();
   const [, setShowMenu] = useRecoilState(menuAtom);
   const navigate = useNavigate();
   const theme = useTheme();
@@ -43,12 +42,6 @@ export default function Header({
     e.preventDefault();
     if (onBackIconClick) {
       onBackIconClick();
-    } else if (
-      window.history.length > 1
-      // window.history.state &&
-      // (window.history.state.idx > 0 || window.history.state.index > 0)
-    ) {
-      navigate(appAbsoluteRoutes.products, { replace: true });
     } else {
       navigate(appAbsoluteRoutes.products, { replace: true });
     }
@@ -58,10 +51,10 @@ export default function Header({
     setShowMenu(true);
   };
 
-  let logoImgSrc = '/images/logo-circle-yellow.png';
-  if (dimensions.width >= 360) {
-    logoImgSrc = '/images/logo-yellow.png';
-  }
+  // let logoImgSrc = '/images/logo-circle-yellow.png';
+  // if (dimensions.width >= 360) {
+  //   logoImgSrc = '/images/logo-yellow.png';
+  // }
 
   return (
     <AppBar
@@ -81,34 +74,24 @@ export default function Header({
             </Button>
           )}
           {!showBackIcon && (
-            <Link
-              variant="button"
-              component={NavLink}
-              to={appAbsoluteRoutes.products}
-              sx={styles.link}
-            >
-              <Button sx={styles.logoIconButton}>
-                <Box
-                  src={logoImgSrc}
-                  component="img"
-                  sx={{ ...styles.icon, height: '42px' }}
-                  alt="Logo"
-                />
-              </Button>
-            </Link>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Link
+                variant="button"
+                component={NavLink}
+                to={appAbsoluteRoutes.products}
+                sx={styles.link}
+              >
+                <Button sx={{ padding: '8px' }}>
+                  <Typography color="secondary">Custom</Typography>
+                </Button>
+              </Link>
+            </Box>
           )}
         </Box>
+        <Box>
+          <FullLogoButton />
+        </Box>
         <Box sx={styles.sectionRight}>
-          <Link
-            sx={styles.link}
-            variant="button"
-            component={NavLink}
-            to={appAbsoluteRoutes.contactUs}
-          >
-            <Button sx={styles.iconButton}>
-              <Diamond sx={styles.icon} />
-            </Button>
-          </Link>
           <Link
             sx={{ ...styles.link, position: 'relative' }}
             component={NavLink}

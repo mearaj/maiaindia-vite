@@ -3,6 +3,9 @@ import { User } from '@firebase/auth';
 import { AuthState } from '@/recoil/data/auth';
 import { Cart } from '@/recoil/data/cart';
 
+export { default as userPlaceholderSvgUrl } from '@/images/user-placeholder.svg';
+export { default as userPlaceholderPngUrl } from '@/images/user-placeholder.png';
+
 export interface UserProfile {
   email: string | null;
   id?: string; // only required for frontend
@@ -18,6 +21,3 @@ export interface AppUser {
     cart: Cart;
   } | null;
 }
-
-export const userPlaceholderSvgUrl = `/images/user-placeholder.svg`;
-export const userPlaceholderPngUrl = `/images/user-placeholder.png`;

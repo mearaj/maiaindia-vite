@@ -43,7 +43,7 @@ export default function FooterComponent() {
             component={NavLink}
             to={appAbsoluteRoutes.privacyPolicy}
             color="secondary"
-            fontSize="medium"
+            fontSize="small"
           >
             Privacy Policy
           </Link>
@@ -51,7 +51,7 @@ export default function FooterComponent() {
             component={NavLink}
             to={appAbsoluteRoutes.cancellationRefundPolicies}
             color="secondary"
-            fontSize="medium"
+            fontSize="small"
           >
             Cancellation & Refund Policy
           </Link>
@@ -59,7 +59,7 @@ export default function FooterComponent() {
             component={NavLink}
             to={appAbsoluteRoutes.cancellationRefundPolicies}
             color="secondary"
-            fontSize="medium"
+            fontSize="small"
           >
             Terms & Conditions
           </Link>
@@ -76,7 +76,7 @@ export default function FooterComponent() {
             component={NavLink}
             to={appAbsoluteRoutes.contactUs}
             color="secondary"
-            fontSize="medium"
+            fontSize="small"
           >
             WhatsApp / Live Chat
           </Link>
@@ -84,7 +84,7 @@ export default function FooterComponent() {
             component={NavLink}
             to="tel:+91-9173169661"
             color="secondary"
-            fontSize="medium"
+            fontSize="small"
           >
             Mobile: +91-9173169661
           </Link>
@@ -92,7 +92,7 @@ export default function FooterComponent() {
             component={NavLink}
             to="mailto:proud@maiaindia.com"
             color="secondary"
-            fontSize="medium"
+            fontSize="small"
           >
             Email: proud@maiaindia.com
           </Link>
@@ -109,7 +109,7 @@ export default function FooterComponent() {
             component={NavLink}
             to={appAbsoluteRoutes.aboutUs}
             color="secondary"
-            fontSize="medium"
+            fontSize="small"
           >
             About Maia Jewellery
           </Link>
@@ -124,9 +124,9 @@ export default function FooterComponent() {
         <Box sx={styles.iconsContainer}>
           <Link
             component={NavLink}
-            to="https://www.instagram.com/_maiaindia_?igsh=MTg4bHA5eDM0eWk3NA=="
+            to="https://www.facebook.com/profile.php?id=100093529567691&mibextid=hIlR13"
             color="secondary"
-            fontSize="medium"
+            fontSize="small"
             target="_blank"
             sx={{ padding: '0px' }}
           >
@@ -136,9 +136,9 @@ export default function FooterComponent() {
           </Link>
           <Link
             component={NavLink}
-            to="https://www.facebook.com/profile.php?id=100093529567691&mibextid=hIlR13"
+            to="https://www.instagram.com/_maiaindia_?igsh=MTg4bHA5eDM0eWk3NA=="
             color="secondary"
-            fontSize="medium"
+            fontSize="small"
             target="_blank"
           >
             <Box sx={{ ...styles.iconContainer }}>
@@ -149,7 +149,7 @@ export default function FooterComponent() {
             component={NavLink}
             to="https://youtube.com/@maiaindia?si=4uJcIbZDMPhIJR-1"
             color="secondary"
-            fontSize="medium"
+            fontSize="small"
             target="_blank"
           >
             <Box
@@ -164,7 +164,7 @@ export default function FooterComponent() {
             component={NavLink}
             to="https://pin.it/yPnIzzf"
             color="secondary"
-            fontSize="medium"
+            fontSize="small"
             target="_blank"
           >
             <Box
@@ -185,7 +185,7 @@ export default function FooterComponent() {
         </Box>
         <Typography
           color="secondary"
-          fontSize="medium"
+          fontSize="small"
           component="address"
           fontStyle="normal"
         >
@@ -202,10 +202,10 @@ export default function FooterComponent() {
       <Box sx={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
         <Typography
           color="secondary"
-          fontSize="medium"
+          fontSize="x-small"
           sx={{ display: 'flex', alignItems: 'center' }}
         >
-          <span style={{ fontWeight: 'bolder', fontSize: '32px' }}>
+          <span style={{ fontWeight: 'bolder', fontSize: '28px' }}>
             &copy;&nbsp;
           </span>
           2024 Maia Jewellery | Powered By Triton Enterprise

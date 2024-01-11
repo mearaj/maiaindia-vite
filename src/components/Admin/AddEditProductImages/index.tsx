@@ -13,6 +13,7 @@ import { Delete, Download } from '@mui/icons-material';
 import Button from '@mui/material/Button';
 import { ProductFormModeState } from '@/recoil/data/product';
 import styles from './index.module.css';
+import addEditProductImagesPlaceholder from '@/images/placeholder.svg';
 
 export default function AddEditProductImagesComponent() {
   const productImages = useRecoilValue(productFormImagesSelector);
@@ -48,7 +49,7 @@ export default function AddEditProductImagesComponent() {
         {filteredProductImages.length === 0 && localImages.length === 0 ? (
           <SwiperSlide className={styles.slide}>
             <img
-              src="/images/placeholder.svg"
+              src={addEditProductImagesPlaceholder}
               alt="Placeholder"
               className={styles.image}
               placeholder="blur"

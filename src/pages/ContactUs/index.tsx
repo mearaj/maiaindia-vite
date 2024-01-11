@@ -24,7 +24,7 @@ export default function ContactUsPage() {
   };
 
   return (
-    <CommonPageLayout showHeader>
+    <CommonPageLayout headerProps={{ showBackIcon: true }}>
       <Box sx={{ padding: '16px' }}>
         <Link
           component={NavLink}
