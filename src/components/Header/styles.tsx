@@ -9,8 +9,7 @@ const toolbarStyles = (_: Theme) => ({
 
 const sectionLeftStyles = (_: Theme) => ({
   height: '100%',
-  minWidth: '100px',
-  flexGrow: 0,
+  minWidth: '85px',
   display: 'flex',
   alignItems: 'center',
   transition: 'flex-grow 250ms, flex-shrink 250ms',
