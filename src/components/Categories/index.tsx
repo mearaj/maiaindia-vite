@@ -89,7 +89,7 @@ export default function CategoriesRadio({
                 />
               }
               label={
-                <Typography fontSize="small" color={labelColor || 'primary'}>
+                <Typography fontSize="medium" color={labelColor || 'primary'}>
                   {eachCategory.name}
                 </Typography>
               }
