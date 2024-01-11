@@ -88,7 +88,14 @@ export default function Header({
             </Box>
           )}
         </Box>
-        <Box>
+        <Box
+          sx={{
+            flexGrow: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           <FullLogoButton />
         </Box>
         <Box sx={styles.sectionRight}>

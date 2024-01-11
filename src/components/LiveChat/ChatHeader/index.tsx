@@ -32,6 +32,7 @@ export default function LiveChatHeader({
       >
         {leftComponent}
       </Box>
+
       <Box sx={{ display: 'flex', flexShrink: 0 }}>
         {onMinimizeClick && (
           <Box

@@ -29,7 +29,7 @@ export default function ChatTabsComponent() {
   return (
     <Box sx={{ height: '100%' }}>
       <LiveChatHeader
-        sx={{ backgroundColor: alpha(theme.palette.primary.main, 0.7) }}
+        sx={{ backgroundColor: alpha(theme.palette.primary.main, 0.8) }}
         onCloseClick={chatSessionEffects.promptOnBackClick}
         onMinimizeClick={() => {
           setIsUIMaximized(!isUIMaximized);
@@ -41,6 +41,7 @@ export default function ChatTabsComponent() {
               display: 'flex',
               justifyContent: 'center',
               fontSize: '18px',
+              paddingLeft: '8px',
             }}
           >
             Live Chat

@@ -140,8 +140,8 @@ export default function NavDrawer(_: DrawerProps) {
           setShowMenu(false);
         }}
         leftComponent={
-          <Box sx={{ padding: '8px 0px' }}>
-            <FullLogoButton logoHeight="32px" />
+          <Box sx={{ padding: '4px 8px' }}>
+            <FullLogoButton logoHeight="36px" />
           </Box>
         }
       />

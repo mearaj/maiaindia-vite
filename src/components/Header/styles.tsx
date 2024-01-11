@@ -9,13 +9,13 @@ const toolbarStyles = (_: Theme) => ({
 
 const sectionLeftStyles = (_: Theme) => ({
   height: '100%',
-  width: 'auto',
+  minWidth: '100px',
+  flexGrow: 0,
   display: 'flex',
   alignItems: 'center',
   transition: 'flex-grow 250ms, flex-shrink 250ms',
   overflow: 'hidden',
   flexShrink: '0',
-  flexGrow: '1',
 });
 
 const sectionRightStyles = (th: Theme) => ({

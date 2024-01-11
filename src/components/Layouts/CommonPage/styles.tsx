@@ -13,6 +13,7 @@ const bodyStyles = (theme: Theme, showHeader: boolean): SxProps<Theme> => {
     height: showHeader
       ? `calc(100% - ${theme.dimensions.appBarHeight}px)`
       : '100%',
+    overflowY: 'auto',
   };
 };
 
