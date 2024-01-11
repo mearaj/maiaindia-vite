@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Menu from '@mui/icons-material/Menu';
+import Menu from '@mui/icons-material/MenuRounded';
 import {
   AppBar,
   Box,
