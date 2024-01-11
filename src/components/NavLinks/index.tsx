@@ -24,7 +24,7 @@ import PolicyIcon from '@mui/icons-material/Policy';
 import ProfileIcon from '@mui/icons-material/AccountCircle';
 import TermsConditions from '@mui/icons-material/Article';
 import { NavLink, useLocation } from 'react-router-dom';
-import ShoppingCart from '@mui/icons-material/ShoppingCart';
+import ShoppingBagSharp from '@mui/icons-material/ShoppingBagSharp';
 import { isActiveByEqual, isActiveByStartsWith } from '@/misc';
 
 import { useRecoilValue } from 'recoil';
@@ -149,7 +149,7 @@ export default function NavLinks() {
               : 'text'
           }
           size="large"
-          startIcon={<ShoppingCart />}
+          startIcon={<ShoppingBagSharp />}
           sx={linkButtonStyle}
         >
           Cart

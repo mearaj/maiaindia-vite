@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Menu from '@mui/icons-material/MenuRounded';
+import MenuSharp from '@mui/icons-material/MenuSharp';
 import {
   AppBar,
   Box,
@@ -12,7 +12,7 @@ import {
   useTheme,
 } from '@mui/material';
 import ArrowBack from '@mui/icons-material/ArrowBackIos';
-import ShoppingCart from '@mui/icons-material/ShoppingCart';
+import ShoppingBagSharp from '@mui/icons-material/ShoppingBagSharp';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { menuAtom } from '@/recoil/atoms/menu';
@@ -105,7 +105,7 @@ export default function Header({
             to="/cart"
           >
             <Button sx={styles.iconButton}>
-              <ShoppingCart sx={styles.icon} />
+              <ShoppingBagSharp sx={styles.icon} />
             </Button>
             {user &&
               user.userState &&
@@ -139,7 +139,7 @@ export default function Header({
             sx={styles.iconButton}
             onClick={() => handleInteractionItemClick()}
           >
-            <Menu sx={styles.icon} />
+            <MenuSharp sx={styles.icon} />
           </Button>
         </Box>
       </Toolbar>
