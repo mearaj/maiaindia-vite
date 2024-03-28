@@ -1,49 +1,45 @@
 import { Box } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  useRecoilValue,
-  useRecoilValueLoadable,
-  useSetRecoilState,
-} from 'recoil';
-import { productIdSelector } from '@/recoil/selectors/productId';
-import { categories } from '@/recoil/data/category';
+import { productIdAtom, productIdSelector } from '@/jotai/selectors/productId';
+import { categories } from '@/jotai/data/category';
 import {
   defaultProductFormState,
   productFormStateAtom,
-} from '@/recoil/atoms/productForm';
+} from '@/jotai/atoms/productForm';
 import * as React from 'react';
 import { SyntheticEvent, useCallback, useEffect } from 'react';
-import { ProductForm } from '@/recoil/data/product';
+import { ProductForm } from '@/jotai/data/product';
 import {
   productFormLocalImagesSelector,
   productFormModeStateSelector,
   productFormProcessingStateSelector,
   productFormSelector,
-} from '@/recoil/selectors/productForm';
+} from '@/jotai/selectors/productForm';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { loadable } from 'jotai/utils';
+import LoadablePageLayout from '@/components/Layouts/JotailLoadablePage';
 import styles from './index.module.css';
 import { appAbsoluteRoutes } from '@/Router';
 import AddEditProductComponent from '@/components/Admin/AddEditProduct';
 import AddEditProductImagesComponent from '@/components/Admin/AddEditProductImages';
-import RecoilLoadablePageLayout from '@/components/Layouts/RecoilLoadablePage';
 import AdminProductFormFooterComponent from '@/components/Admin/ProductFormFooter';
 
 export default function AdminProductDetailsPage() {
   const params = useParams();
-  const recoilProductValueLoadable = useRecoilValueLoadable(
-    productIdSelector(params.id as string)
-  );
+  const setProductID = useSetAtom(productIdAtom);
+  const productWithImagesLoadable = loadable(productIdSelector);
+  const productValueLoadable = useAtomValue(productWithImagesLoadable);
 
-  const setProductFormState = useSetRecoilState(productFormStateAtom);
-  const productForm = useRecoilValue(productFormSelector);
+  const setProductFormState = useSetAtom(productFormStateAtom);
+  const productForm = useAtomValue(productFormSelector);
   const navigate = useNavigate();
-  const locallyUploadedImages = useRecoilValue(productFormLocalImagesSelector);
-  const isProcessing = useRecoilValue(productFormProcessingStateSelector);
-  const formMode = useRecoilValue(productFormModeStateSelector);
+  const locallyUploadedImages = useAtomValue(productFormLocalImagesSelector);
+  const isProcessing = useAtomValue(productFormProcessingStateSelector);
+  const formMode = useAtomValue(productFormModeStateSelector);
 
   const product =
-    recoilProductValueLoadable.state === 'hasValue' &&
-    recoilProductValueLoadable.contents
-      ? recoilProductValueLoadable.contents
+    productValueLoadable.state === 'hasData' && productValueLoadable.data
+      ? productValueLoadable.data
       : undefined;
 
   const handleReset = useCallback(
@@ -57,7 +53,7 @@ export default function AdminProductDetailsPage() {
         event.stopPropagation();
       }
       const shouldReset =
-        recoilProductValueLoadable.state === 'hasValue' && !isProcessing;
+        productValueLoadable.state === 'hasData' && !isProcessing;
 
       if (shouldReset && product) {
         const newProductForm: ProductForm = {
@@ -86,14 +82,14 @@ export default function AdminProductDetailsPage() {
       locallyUploadedImages,
       isProcessing,
       product,
-      recoilProductValueLoadable.state,
+      productValueLoadable.state,
       setProductFormState,
     ]
   );
 
   useEffect(() => {
-    if (recoilProductValueLoadable.state === 'hasValue') {
-      const newProduct = recoilProductValueLoadable.contents;
+    if (productValueLoadable.state === 'hasData') {
+      const newProduct = productValueLoadable.data;
       const newProductForm: ProductForm = {
         details: newProduct.details ?? '',
         mrp: newProduct.mrp,
@@ -118,14 +114,17 @@ export default function AdminProductDetailsPage() {
     formMode,
     product?.images,
     productForm.id,
-    recoilProductValueLoadable.contents,
-    recoilProductValueLoadable.state,
+    productValueLoadable.state,
     setProductFormState,
   ]);
 
+  useEffect(() => {
+    setProductID(params.id as string);
+  }, [params.id as string, setProductID]);
+
   return (
-    <RecoilLoadablePageLayout
-      recoilLoadable={recoilProductValueLoadable}
+    <LoadablePageLayout
+      jotaiLoadable={productValueLoadable}
       headerProps={{
         showBackIcon: true,
         onBackIconClick: () => {
@@ -144,6 +143,6 @@ export default function AdminProductDetailsPage() {
           </>
         )}
       </Box>
-    </RecoilLoadablePageLayout>
+    </LoadablePageLayout>
   );
 }

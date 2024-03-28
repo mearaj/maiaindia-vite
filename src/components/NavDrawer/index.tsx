@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Box, Divider, useTheme } from '@mui/material';
-import { useRecoilState } from 'recoil';
-import { menuAtom } from '@/recoil/atoms/menu';
+import { menuAtom } from '@/jotai/atoms/menu';
+import { useAtom } from 'jotai';
 import LiveChatHeader from '@/components/LiveChat/ChatHeader';
 import CategoriesRadio from '@/components/Categories';
 import NavLinks from '@/components/NavLinks';
@@ -17,7 +17,7 @@ export interface DrawerProps {
 
 export default function NavDrawer(_: DrawerProps) {
   const drawerRef = useRef<HTMLDivElement>(null);
-  const [showMenu, setShowMenu] = useRecoilState(menuAtom);
+  const [showMenu, setShowMenu] = useAtom(menuAtom);
   const minTransDuration = 250; // milliseconds
   const dimensions = useDimensions();
   const [touchStartPos, setTouchStartPos] = useState({

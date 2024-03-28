@@ -1,3 +1,3 @@
-import { UserProfile } from '@/recoil/data/user';
+import { UserProfile } from '@/jotai/data/user';
 
 export type AdminUsers = { [key: string]: UserProfile };

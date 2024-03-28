@@ -1,11 +1,13 @@
 import { Box, Paper } from '@mui/material';
-import { defaultPlaceholderProductImage, Product } from '@/recoil/data/product';
+import { defaultPlaceholderProductImage, Product } from '@/jotai/data/product';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValueLoadable } from 'recoil';
-import { productIdSelector } from '@/recoil/selectors/productId';
+import { productIdAtom, productIdSelector } from '@/jotai/selectors/productId';
+import { loadable } from 'jotai/utils';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { useEffect } from 'react';
+import LoadableComponent from '@/components/Layouts/JotailLoadableComponent';
 import ProductPrice from '@/components/Product/Price';
 import AddUpdateButton from '@/components/Buttons/AddUpdate';
-import RecoilLoadableComponent from '@/components/Layouts/RecoilLoadableComponent';
 import { appAbsoluteRoutes } from '@/Router';
 
 export default function ProductComponent({
@@ -16,16 +18,20 @@ export default function ProductComponent({
   isAdminProduct: boolean;
 }) {
   const navigate = useNavigate();
-  const productWithImages = useRecoilValueLoadable(
-    productIdSelector(product.id!)
-  );
+  const setProductID = useSetAtom(productIdAtom);
+  const productWithImagesLoadable = loadable(productIdSelector);
+  const productWithImages = useAtomValue(productWithImagesLoadable);
+
+  useEffect(() => {
+    setProductID(product.id!);
+  }, [product.id, setProductID]);
 
   const preferredImgSrc =
-    productWithImages.state === 'hasValue' &&
-    productWithImages.contents &&
-    productWithImages.contents.images &&
-    productWithImages.contents.images.length > 0
-      ? productWithImages.contents.images[0]
+    productWithImages.state === 'hasData' &&
+    productWithImages.data &&
+    productWithImages.data.images &&
+    productWithImages.data.images.length > 0
+      ? productWithImages.data.images[0]
       : defaultPlaceholderProductImage;
   const imageStyle = {
     height: 'auto',
@@ -80,10 +86,10 @@ export default function ProductComponent({
               padding: '16px',
             }}
           >
-            <RecoilLoadableComponent
+            <LoadableComponent
               errorContainerStyle={imageStyle}
               loaderContainerStyle={imageStyle}
-              recoilLoadable={productWithImages}
+              jotaiLoadable={productWithImages}
             >
               <Box
                 component="img"
@@ -91,7 +97,7 @@ export default function ProductComponent({
                 alt={product.name}
                 sx={imageStyle}
               />
-            </RecoilLoadableComponent>
+            </LoadableComponent>
           </Box>
           <Box sx={{ padding: '4px 8px 4px' }}>
             <Box

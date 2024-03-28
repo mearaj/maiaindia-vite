@@ -12,9 +12,8 @@ import {
 import { Attachment, Send } from '@mui/icons-material';
 import { useEffect, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
-import { SetterOrUpdater, useRecoilValue, useSetRecoilState } from 'recoil';
-import { userAtom } from '@/recoil/atoms';
-import { userPlaceholderSvgUrl } from '@/recoil/data/user';
+import { userAtom } from '@/jotai/atoms';
+import { userPlaceholderSvgUrl } from '@/jotai/data/user';
 import {
   addDoc,
   collection,
@@ -28,10 +27,11 @@ import { appFirestore } from '@/firebase';
 import {
   SupportChatMessage,
   SupportChatSession,
-} from '@/recoil/data/supportChat';
-import { selectedDialogAtom } from '@/recoil/atoms/dialog';
+} from '@/jotai/data/supportChat';
+import { selectedDialogAtom } from '@/jotai/atoms/dialog';
 import CircularProgress from '@mui/material/CircularProgress';
 import { FirebaseError, uuidv4 } from '@firebase/util';
+import { useAtomValue, useSetAtom } from 'jotai/index';
 import ChatRoomGreetingsComponent from '@/components/LiveChat/ChatTabs/ChatRoomGreetings';
 import SnackbarDialog from '@/components/Dialogs/SnackBar';
 
@@ -42,15 +42,14 @@ export default function CommonChatRoomComponent({
 }: {
   isAdminUI?: boolean;
   chatSession: SupportChatSession | null;
-  setChatSession: SetterOrUpdater<SupportChatSession | null>;
+  setChatSession: Function;
 }) {
   const [textValue, setTextValue] = useState('');
   const ref = useRef<HTMLElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const appUser = useRecoilValue(userAtom);
-  const setDialog = useSetRecoilState(selectedDialogAtom);
+  const appUser = useAtomValue(userAtom);
+  const setDialog = useSetAtom(selectedDialogAtom);
   const theme = useTheme();
-
   const createNewChatSession = async (): Promise<SupportChatSession | null> => {
     const open = true;
     let newChatSession: SupportChatSession | null = null;

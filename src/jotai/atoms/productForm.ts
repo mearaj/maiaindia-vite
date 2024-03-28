@@ -1,7 +1,6 @@
-import { atom } from 'recoil';
-import { recoilKeys } from '@/recoil/data/recoilKeys';
-import { ProductFormModeState, ProductFormState } from '@/recoil/data/product';
-import { categories } from '@/recoil/data/category';
+import { atom } from 'jotai';
+import { ProductFormModeState, ProductFormState } from '@/jotai/data/product';
+import { categories } from '@/jotai/data/category';
 
 export const defaultProductForm = {
   id: null,
@@ -22,7 +21,6 @@ export const defaultProductFormState: ProductFormState = {
   localImages: [],
   imagesForDeletion: [],
 };
-export const productFormStateAtom = atom<ProductFormState>({
-  key: recoilKeys.productFormStateAtom,
-  default: defaultProductFormState,
-});
+export const productFormStateAtom = atom<ProductFormState>(
+  defaultProductFormState
+);

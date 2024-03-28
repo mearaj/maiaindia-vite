@@ -1,11 +1,13 @@
 import { Box, Card } from '@mui/material';
-import { useRecoilValueLoadable } from 'recoil';
-import { productIdSelector } from '@/recoil/selectors/productId';
-import { defaultPlaceholderProductImage } from '@/recoil/data/product';
+import { productIdAtom, productIdSelector } from '@/jotai/selectors/productId';
+import { defaultPlaceholderProductImage } from '@/jotai/data/product';
+import { loadable } from 'jotai/utils';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { useEffect } from 'react';
+import LoadableComponent from '@/components/Layouts/JotailLoadableComponent';
 import ProductPrice from '@/components/Product/Price';
 import AddUpdateButton from '@/components/Buttons/AddUpdate';
 import RemoveButton from '@/components/Buttons/Remove';
-import RecoilLoadableComponent from '@/components/Layouts/RecoilLoadableComponent';
 
 interface CartItemComponentProps {
   productId: string;
@@ -14,17 +16,20 @@ interface CartItemComponentProps {
 export default function CartItemComponent({
   productId,
 }: CartItemComponentProps) {
-  const productIDLoadable = useRecoilValueLoadable(
-    productIdSelector(productId)
-  );
-
+  const setProductID = useSetAtom(productIdAtom);
+  const productWithImagesLoadable = loadable(productIdSelector);
+  const productIDLoadable = useAtomValue(productWithImagesLoadable);
   const product =
-    productIDLoadable.state === 'hasValue' && productIDLoadable.contents
-      ? productIDLoadable.contents
+    productIDLoadable.state === 'hasData' && productIDLoadable.data
+      ? productIDLoadable.data
       : null;
   const preferredImgSrc =
-    product && product.images && product.images.length > 0
-      ? productIDLoadable.contents.images[0]
+    product &&
+    product.images &&
+    product.images.length > 0 &&
+    productIDLoadable.state !== 'loading' &&
+    productIDLoadable.state === 'hasData'
+      ? productIDLoadable.data.images[0]
       : defaultPlaceholderProductImage;
 
   const defaultLoaderStyle = {
@@ -32,6 +37,10 @@ export default function CartItemComponent({
     alignItems: 'center',
     justifyContent: 'center',
   };
+
+  useEffect(() => {
+    setProductID(productId!);
+  }, [productId, setProductID]);
 
   return (
     <Card
@@ -43,10 +52,10 @@ export default function CartItemComponent({
         padding: '8px',
       }}
     >
-      <RecoilLoadableComponent
+      <LoadableComponent
         loaderContainerStyle={defaultLoaderStyle}
         errorContainerStyle={defaultLoaderStyle}
-        recoilLoadable={productIDLoadable}
+        jotaiLoadable={productIDLoadable}
       >
         {product && preferredImgSrc && (
           <>
@@ -101,7 +110,7 @@ export default function CartItemComponent({
             </Box>
           </>
         )}
-      </RecoilLoadableComponent>
+      </LoadableComponent>
     </Card>
   );
 }

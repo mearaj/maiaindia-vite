@@ -1,22 +1,20 @@
-import { Loadable } from 'recoil';
 import { Box } from '@mui/material';
 import { Loader } from '@/components';
+import { Loadable } from 'jotai/vanilla/utils/loadable';
 import CommonPageLayout, {
   CommonPageLayoutProps,
 } from '@/components/Layouts/CommonPage';
 
-export interface RecoilLoadablePageLayoutProps<T>
-  extends CommonPageLayoutProps {
-  recoilLoadable: Loadable<T>;
+export interface LoadablePageLayoutProps<T> extends CommonPageLayoutProps {
+  jotaiLoadable: Loadable<T>;
 }
 
-export default function RecoilLoadablePageLayout<T>({
-  recoilLoadable,
+export default function LoadablePageLayout<T>({
+  jotaiLoadable,
   children,
   ...otherProps
-}: RecoilLoadablePageLayoutProps<T>) {
-  const { contents, state } = recoilLoadable;
-  if (state === 'loading') {
+}: LoadablePageLayoutProps<T>) {
+  if (jotaiLoadable.state === 'loading') {
     return (
       <CommonPageLayout
         sxRootProps={{ alignItems: 'center', justifyContent: 'center' }}
@@ -27,9 +25,9 @@ export default function RecoilLoadablePageLayout<T>({
       </CommonPageLayout>
     );
   }
-  if (state === 'hasError') {
-    const message = contents.message
-      ? contents.message
+  if (jotaiLoadable.state === 'hasError') {
+    const message = jotaiLoadable.error
+      ? jotaiLoadable.error.toString()
       : 'An unknown error occurred!';
     return (
       <CommonPageLayout

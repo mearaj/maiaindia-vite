@@ -10,7 +10,7 @@ import {
   useTheme,
 } from '@mui/material';
 import Button from '@mui/material/Button';
-import { categories, Category } from '@/recoil/data/category';
+import { categories, Category } from '@/jotai/data/category';
 import { KeyboardArrowDown } from '@mui/icons-material';
 
 export interface CategoriesDropdownProps {

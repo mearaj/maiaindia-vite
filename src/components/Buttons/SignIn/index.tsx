@@ -1,8 +1,8 @@
 import { Box, Button, ButtonProps, useTheme } from '@mui/material';
 import React from 'react';
-import { userAtom } from '@/recoil/atoms';
-import { useRecoilValue } from 'recoil';
-import { AuthState } from '@/recoil/data/auth';
+import { userAtom } from '@/jotai/atoms';
+import { AuthState } from '@/jotai/data/auth';
+import { useAtomValue } from 'jotai/index';
 import Loader from '@/components/Loader';
 import GoogleIcon from '@/icons/googleG';
 import createStyles from '@/components/Buttons/SignIn/styles';
@@ -14,7 +14,7 @@ export default function SignInButton({
   sx,
   ...otherProps
 }: ButtonProps) {
-  const { authState, userState } = useRecoilValue(userAtom);
+  const { authState, userState } = useAtomValue(userAtom);
   const theme = useTheme();
   const styles = createStyles(theme);
   const { signInWithGooglePopUp } = useSignInWithGooglePopup();

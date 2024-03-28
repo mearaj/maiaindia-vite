@@ -12,10 +12,10 @@ import {
 } from '@mui/material';
 import ArrowBack from '@mui/icons-material/ArrowBackIos';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { menuAtom } from '@/recoil/atoms/menu';
-import { userAtom } from '@/recoil/atoms';
+import { menuAtom } from '@/jotai/atoms/menu';
+import { userAtom } from '@/jotai/atoms';
 import { LocalMallTwoTone, WidgetsTwoTone } from '@mui/icons-material';
+import { useAtom, useAtomValue } from 'jotai';
 import createStyles from './styles';
 import { appAbsoluteRoutes } from '@/Router';
 import FullLogoButton from '@/components/Buttons/FullLogo';
@@ -32,11 +32,11 @@ export default function Header({
   sx,
 }: HeaderProps) {
   // const dimensions = useDimensions();
-  const [, setShowMenu] = useRecoilState(menuAtom);
+  const [, setShowMenu] = useAtom(menuAtom);
   const navigate = useNavigate();
   const theme = useTheme();
   const styles = createStyles(theme);
-  const user = useRecoilValue(userAtom);
+  const user = useAtomValue(userAtom);
   const handleBackIconClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (onBackIconClick) {

@@ -1,14 +1,21 @@
-import { useRecoilValueLoadable } from 'recoil';
-import { productsSelector } from '@/recoil';
+import { productsSelector } from '@/jotai';
+import { useAtomValue } from 'jotai';
+import { Product } from '@/jotai/data/product';
+import { loadable } from 'jotai/utils';
+import LoadablePageLayout from '@/components/Layouts/JotailLoadablePage';
 import AdminProducts from '@/components/Admin/Products';
-import RecoilLoadablePageLayout from '@/components/Layouts/RecoilLoadablePage';
 
 export default function AdminProductsPage() {
-  const recoilValueLoadable = useRecoilValueLoadable(productsSelector);
+  const valueLoadable = useAtomValue(loadable(productsSelector));
+
+  let data: Product[] = [];
+  if (valueLoadable.state === 'hasData') {
+    data = valueLoadable.data;
+  }
 
   return (
-    <RecoilLoadablePageLayout recoilLoadable={recoilValueLoadable}>
-      <AdminProducts products={recoilValueLoadable.contents} />
-    </RecoilLoadablePageLayout>
+    <LoadablePageLayout jotaiLoadable={valueLoadable}>
+      <AdminProducts products={data} />
+    </LoadablePageLayout>
   );
 }

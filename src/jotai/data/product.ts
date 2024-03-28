@@ -1,5 +1,5 @@
 import { FieldValue, Timestamp } from '@firebase/firestore';
-import { Category } from '@/recoil/data/category';
+import { Category } from '@/jotai/data/category';
 
 export interface ProductImage {
   name: string;

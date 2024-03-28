@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { Product } from '@/recoil/data/product';
+import { Product } from '@/jotai/data/product';
 import ProductComponent from '@/components/Product';
 
 function Products({ products }: { products: Product[] }) {

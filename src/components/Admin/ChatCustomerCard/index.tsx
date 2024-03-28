@@ -1,15 +1,15 @@
 import { Box, Card } from '@mui/material';
-import { userPlaceholderSvgUrl } from '@/recoil/data/user';
-import { SupportChatSession } from '@/recoil/data/supportChat';
-import { useSetRecoilState } from 'recoil';
-import { adminActiveChatSessionAtom } from '@/recoil/atoms/supportChat';
+import { userPlaceholderSvgUrl } from '@/jotai/data/user';
+import { SupportChatSession } from '@/jotai/data/supportChat';
+import { adminActiveChatSessionAtom } from '@/jotai/atoms/supportChat';
+import { useSetAtom } from 'jotai';
 
 export default function ChatCustomerCardComponent({
   chatSession,
 }: {
   chatSession: SupportChatSession;
 }) {
-  const setActiveChatSession = useSetRecoilState(adminActiveChatSessionAtom);
+  const setActiveChatSession = useSetAtom(adminActiveChatSessionAtom);
   const handleCardClick = () => {
     setActiveChatSession(chatSession);
   };

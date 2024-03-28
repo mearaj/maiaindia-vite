@@ -1,11 +1,11 @@
 import { Chat } from '@mui/icons-material';
 import { alpha, Box, Card, IconButton, useTheme } from '@mui/material';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { userAtom } from '@/recoil/atoms';
-import { selectedDialogAtom } from '@/recoil/atoms/dialog';
+import { userAtom } from '@/jotai/atoms';
+import { selectedDialogAtom } from '@/jotai/atoms/dialog';
 import { ReactNode } from 'react';
-import { currentUserLiveChatMaximizedAtom } from '@/recoil/atoms/supportChat';
+import { currentUserLiveChatMaximizedAtom } from '@/jotai/atoms/supportChat';
 import { useLocation } from 'react-router-dom';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import ChatTabsComponent from '@/components/LiveChat/ChatTabs';
 import SignInRequiredDialog from '@/components/Dialogs/SignInRequired';
 import SignInButton from '@/components/Buttons/SignIn';
@@ -14,12 +14,12 @@ import { appAbsoluteRoutes } from '@/Router';
 
 export default function LiveChatButton() {
   const theme = useTheme();
-  const [isUIMaximized, setIsUIMaximized] = useRecoilState(
+  const [isUIMaximized, setIsUIMaximized] = useAtom(
     currentUserLiveChatMaximizedAtom
   );
   const location = useLocation();
-  const setActiveDialog = useSetRecoilState(selectedDialogAtom);
-  const user = useRecoilValue(userAtom);
+  const setActiveDialog = useSetAtom(selectedDialogAtom);
+  const user = useAtomValue(userAtom);
   const dimensions = useDimensions();
   const onClickHandler = () => {
     if (!user.userState) {

@@ -1,20 +1,20 @@
-import { useRecoilState, useSetRecoilState } from 'recoil';
-import { adminActiveChatSessionAtom } from '@/recoil/atoms/supportChat';
+import { adminActiveChatSessionAtom } from '@/jotai/atoms/supportChat';
 import { Box, Button, IconButton, Typography, useTheme } from '@mui/material';
-import { menuAtom } from '@/recoil/atoms';
+import { menuAtom } from '@/jotai/atoms';
 import ArrowBack from '@mui/icons-material/ArrowBackIos';
 import Close from '@mui/icons-material/Close';
 import { WidgetsTwoTone } from '@mui/icons-material';
+import { useAtom, useSetAtom } from 'jotai';
 import HeaderLayout from '@/components/Layouts/Header';
 import { useChatSessionEffects } from '@/hooks/useChatSession';
 import FullLogoButton from '@/components/Buttons/FullLogo';
 
 export default function AdminLiveChatPageHeader() {
-  const [activeLiveChatSession, setActiveLiveChatSession] = useRecoilState(
+  const [activeLiveChatSession, setActiveLiveChatSession] = useAtom(
     adminActiveChatSessionAtom
   );
   const theme = useTheme();
-  const setShowMenu = useSetRecoilState(menuAtom);
+  const setShowMenu = useSetAtom(menuAtom);
   const chatSessionEffects = useChatSessionEffects({
     chatSession: activeLiveChatSession,
     setChatSession: setActiveLiveChatSession,

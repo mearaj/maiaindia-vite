@@ -1,26 +1,25 @@
-import { Loadable } from 'recoil';
 import { Box, SxProps, Theme } from '@mui/material';
 import { Loader } from '@/components';
 import { PropsWithChildren } from 'react';
+import { Loadable } from 'jotai/vanilla/utils/loadable';
 
-export interface RecoilLoadableComponentProps<T> extends PropsWithChildren {
-  recoilLoadable: Loadable<T>;
+export interface LoadableComponentProps<T> extends PropsWithChildren {
+  jotaiLoadable: Loadable<T>;
   loaderContainerStyle?: SxProps<Theme>;
   errorContainerStyle?: SxProps<Theme>;
   showLoader?: boolean;
   showError?: boolean;
 }
 
-export default function RecoilLoadableComponent<T>({
-  recoilLoadable,
+export default function LoadableComponent<T>({
+  jotaiLoadable,
   children,
   loaderContainerStyle = {},
   errorContainerStyle = {},
   showError = true,
   showLoader = true,
-}: RecoilLoadableComponentProps<T>) {
-  const { contents, state } = recoilLoadable;
-  if (state === 'loading') {
+}: LoadableComponentProps<T>) {
+  if (jotaiLoadable.state === 'loading') {
     if (!showLoader) {
       return null;
     }
@@ -36,7 +35,7 @@ export default function RecoilLoadableComponent<T>({
       </Box>
     );
   }
-  if (state === 'hasError') {
+  if (jotaiLoadable.state === 'hasError') {
     if (!showError) {
       return true;
     }
@@ -46,8 +45,8 @@ export default function RecoilLoadableComponent<T>({
       justifyContent: 'center',
       ...errorContainerStyle,
     };
-    const message = contents.message
-      ? contents.message
+    const message = jotaiLoadable.error
+      ? jotaiLoadable.error.toString()
       : 'An unknown error occurred!';
     return <Box sx={containerStyle}>{message}</Box>;
   }

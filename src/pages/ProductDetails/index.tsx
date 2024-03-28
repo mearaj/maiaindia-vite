@@ -3,10 +3,9 @@ import { Box, Dialog, DialogContent } from '@mui/material';
 import { Swiper, SwiperClass, SwiperRef, SwiperSlide } from 'swiper/react';
 import { FreeMode, Navigation, Pagination, Thumbs } from 'swiper/modules';
 import { useParams } from 'react-router-dom';
-import { useRef } from 'react';
-import { useRecoilValueLoadable, useSetRecoilState } from 'recoil';
-import { productIdSelector } from '@/recoil/selectors/productId';
-import { selectedDialogAtom } from '@/recoil/atoms/dialog';
+import { useEffect, useRef } from 'react';
+import { productIdAtom, productIdSelector } from '@/jotai/selectors/productId';
+import { selectedDialogAtom } from '@/jotai/atoms/dialog';
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 import {
   Add,
@@ -16,25 +15,48 @@ import {
   SearchTwoTone,
 } from '@mui/icons-material';
 import Button from '@mui/material/Button';
+import { loadable } from 'jotai/utils';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { ProductWithImages } from '@/jotai/data/product';
+import { Timestamp } from '@firebase/firestore';
+import LoadableComponent from '@/components/Layouts/JotailLoadableComponent';
 import ProductPrice from '@/components/Product/Price';
 import styles from './index.module.css';
 import AddUpdateButton from '@/components/Buttons/AddUpdate';
 import BuyButton from '@/components/Buttons/Buy';
-import RecoilLoadableComponent from '@/components/Layouts/RecoilLoadableComponent';
 
 export default function ProductDetailsPage() {
   const params = useParams();
-  const recoilProductLoadable = useRecoilValueLoadable(
-    productIdSelector(params.id as string)
-  );
+  const setProductID = useSetAtom(productIdAtom);
+  const productWithImagesLoadable = loadable(productIdSelector);
+  const productLoadable = useAtomValue(productWithImagesLoadable);
 
   const mainSwiperRef = useRef<SwiperRef | null>(null);
-  const setDialog = useSetRecoilState(selectedDialogAtom);
+  const setDialog = useSetAtom(selectedDialogAtom);
+
+  let data: ProductWithImages = {
+    categoryID: '',
+    createdAt: Timestamp.now(),
+    currency: '',
+    mrp: 0,
+    sp: 0,
+    updatedAt: Timestamp.now(),
+    name: '',
+    images: [],
+    details: '',
+  };
+  if (productLoadable.state === 'hasData') {
+    data = productLoadable.data;
+  }
 
   const product =
-    recoilProductLoadable.state === 'hasValue' && recoilProductLoadable.contents
-      ? recoilProductLoadable.contents
+    productLoadable.state === 'hasData' && productLoadable.data
+      ? productLoadable.data
       : undefined;
+
+  useEffect(() => {
+    setProductID(params.id as string);
+  }, [params.id, setProductID]);
 
   const onImageClick = async (
     swiper: SwiperClass,
@@ -172,7 +194,7 @@ export default function ProductDetailsPage() {
                           <TransformComponent>
                             <img
                               src={item.url}
-                              alt={recoilProductLoadable.contents.name}
+                              alt={data.name}
                               className={styles.imageDialog}
                               placeholder="blur"
                             />
@@ -194,10 +216,10 @@ export default function ProductDetailsPage() {
     <Box className={styles.layout}>
       <Header showBackIcon />
       <Box className={styles.body}>
-        <RecoilLoadableComponent
+        <LoadableComponent
           loaderContainerStyle={{ height: '80vh', width: '100%' }}
           errorContainerStyle={{ height: '80vh', width: '100%' }}
-          recoilLoadable={recoilProductLoadable}
+          jotaiLoadable={productLoadable}
         >
           {product && product.images && product.images.length > 0 && (
             <Swiper
@@ -237,7 +259,7 @@ export default function ProductDetailsPage() {
                   <SwiperSlide key={item.url} className={styles.slide}>
                     <img
                       src={item.url}
-                      alt={recoilProductLoadable.contents.name}
+                      alt={data.name}
                       className={styles.image}
                       placeholder="blur"
                     />
@@ -246,20 +268,18 @@ export default function ProductDetailsPage() {
               })}
             </Swiper>
           )}
-        </RecoilLoadableComponent>
+        </LoadableComponent>
         {product && (
           <>
             <div className={styles.productDetails}>
-              <div className={styles.productName}>
-                {recoilProductLoadable.contents.name}
-              </div>
-              <ProductPrice product={recoilProductLoadable.contents} />
+              <div className={styles.productName}>{data.name}</div>
+              <ProductPrice product={data} />
             </div>
             <Box sx={{ padding: '16px' }}>
               <Box sx={{ marginBottom: '8px' }}>
-                <AddUpdateButton product={recoilProductLoadable.contents} />
+                <AddUpdateButton product={data} />
               </Box>
-              <BuyButton product={recoilProductLoadable.contents} />
+              <BuyButton product={data} />
             </Box>
           </>
         )}

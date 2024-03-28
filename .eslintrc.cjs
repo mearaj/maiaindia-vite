@@ -64,9 +64,7 @@ module.exports = {
     ],
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": [
-      "warn", {
-        "additionalHooks": "(useRecoilCallback|useRecoilTransaction_UNSTABLE)"
-      }
+      "warn", {}
     ]
   },
   settings: {
@@ -87,7 +85,7 @@ module.exports = {
           ["@/pages", "./src/pages"],
           ["@/providers", "./src/providers"],
           ["@/store", "./src/store"],
-          ["@/recoil", "./src/recoil"]
+          ["@/jotai", "./src/jotai"]
         ]
       }
     }

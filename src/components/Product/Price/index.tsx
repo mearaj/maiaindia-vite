@@ -1,6 +1,6 @@
 import { Box, SxProps, Theme, Typography } from '@mui/material';
 
-import { Product } from '@/recoil/data/product';
+import { Product } from '@/jotai/data/product';
 import { ReactNode } from 'react';
 
 export default function ProductPrice({

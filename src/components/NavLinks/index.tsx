@@ -27,12 +27,12 @@ import TermsConditions from '@mui/icons-material/Article';
 import { NavLink, useLocation } from 'react-router-dom';
 import { isActiveByEqual, isActiveByStartsWith } from '@/misc';
 
-import { useRecoilValue } from 'recoil';
-import { isAdminAtom } from '@/recoil/atoms/admin';
+import { isAdminAtom } from '@/jotai/atoms/admin';
+import { useAtomValue } from 'jotai/index';
 import { appAbsoluteRoutes } from '@/Router';
 
 export default function NavLinks() {
-  const isAdmin = useRecoilValue(isAdminAtom);
+  const isAdmin = useAtomValue(isAdminAtom);
   const location = useLocation();
 
   const linkButtonStyle: SxProps<Theme> = {

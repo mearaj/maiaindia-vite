@@ -1,10 +1,10 @@
 import { Box, Button, SxProps, Theme } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { userAtom } from '@/recoil/atoms';
+import { userAtom } from '@/jotai/atoms';
 import React from 'react';
-import { Product } from '@/recoil/data/product';
-import { selectedDialogAtom } from '@/recoil/atoms/dialog';
+import { Product } from '@/jotai/data/product';
+import { selectedDialogAtom } from '@/jotai/atoms/dialog';
+import { useAtomValue, useSetAtom } from 'jotai';
 import SignInRequiredDialog from '@/components/Dialogs/SignInRequired';
 
 interface ProductActionProps {
@@ -13,9 +13,9 @@ interface ProductActionProps {
 }
 
 export default function BuyButton({ product, sx }: ProductActionProps) {
-  const user = useRecoilValue(userAtom);
+  const user = useAtomValue(userAtom);
   const navigate = useNavigate();
-  const setActiveDialog = useSetRecoilState(selectedDialogAtom);
+  const setActiveDialog = useSetAtom(selectedDialogAtom);
 
   const handleBuyClick = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>

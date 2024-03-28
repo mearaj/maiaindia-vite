@@ -1,13 +1,13 @@
 import { Box, Button } from '@mui/material';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 import AddToCartIcon from '@mui/icons-material/AddShoppingCart';
 import React, { useEffect, useState } from 'react';
-import { userAtom } from '@/recoil/atoms';
-import { Product } from '@/recoil/data/product';
-import { selectedDialogAtom } from '@/recoil/atoms/dialog';
+import { userAtom } from '@/jotai/atoms';
+import { Product } from '@/jotai/data/product';
+import { selectedDialogAtom } from '@/jotai/atoms/dialog';
 import { Add, Remove } from '@mui/icons-material';
 import { setCartQuantity } from '@/misc';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useAtomValue, useSetAtom } from 'jotai/index';
 import SignInRequiredDialog from '@/components/Dialogs/SignInRequired';
 
 interface AddUpdateButtonProps {
@@ -15,8 +15,8 @@ interface AddUpdateButtonProps {
 }
 
 export default function AddUpdateButton({ product }: AddUpdateButtonProps) {
-  const user = useRecoilValue(userAtom);
-  const setActiveDialog = useSetRecoilState(selectedDialogAtom);
+  const user = useAtomValue(userAtom);
+  const setActiveDialog = useSetAtom(selectedDialogAtom);
   const [quantity, setQuantity] = useState(
     user.userState?.cart.items[product.id!]?.quantity ?? 0
   );

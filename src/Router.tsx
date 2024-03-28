@@ -1,10 +1,10 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
-import { userAtom } from '@/recoil/atoms';
+import { useAtomValue } from 'jotai';
+import { userAtom } from '@/jotai/atoms';
 import { Box } from '@mui/material';
 import { Loader } from '@/components';
-import { AuthState } from '@/recoil/data/auth';
-import { isAdminAtom } from '@/recoil/atoms/admin';
+import { AuthState } from '@/jotai/data/auth';
+import { isAdminAtom } from '@/jotai/atoms/admin';
 import AdminLiveChatPage from '@/pages/Admin/LiveChat';
 import ProfilePage from '@/pages/Profile';
 import CancellationRefundPolicy from '@/pages/CancellationRefundPolicy';
@@ -74,7 +74,7 @@ export const appRelativeRoutes = {
 };
 
 function AuthRoutes() {
-  const { authState, userState } = useRecoilValue(userAtom);
+  const { authState, userState } = useAtomValue(userAtom);
   let text: string | null;
   if (authState !== AuthState.idle) {
     switch (authState) {
@@ -121,7 +121,7 @@ function AuthRoutes() {
 }
 
 function AdminRoutes() {
-  const isAdmin = useRecoilValue(isAdminAtom);
+  const isAdmin = useAtomValue(isAdminAtom);
   if (!isAdmin) {
     return <Navigate to={appAbsoluteRoutes.home} replace />;
   }

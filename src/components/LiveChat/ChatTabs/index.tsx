@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { alpha, Box, Tab, Tabs, Typography, useTheme } from '@mui/material';
 import { Chat, Info } from '@mui/icons-material';
-import { useRecoilState } from 'recoil';
 import {
   currentUserLastActiveChatSessionAtom,
   currentUserLiveChatMaximizedAtom,
-} from '@/recoil/atoms/supportChat';
+} from '@/jotai/atoms/supportChat';
+import { useAtom } from 'jotai';
 import LiveChatHeader from '@/components/LiveChat/ChatHeader';
 import CommonChatRoomComponent from '@/components/LiveChat/ChatTabs/CommonChatRoom';
 import ChatDetailsComponent from '@/components/LiveChat/ChatTabs/ChatDetails';
@@ -13,10 +13,10 @@ import { useChatSessionEffects } from '@/hooks/useChatSession';
 
 export default function ChatTabsComponent() {
   const [tabIndex, setTabIndex] = useState(0);
-  const [chatSession, setChatSession] = useRecoilState(
+  const [chatSession, setChatSession] = useAtom(
     currentUserLastActiveChatSessionAtom
   );
-  const [isUIMaximized, setIsUIMaximized] = useRecoilState(
+  const [isUIMaximized, setIsUIMaximized] = useAtom(
     currentUserLiveChatMaximizedAtom
   );
 

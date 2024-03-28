@@ -7,18 +7,18 @@ import {
   OutlinedInput,
   useTheme,
 } from '@mui/material';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { userAtom } from '@/recoil/atoms';
+import { userAtom } from '@/jotai/atoms';
 import Button from '@mui/material/Button';
 import * as React from 'react';
 import { ReactNode, useRef, useState } from 'react';
 import { Edit } from '@mui/icons-material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { selectedDialogAtom } from '@/recoil/atoms/dialog';
+import { selectedDialogAtom } from '@/jotai/atoms/dialog';
 import { appFirebaseStorage, appFirestore } from '@/firebase';
 import { ref, uploadBytesResumable, UploadTask } from '@firebase/storage';
 import { doc, setDoc } from '@firebase/firestore';
-import { userPlaceholderSvgUrl } from '@/recoil/data/user';
+import { userPlaceholderSvgUrl } from '@/jotai/data/user';
+import { useAtomValue, useSetAtom } from 'jotai';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
 import createStyles from './styles';
 import SnackbarDialog from '@/components/Dialogs/SnackBar';
@@ -41,7 +41,7 @@ interface ProcessingState {
 }
 
 export default function ProfilePage() {
-  const appUserState = useRecoilValue(userAtom);
+  const appUserState = useAtomValue(userAtom);
   const { userState } = appUserState!;
   const [editMode, setEditMode] = useState(false);
   const [profileState, setProfileState] = useState(userState!.profile);
@@ -49,7 +49,7 @@ export default function ProfilePage() {
     uploadingState: UploadingState.idle,
     uploadProgress: 0,
   });
-  const setDialogComponent = useSetRecoilState(selectedDialogAtom);
+  const setDialogComponent = useSetAtom(selectedDialogAtom);
   // uploadTask is upload photo to backend
   const uploadPhotoTask = useRef<UploadTask | null>(null);
   // uploadedFile is for photo file uploaded to browser

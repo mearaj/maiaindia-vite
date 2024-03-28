@@ -7,11 +7,11 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { useRecoilState } from 'recoil';
-import { menuAtom } from '@/recoil/atoms/menu';
-import { categoryAtom } from '@/recoil/atoms/category';
-import { categories, defaultSelectedCategory } from '@/recoil/data/category';
+import { menuAtom } from '@/jotai/atoms/menu';
+import { categoryAtom } from '@/jotai/atoms/category';
+import { categories, defaultSelectedCategory } from '@/jotai/data/category';
 import { ReactNode } from 'react';
+import { useAtom } from 'jotai';
 
 const availableCategories = [defaultSelectedCategory, ...categories];
 
@@ -33,8 +33,8 @@ export default function CategoriesRadio({
     | 'warning';
   radioGroupSx?: SxProps<Theme>;
 }) {
-  const [, setShowMenu] = useRecoilState(menuAtom);
-  const [selectedCategory, setCategory] = useRecoilState(categoryAtom);
+  const [, setShowMenu] = useAtom(menuAtom);
+  const [selectedCategory, setCategory] = useAtom(categoryAtom);
   const theme = useTheme();
   return (
     <>

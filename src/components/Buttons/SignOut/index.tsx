@@ -1,13 +1,13 @@
 import { Button } from '@mui/material';
 import React from 'react';
-import { useRecoilState } from 'recoil';
-import { userAtom } from '@/recoil/atoms';
+import { userAtom } from '@/jotai/atoms';
 import { appFirebaseAuth } from '@/firebase';
-import { AuthState } from '@/recoil/data/auth';
+import { AuthState } from '@/jotai/data/auth';
+import { useAtom } from 'jotai';
 import Loader from '@/components/Loader';
 
 export default function SignOutButton() {
-  const [{ authState, userState }, setAuthState] = useRecoilState(userAtom);
+  const [{ authState, userState }, setAuthState] = useAtom(userAtom);
   const buttonStyle = {
     display: 'flex',
     alignItems: 'center',

@@ -1,18 +1,18 @@
-import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   adminActiveChatSessionAtom,
   adminSupportChatSessions,
-} from '@/recoil/atoms/supportChat';
+} from '@/jotai/atoms/supportChat';
 import { Box, useTheme } from '@mui/material';
 import { useEffect } from 'react';
 import { Timestamp } from '@firebase/firestore';
+import { useAtom, useAtomValue } from 'jotai';
 import ChatCustomerCardComponent from '@/components/Admin/ChatCustomerCard';
 import CommonChatRoomComponent from '@/components/LiveChat/ChatTabs/CommonChatRoom';
 import AdminLiveChatPageHeader from '@/pages/Admin/LiveChat/header';
 
 export default function AdminLiveChatPage() {
-  const supportChatSessions = useRecoilValue(adminSupportChatSessions);
-  const [activeLiveChatSession, setActiveLiveChatSession] = useRecoilState(
+  const supportChatSessions = useAtomValue(adminSupportChatSessions);
+  const [activeLiveChatSession, setActiveLiveChatSession] = useAtom(
     adminActiveChatSessionAtom
   );
   const theme = useTheme();

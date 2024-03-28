@@ -1,10 +1,10 @@
 import { Box } from '@mui/material';
-import { useRecoilValue } from 'recoil';
-import { adminUsersAtom } from '@/recoil/atoms/admin';
+import { useAtomValue } from 'jotai/index';
+import { adminUsersAtom } from '@/jotai/atoms/admin';
 import ChatExecutiveCardComponent from '@/components/ChatExecutiveCard';
 
 export default function ChatDetailsComponent() {
-  const admins = useRecoilValue(adminUsersAtom);
+  const admins = useAtomValue(adminUsersAtom);
 
   return (
     <Box

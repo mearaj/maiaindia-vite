@@ -17,13 +17,8 @@ import {
   Product,
   ProductFormModeState,
   ProductImage,
-} from '@/recoil/data/product';
-import {
-  useRecoilRefresher_UNSTABLE,
-  useRecoilState,
-  useRecoilValue,
-  useSetRecoilState,
-} from 'recoil';
+} from '@/jotai/data/product';
+
 import {
   productFormImagesForDeletionSelector,
   productFormImagesSelector,
@@ -31,7 +26,7 @@ import {
   productFormModeStateSelector,
   productFormProcessingStateSelector,
   productFormSelector,
-} from '@/recoil/selectors/productForm';
+} from '@/jotai/selectors/productForm';
 import {
   addDoc,
   collection,
@@ -42,12 +37,12 @@ import {
 } from '@firebase/firestore';
 import { appFirebaseStorage, appFirestore } from '@/firebase';
 import { useNavigate } from 'react-router-dom';
-import { selectedDialogAtom } from '@/recoil/atoms/dialog';
-import { categories } from '@/recoil/data/category';
+import { selectedDialogAtom } from '@/jotai/atoms/dialog';
+import { categories } from '@/jotai/data/category';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { deleteObject, ref, uploadBytesResumable } from '@firebase/storage';
 import { Delete, Publish, RestartAlt } from '@mui/icons-material';
-import { productIdSelector } from '@/recoil/selectors/productId';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai/index';
 import createStyles from './styles';
 import { appAbsoluteRoutes } from '@/Router';
 import SnackbarDialog from '@/components/Dialogs/SnackBar';
@@ -63,29 +58,22 @@ interface AdminProductFormFooterComponentProps {
 export default function AdminProductFormFooterComponent({
   handleReset,
 }: AdminProductFormFooterComponentProps) {
-  const formMode = useRecoilValue(productFormModeStateSelector);
-  const [isProcessing, setIsProcessing] = useRecoilState(
+  const formMode = useAtomValue(productFormModeStateSelector);
+  const [isProcessing, setIsProcessing] = useAtom(
     productFormProcessingStateSelector
   );
-  const productForm = useRecoilValue(productFormSelector);
+  const productForm = useAtomValue(productFormSelector);
   const navigate = useNavigate();
-  const setDialogComponent = useSetRecoilState(selectedDialogAtom);
+  const setDialogComponent = useSetAtom(selectedDialogAtom);
   const theme = useTheme();
   const styles = createStyles(theme);
-  const [localImages, setLocalImages] = useRecoilState(
-    productFormLocalImagesSelector
-  );
-  const productImages = useRecoilValue(productFormImagesSelector) ?? [];
-  const imagesForDeletion = useRecoilValue(
-    productFormImagesForDeletionSelector
-  );
+  const [localImages, setLocalImages] = useAtom(productFormLocalImagesSelector);
+  const productImages = useAtomValue(productFormImagesSelector) ?? [];
+  const imagesForDeletion = useAtomValue(productFormImagesForDeletionSelector);
   const [localDialog, setLocalDialog] = useState<{
     props: DialogProps;
     children: ReactNode;
   } | null>(null);
-  const recoilProductValueLoadableRefresher = useRecoilRefresher_UNSTABLE(
-    productIdSelector(productForm.id ?? '')
-  );
 
   const commonPromptDialogHandler = useCallback(
     async (
@@ -456,7 +444,7 @@ export default function AdminProductFormFooterComponent({
           setDialogComponent(
             <SnackbarDialog severity={severity} message={snackbarMsg} />
           );
-          recoilProductValueLoadableRefresher();
+          // valueLoadableRefresher();
         }
       }
     },
@@ -475,7 +463,6 @@ export default function AdminProductFormFooterComponent({
       productForm.mrp,
       productForm.name,
       productForm.sp,
-      recoilProductValueLoadableRefresher,
       setDialogComponent,
       setIsProcessing,
     ]

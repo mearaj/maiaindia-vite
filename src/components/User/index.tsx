@@ -1,11 +1,11 @@
-import { useRecoilValue } from 'recoil';
-import { userAtom } from '@/recoil/atoms';
+import { userAtom } from '@/jotai/atoms';
 import { Box } from '@mui/material';
+import { useAtomValue } from 'jotai/index';
 import SignOutButton from '@/components/Buttons/SignOut';
 import SignInButton from '@/components/Buttons/SignIn';
 
 export default function UserComponent() {
-  const { userState } = useRecoilValue(userAtom);
+  const { userState } = useAtomValue(userAtom);
 
   return userState ? (
     <Box

@@ -1,9 +1,9 @@
 import { Box, Button, ButtonProps, SxProps, Theme } from '@mui/material';
-import { useRecoilValue } from 'recoil';
-import { userAtom } from '@/recoil/atoms';
+import { userAtom } from '@/jotai/atoms';
 import { Delete } from '@mui/icons-material';
-import { Product } from '@/recoil/data/product';
+import { Product } from '@/jotai/data/product';
 import { setCartQuantity } from '@/misc';
+import { useAtomValue } from 'jotai/index';
 
 interface RemoveButtonProps extends ButtonProps {
   product: Product;
@@ -15,7 +15,7 @@ export default function RemoveButton({
   sx,
   ...otherProps
 }: RemoveButtonProps) {
-  const user = useRecoilValue(userAtom);
+  const user = useAtomValue(userAtom);
 
   const updateQuantity = async (quantityAlt: number) => {
     await setCartQuantity(user, product.id!, quantityAlt);

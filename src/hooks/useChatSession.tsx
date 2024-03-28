@@ -1,8 +1,7 @@
-import { SupportChatSession } from '@/recoil/data/supportChat';
-import { SetterOrUpdater, useRecoilValue, useSetRecoilState } from 'recoil';
-import { selectedDialogAtom } from '@/recoil/atoms/dialog';
-import { userAtom } from '@/recoil/atoms';
-import { currentUserLiveChatMaximizedAtom } from '@/recoil/atoms/supportChat';
+import { SupportChatSession } from '@/jotai/data/supportChat';
+import { selectedDialogAtom } from '@/jotai/atoms/dialog';
+import { userAtom } from '@/jotai/atoms';
+import { currentUserLiveChatMaximizedAtom } from '@/jotai/atoms/supportChat';
 import {
   Box,
   Dialog,
@@ -15,6 +14,7 @@ import { deleteDoc, doc, serverTimestamp, setDoc } from '@firebase/firestore';
 import { appFirestore } from '@/firebase';
 import { FirebaseError } from '@firebase/util';
 import Button from '@mui/material/Button';
+import { useAtomValue, useSetAtom } from 'jotai';
 import SnackbarDialog from '@/components/Dialogs/SnackBar';
 
 export const useChatSessionEffects = ({
@@ -22,11 +22,11 @@ export const useChatSessionEffects = ({
   setChatSession,
 }: {
   chatSession: SupportChatSession | null;
-  setChatSession: SetterOrUpdater<SupportChatSession | null>;
+  setChatSession: Function;
 }) => {
-  const setDialog = useSetRecoilState(selectedDialogAtom);
-  const currentUser = useRecoilValue(userAtom);
-  const setIsUIMaximized = useSetRecoilState(currentUserLiveChatMaximizedAtom);
+  const setDialog = useSetAtom(selectedDialogAtom);
+  const currentUser = useAtomValue(userAtom);
+  const setIsUIMaximized = useSetAtom(currentUserLiveChatMaximizedAtom);
   const deleteOrCloseCurrentSession = async () => {
     const isEmpty =
       !chatSession ||

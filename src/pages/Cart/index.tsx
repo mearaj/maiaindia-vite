@@ -1,6 +1,6 @@
 import { Box, useTheme } from '@mui/material';
-import { useRecoilValue } from 'recoil';
-import { userAtom } from '@/recoil/atoms';
+import { userAtom } from '@/jotai/atoms';
+import { useAtomValue } from 'jotai/index';
 import createStyles from './styles';
 import CartItemComponent from '@/components/CartItem';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
@@ -8,7 +8,7 @@ import CommonPageLayout from '@/components/Layouts/CommonPage';
 export default function CartPage() {
   const theme = useTheme();
   const styles = createStyles(theme);
-  const user = useRecoilValue(userAtom);
+  const user = useAtomValue(userAtom);
 
   if (
     !user.userState!.cart.items ||

@@ -1,5 +1,5 @@
 import { Location } from 'react-router-dom';
-import { AppUser } from '@/recoil/data/user';
+import { AppUser } from '@/jotai/data/user';
 import { doc, serverTimestamp, setDoc } from '@firebase/firestore';
 import { appFirestore } from '@/firebase';
 

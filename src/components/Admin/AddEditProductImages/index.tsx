@@ -1,5 +1,4 @@
 import { Box } from '@mui/material';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode, Navigation, Thumbs } from 'swiper/modules';
 import {
@@ -8,23 +7,22 @@ import {
   productFormLocalImagesSelector,
   productFormModeStateSelector,
   productFormProcessingStateSelector,
-} from '@/recoil/selectors/productForm';
+} from '@/jotai/selectors/productForm';
 import { Delete, Download } from '@mui/icons-material';
 import Button from '@mui/material/Button';
-import { ProductFormModeState } from '@/recoil/data/product';
+import { ProductFormModeState } from '@/jotai/data/product';
+import { useAtom, useAtomValue } from 'jotai/index';
 import styles from './index.module.css';
 import addEditProductImagesPlaceholder from '@/images/placeholder.svg';
 
 export default function AddEditProductImagesComponent() {
-  const productImages = useRecoilValue(productFormImagesSelector);
-  const [localImages, setLocalImages] = useRecoilState(
-    productFormLocalImagesSelector
-  );
-  const [imagesForDeletion, setImagesForDeletion] = useRecoilState(
+  const productImages = useAtomValue(productFormImagesSelector);
+  const [localImages, setLocalImages] = useAtom(productFormLocalImagesSelector);
+  const [imagesForDeletion, setImagesForDeletion] = useAtom(
     productFormImagesForDeletionSelector
   );
-  const isProcessing = useRecoilValue(productFormProcessingStateSelector);
-  const formMode = useRecoilValue(productFormModeStateSelector);
+  const isProcessing = useAtomValue(productFormProcessingStateSelector);
+  const formMode = useAtomValue(productFormModeStateSelector);
 
   const filteredProductImages = (productImages ?? []).filter(
     (eacImage) =>

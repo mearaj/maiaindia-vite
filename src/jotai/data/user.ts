@@ -1,7 +1,7 @@
 import { User } from '@firebase/auth';
 
-import { AuthState } from '@/recoil/data/auth';
-import { Cart } from '@/recoil/data/cart';
+import { AuthState } from '@/jotai/data/auth';
+import { Cart } from '@/jotai/data/cart';
 
 export { default as userPlaceholderSvgUrl } from '@/images/user-placeholder.svg';
 export { default as userPlaceholderPngUrl } from '@/images/user-placeholder.png';

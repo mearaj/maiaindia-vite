@@ -1,14 +1,14 @@
 import { appFirebaseAuth } from '@/firebase';
 import { GoogleAuthProvider, signInWithPopup } from '@firebase/auth';
 import { useCallback, useState } from 'react';
-import { useRecoilState } from 'recoil';
-import { userAtom } from '@/recoil/atoms';
+import { userAtom } from '@/jotai/atoms';
 
-import { AuthState } from '@/recoil/data/auth';
+import { AuthState } from '@/jotai/data/auth';
+import { useAtom } from 'jotai';
 
 export default function useSignInWithGooglePopup() {
   const [error, setError] = useState<string | null>(null);
-  const [{ authState, userState }, setAppUser] = useRecoilState(userAtom);
+  const [{ authState, userState }, setAppUser] = useAtom(userAtom);
 
   const clearError = useCallback(() => {
     if (error) {

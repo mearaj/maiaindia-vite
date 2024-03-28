@@ -9,21 +9,21 @@ import {
 } from '@mui/material';
 import { Cancel, Edit } from '@mui/icons-material';
 
-import { ProductFormModeState } from '@/recoil/data/product';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { ProductFormModeState } from '@/jotai/data/product';
 import {
   productFormModeStateSelector,
   productFormProcessingStateSelector,
   productFormSelector,
-} from '@/recoil/selectors/productForm';
-import { Category } from '@/recoil/data/category';
+} from '@/jotai/selectors/productForm';
+import { Category } from '@/jotai/data/category';
+import { useAtom, useAtomValue } from 'jotai';
 import CategoriesDropdown from '@/components/Dropdowns/Categories';
 import createStyles from './styles';
 
 export default function AddEditProductComponent() {
-  const [productForm, setProductForm] = useRecoilState(productFormSelector);
-  const [formMode, setFormMode] = useRecoilState(productFormModeStateSelector);
-  const isProcessing = useRecoilValue(productFormProcessingStateSelector);
+  const [productForm, setProductForm] = useAtom(productFormSelector);
+  const [formMode, setFormMode] = useAtom(productFormModeStateSelector);
+  const isProcessing = useAtomValue(productFormProcessingStateSelector);
 
   const theme = useTheme();
   const styles = createStyles(theme);

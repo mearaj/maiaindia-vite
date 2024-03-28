@@ -1,5 +1,5 @@
 import { Box, Card } from '@mui/material';
-import { userPlaceholderSvgUrl, UserProfile } from '@/recoil/data/user';
+import { userPlaceholderSvgUrl, UserProfile } from '@/jotai/data/user';
 
 export default function ChatExecutiveCardComponent({
   executiveProfile,

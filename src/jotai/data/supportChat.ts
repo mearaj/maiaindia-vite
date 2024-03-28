@@ -1,5 +1,5 @@
 import { FieldValue, Timestamp } from '@firebase/firestore';
-import { UserProfile } from '@/recoil/data/user';
+import { UserProfile } from '@/jotai/data/user';
 
 export interface SupportChatSession {
   id?: string; // required only in frontend

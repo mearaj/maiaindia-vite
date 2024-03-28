@@ -1,8 +1,7 @@
-import { selectorFamily } from 'recoil';
-import { recoilKeys } from '@/recoil/data/recoilKeys';
 import { appFirestore } from '@/firebase';
 import { doc, getDoc } from '@firebase/firestore';
-import { ProductImage, ProductWithImages } from '@/recoil/data/product';
+import { ProductImage, ProductWithImages } from '@/jotai/data/product';
+import { atom } from 'jotai';
 
 const staticProductIDToImagesMap: { [key: string]: string[] } = {
   DlvdohiBj7OODe9obUrW: [
@@ -80,33 +79,22 @@ const staticProductImages: { [key: string]: ProductImage[] } = Object.keys(
   };
 }, {});
 
-export const productIdSelector = selectorFamily({
-  key: recoilKeys.productIdSelector,
-  get: (productID: string) => async () => {
-    const docRef = doc(appFirestore, 'products', productID);
-    const docSnapshot = await getDoc(docRef);
-    if (!docSnapshot.exists()) {
-      throw Error('Product not found');
-    }
-    const productToAddModify = {
-      ...docSnapshot.data(),
-      id: docSnapshot.id,
-    } as ProductWithImages;
-    if (staticProductImages[docSnapshot.id]) {
-      productToAddModify.images = staticProductImages[docSnapshot.id];
-    } else {
-      productToAddModify.images = [];
-    }
-    // const imagesRef = ref(appFirebaseStorage, `products/${productID}`);
-    // const allListRef = await listAll(imagesRef);
-    // productToAddModify.images = [];
-    // for await (const eachImageRef of allListRef.items) {
-    //   const imageURL = await getDownloadURL(eachImageRef);
-    //   productToAddModify.images.push({
-    //     url: imageURL,
-    //     name: eachImageRef.name,
-    //   });
-    // }
-    return productToAddModify;
-  },
+export const productIdAtom = atom<string>('');
+export const productIdSelector = atom(async (get) => {
+  const productID = get(productIdAtom);
+  const docRef = doc(appFirestore, 'products', productID);
+  const docSnapshot = await getDoc(docRef);
+  if (!docSnapshot.exists()) {
+    throw Error('Product not found');
+  }
+  const productToAddModify = {
+    ...docSnapshot.data(),
+    id: docSnapshot.id,
+  } as ProductWithImages;
+  if (staticProductImages[docSnapshot.id]) {
+    productToAddModify.images = staticProductImages[docSnapshot.id];
+  } else {
+    productToAddModify.images = [];
+  }
+  return productToAddModify;
 });

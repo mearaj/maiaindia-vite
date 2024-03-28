@@ -1,14 +1,14 @@
 import { Dialog, DialogActions, DialogTitle } from '@mui/material';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { userAtom } from '@/recoil/atoms';
+import { userAtom } from '@/jotai/atoms';
 import React from 'react';
-import { selectedDialogAtom } from '@/recoil/atoms/dialog';
-import { authStateEnumToString } from '@/recoil/data/auth';
+import { selectedDialogAtom } from '@/jotai/atoms/dialog';
+import { authStateEnumToString } from '@/jotai/data/auth';
+import { useAtom, useAtomValue } from 'jotai/index';
 import SignInButton from '@/components/Buttons/SignIn';
 
 export default function SignInRequiredDialog() {
-  const { userState, authState } = useRecoilValue(userAtom);
-  const [dialog, setActiveDialog] = useRecoilState(selectedDialogAtom);
+  const { userState, authState } = useAtomValue(userAtom);
+  const [dialog, setActiveDialog] = useAtom(selectedDialogAtom);
 
   const handleClose = (_e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setActiveDialog(null);

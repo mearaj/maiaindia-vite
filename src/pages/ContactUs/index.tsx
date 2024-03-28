@@ -2,9 +2,9 @@ import { Box, Button, Link, useTheme } from '@mui/material';
 import WhatsApp from '@mui/icons-material/WhatsApp';
 import { NavLink } from 'react-router-dom';
 import { Message } from '@mui/icons-material';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { userAtom } from '@/recoil/atoms';
-import { selectedDialogAtom } from '@/recoil/atoms/dialog';
+import { userAtom } from '@/jotai/atoms';
+import { selectedDialogAtom } from '@/jotai/atoms/dialog';
+import { useAtomValue, useSetAtom } from 'jotai/index';
 import createStyles from '@/pages/ContactUs/styles';
 import { appAbsoluteRoutes } from '@/Router';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
@@ -12,8 +12,8 @@ import SignInRequiredDialog from '@/components/Dialogs/SignInRequired';
 
 export default function ContactUsPage() {
   const theme = useTheme();
-  const { userState } = useRecoilValue(userAtom);
-  const setSelectedDialog = useSetRecoilState(selectedDialogAtom);
+  const { userState } = useAtomValue(userAtom);
+  const setSelectedDialog = useSetAtom(selectedDialogAtom);
 
   const styles = createStyles(theme);
 
