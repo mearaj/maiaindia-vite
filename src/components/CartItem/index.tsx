@@ -1,9 +1,8 @@
 import { Box, Card } from '@mui/material';
-import { productIdAtom, productIdSelector } from '@/jotai/selectors/productId';
+import { productIdSelector } from '@/jotai/atoms/productId';
 import { defaultPlaceholderProductImage } from '@/jotai/data/product';
 import { loadable } from 'jotai/utils';
-import { useAtomValue, useSetAtom } from 'jotai';
-import { useEffect } from 'react';
+import { useAtomValue } from 'jotai';
 import LoadableComponent from '@/components/Layouts/JotailLoadableComponent';
 import ProductPrice from '@/components/Product/Price';
 import AddUpdateButton from '@/components/Buttons/AddUpdate';
@@ -16,8 +15,7 @@ interface CartItemComponentProps {
 export default function CartItemComponent({
   productId,
 }: CartItemComponentProps) {
-  const setProductID = useSetAtom(productIdAtom);
-  const productWithImagesLoadable = loadable(productIdSelector);
+  const productWithImagesLoadable = loadable(productIdSelector(productId));
   const productIDLoadable = useAtomValue(productWithImagesLoadable);
   const product =
     productIDLoadable.state === 'hasData' && productIDLoadable.data
@@ -37,10 +35,6 @@ export default function CartItemComponent({
     alignItems: 'center',
     justifyContent: 'center',
   };
-
-  useEffect(() => {
-    setProductID(productId!);
-  }, [productId, setProductID]);
 
   return (
     <Card

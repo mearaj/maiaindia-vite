@@ -3,8 +3,8 @@ import { Box, Dialog, DialogContent } from '@mui/material';
 import { Swiper, SwiperClass, SwiperRef, SwiperSlide } from 'swiper/react';
 import { FreeMode, Navigation, Pagination, Thumbs } from 'swiper/modules';
 import { useParams } from 'react-router-dom';
-import { useEffect, useRef } from 'react';
-import { productIdAtom, productIdSelector } from '@/jotai/selectors/productId';
+import { useRef } from 'react';
+import { productIdSelector } from '@/jotai/atoms/productId';
 import { selectedDialogAtom } from '@/jotai/atoms/dialog';
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 import {
@@ -27,8 +27,9 @@ import BuyButton from '@/components/Buttons/Buy';
 
 export default function ProductDetailsPage() {
   const params = useParams();
-  const setProductID = useSetAtom(productIdAtom);
-  const productWithImagesLoadable = loadable(productIdSelector);
+  const productWithImagesLoadable = loadable(
+    productIdSelector(params.id as string)
+  );
   const productLoadable = useAtomValue(productWithImagesLoadable);
 
   const mainSwiperRef = useRef<SwiperRef | null>(null);
@@ -53,11 +54,6 @@ export default function ProductDetailsPage() {
     productLoadable.state === 'hasData' && productLoadable.data
       ? productLoadable.data
       : undefined;
-
-  useEffect(() => {
-    setProductID(params.id as string);
-  }, [params.id, setProductID]);
-
   const onImageClick = async (
     swiper: SwiperClass,
     _event: MouseEvent | TouchEvent | PointerEvent

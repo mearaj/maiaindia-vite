@@ -14,7 +14,7 @@ import {
   productFormModeStateSelector,
   productFormProcessingStateSelector,
   productFormSelector,
-} from '@/jotai/selectors/productForm';
+} from '@/jotai/atoms/productFormSelector';
 import { Category } from '@/jotai/data/category';
 import { useAtom, useAtomValue } from 'jotai';
 import CategoriesDropdown from '@/components/Dropdowns/Categories';

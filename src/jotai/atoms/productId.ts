@@ -2,6 +2,7 @@ import { appFirestore } from '@/firebase';
 import { doc, getDoc } from '@firebase/firestore';
 import { ProductImage, ProductWithImages } from '@/jotai/data/product';
 import { atom } from 'jotai';
+import { atomFamily } from 'jotai/utils';
 
 const staticProductIDToImagesMap: { [key: string]: string[] } = {
   DlvdohiBj7OODe9obUrW: [
@@ -79,22 +80,23 @@ const staticProductImages: { [key: string]: ProductImage[] } = Object.keys(
   };
 }, {});
 
-export const productIdAtom = atom<string>('');
-export const productIdSelector = atom(async (get) => {
-  const productID = get(productIdAtom);
-  const docRef = doc(appFirestore, 'products', productID);
-  const docSnapshot = await getDoc(docRef);
-  if (!docSnapshot.exists()) {
-    throw Error('Product not found');
-  }
-  const productToAddModify = {
-    ...docSnapshot.data(),
-    id: docSnapshot.id,
-  } as ProductWithImages;
-  if (staticProductImages[docSnapshot.id]) {
-    productToAddModify.images = staticProductImages[docSnapshot.id];
-  } else {
-    productToAddModify.images = [];
-  }
-  return productToAddModify;
+export const productIdSelector = atomFamily((param: string) => {
+  const asyncAtom = atom(async () => {
+    const docRef = doc(appFirestore, 'products', param);
+    const docSnapshot = await getDoc(docRef);
+    if (!docSnapshot.exists()) {
+      throw Error('Product not found');
+    }
+    const productToAddModify = {
+      ...docSnapshot.data(),
+      id: docSnapshot.id,
+    } as ProductWithImages;
+    if (staticProductImages[docSnapshot.id]) {
+      productToAddModify.images = staticProductImages[docSnapshot.id];
+    } else {
+      productToAddModify.images = [];
+    }
+    return productToAddModify;
+  });
+  return asyncAtom;
 });

@@ -7,7 +7,7 @@ import {
   productFormLocalImagesSelector,
   productFormModeStateSelector,
   productFormProcessingStateSelector,
-} from '@/jotai/selectors/productForm';
+} from '@/jotai/atoms/productFormSelector';
 import { Delete, Download } from '@mui/icons-material';
 import Button from '@mui/material/Button';
 import { ProductFormModeState } from '@/jotai/data/product';

@@ -3,6 +3,8 @@ import { useCallback, useEffect } from 'react';
 import { menuAtom } from '@/jotai/atoms/menu';
 import { selectedDialogAtom } from '@/jotai/atoms/dialog';
 import { useAtom, useAtomValue } from 'jotai';
+import { userAtomEffect } from '@/jotai/atoms/user';
+import { allProductsAtomEffect } from '@/jotai/atoms/allProducts';
 import LiveChatButton from '@/components/LiveChat';
 import NavDrawer from '@/components/NavDrawer';
 
@@ -10,6 +12,9 @@ function App() {
   const location = useLocation();
   const [, setShowMenu] = useAtom(menuAtom);
   const selectedDialog = useAtomValue(selectedDialogAtom);
+
+  useAtom(userAtomEffect);
+  useAtom(allProductsAtomEffect);
 
   const closeDrawer = useCallback(() => {
     setShowMenu(false);

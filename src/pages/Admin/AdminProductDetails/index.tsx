@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-import { productIdAtom, productIdSelector } from '@/jotai/selectors/productId';
+import { productIdSelector } from '@/jotai/atoms/productId';
 import { categories } from '@/jotai/data/category';
 import {
   defaultProductFormState,
@@ -14,7 +14,7 @@ import {
   productFormModeStateSelector,
   productFormProcessingStateSelector,
   productFormSelector,
-} from '@/jotai/selectors/productForm';
+} from '@/jotai/atoms/productFormSelector';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { loadable } from 'jotai/utils';
 import LoadablePageLayout from '@/components/Layouts/JotailLoadablePage';
@@ -26,8 +26,9 @@ import AdminProductFormFooterComponent from '@/components/Admin/ProductFormFoote
 
 export default function AdminProductDetailsPage() {
   const params = useParams();
-  const setProductID = useSetAtom(productIdAtom);
-  const productWithImagesLoadable = loadable(productIdSelector);
+  const productWithImagesLoadable = loadable(
+    productIdSelector(params.id as string)
+  );
   const productValueLoadable = useAtomValue(productWithImagesLoadable);
 
   const setProductFormState = useSetAtom(productFormStateAtom);
@@ -117,10 +118,6 @@ export default function AdminProductDetailsPage() {
     productValueLoadable.state,
     setProductFormState,
   ]);
-
-  useEffect(() => {
-    setProductID(params.id as string);
-  }, [params.id as string, setProductID]);
 
   return (
     <LoadablePageLayout

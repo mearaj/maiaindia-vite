@@ -26,7 +26,7 @@ import {
   productFormModeStateSelector,
   productFormProcessingStateSelector,
   productFormSelector,
-} from '@/jotai/selectors/productForm';
+} from '@/jotai/atoms/productFormSelector';
 import {
   addDoc,
   collection,

@@ -1,10 +1,9 @@
 import { Box, Paper } from '@mui/material';
 import { defaultPlaceholderProductImage, Product } from '@/jotai/data/product';
 import { useNavigate } from 'react-router-dom';
-import { productIdAtom, productIdSelector } from '@/jotai/selectors/productId';
+import { productIdSelector } from '@/jotai/atoms/productId';
 import { loadable } from 'jotai/utils';
-import { useAtomValue, useSetAtom } from 'jotai';
-import { useEffect } from 'react';
+import { useAtomValue } from 'jotai';
 import LoadableComponent from '@/components/Layouts/JotailLoadableComponent';
 import ProductPrice from '@/components/Product/Price';
 import AddUpdateButton from '@/components/Buttons/AddUpdate';
@@ -18,13 +17,8 @@ export default function ProductComponent({
   isAdminProduct: boolean;
 }) {
   const navigate = useNavigate();
-  const setProductID = useSetAtom(productIdAtom);
-  const productWithImagesLoadable = loadable(productIdSelector);
+  const productWithImagesLoadable = loadable(productIdSelector(product.id!));
   const productWithImages = useAtomValue(productWithImagesLoadable);
-
-  useEffect(() => {
-    setProductID(product.id!);
-  }, [product.id, setProductID]);
 
   const preferredImgSrc =
     productWithImages.state === 'hasData' &&
