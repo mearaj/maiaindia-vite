@@ -1,16 +1,14 @@
 import { Box, Button, Link, useTheme } from '@mui/material';
 import { NavLink } from 'react-router-dom';
 import { appAbsoluteRoutes } from '@/Router';
-import logoImgSrc from '@/images/logo-yellow.png';
+import logoImgSrc from '@/images/logo-circle-yellow.png';
 import createStyles from './styles';
 
-export interface FullLogoButtonProps {
+export interface LogoButtonProps {
   logoHeight?: number | string;
 }
 
-export default function FullLogoButton({
-  logoHeight = '42px',
-}: FullLogoButtonProps) {
+export default function LogoButton({ logoHeight = '42px' }: LogoButtonProps) {
   const theme = useTheme();
   const styles = createStyles(theme);
   return (

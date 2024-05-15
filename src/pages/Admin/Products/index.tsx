@@ -1,4 +1,4 @@
-import { productsSelector } from '@/jotai';
+import { productsByCategory } from '@/jotai';
 import { useAtomValue } from 'jotai';
 import { Product } from '@/jotai/data/product';
 import { loadable } from 'jotai/utils';
@@ -6,7 +6,7 @@ import LoadablePageLayout from '@/components/Layouts/JotailLoadablePage';
 import AdminProducts from '@/components/Admin/Products';
 
 export default function AdminProductsPage() {
-  const valueLoadable = useAtomValue(loadable(productsSelector));
+  const valueLoadable = useAtomValue(loadable(productsByCategory));
 
   let data: Product[] = [];
   if (valueLoadable.state === 'hasData') {

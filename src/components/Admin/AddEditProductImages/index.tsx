@@ -1,17 +1,17 @@
 import { Box } from '@mui/material';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode, Navigation, Thumbs } from 'swiper/modules';
+import { Delete, Download } from '@mui/icons-material';
+import Button from '@mui/material/Button';
+import { ProductFormModeState } from '@/jotai/data/product';
+import { useAtom, useAtomValue } from 'jotai/index';
 import {
   productFormImagesForDeletionSelector,
   productFormImagesSelector,
   productFormLocalImagesSelector,
   productFormModeStateSelector,
   productFormProcessingStateSelector,
-} from '@/jotai/atoms/productFormSelector';
-import { Delete, Download } from '@mui/icons-material';
-import Button from '@mui/material/Button';
-import { ProductFormModeState } from '@/jotai/data/product';
-import { useAtom, useAtomValue } from 'jotai/index';
+} from '@/jotai/atoms/productForm';
 import styles from './index.module.css';
 import addEditProductImagesPlaceholder from '@/images/placeholder.svg';
 

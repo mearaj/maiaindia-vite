@@ -1,5 +1,5 @@
 import { userAtom } from '@/jotai/atoms';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useAtomValue } from 'jotai/index';
 import SignOutButton from '@/components/Buttons/SignOut';
 import SignInButton from '@/components/Buttons/SignIn';
@@ -21,7 +21,11 @@ export default function UserComponent() {
         sx={{ width: '60px', borderRadius: '50%', marginRight: '16px' }}
       />
       <Box>
-        <Box>{userState.profile.displayName}</Box>
+        <Box>
+          <Typography color="secondary">
+            {userState.profile.displayName}
+          </Typography>
+        </Box>
         <SignOutButton />
       </Box>
     </Box>

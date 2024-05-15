@@ -1,15 +1,11 @@
 import * as React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Box, Divider, useTheme } from '@mui/material';
-import { menuAtom } from '@/jotai/atoms/menu';
+import { Box, useTheme } from '@mui/material';
 import { useAtom } from 'jotai';
-import LiveChatHeader from '@/components/LiveChat/ChatHeader';
-import CategoriesRadio from '@/components/Categories';
-import NavLinks from '@/components/NavLinks';
+import { cartAtom } from '@/jotai/atoms/cart';
+import CartPage from '@/components/Cart';
 import useDimensions from '@/hooks/useDimensions';
-import UserComponent from '@/components/User';
 import createStyles from './styles';
-import FullLogoButton from '@/components/Buttons/FullLogo';
 
 export interface DrawerProps {
   className?: string;
@@ -17,7 +13,7 @@ export interface DrawerProps {
 
 export default function NavDrawer(_: DrawerProps) {
   const drawerRef = useRef<HTMLDivElement>(null);
-  const [showMenu, setShowMenu] = useAtom(menuAtom);
+  const [showMenu, setShowMenu] = useAtom(cartAtom);
   const minTransDuration = 250; // milliseconds
   const dimensions = useDimensions();
   const [touchStartPos, setTouchStartPos] = useState({
@@ -135,36 +131,7 @@ export default function NavDrawer(_: DrawerProps) {
       onMouseUp={onTouchEndOrOnMouseUp}
       role="presentation"
     >
-      <LiveChatHeader
-        onCloseClick={() => {
-          setShowMenu(false);
-        }}
-        leftComponent={
-          <Box sx={{ padding: '4px 8px' }}>
-            <FullLogoButton logoHeight="36px" />
-          </Box>
-        }
-      />
-      <Box sx={styles.main}>
-        <UserComponent />
-        <Divider
-          sx={{
-            margin: '16px 0',
-          }}
-        />
-        <CategoriesRadio />
-        <Divider
-          sx={{
-            margin: '16px 0px',
-          }}
-        />
-        <NavLinks />
-        <Divider
-          sx={{
-            margin: '16px 0px',
-          }}
-        />
-      </Box>
+      <CartPage />
     </Box>
   );
 }

@@ -20,14 +20,6 @@ import {
 } from '@/jotai/data/product';
 
 import {
-  productFormImagesForDeletionSelector,
-  productFormImagesSelector,
-  productFormLocalImagesSelector,
-  productFormModeStateSelector,
-  productFormProcessingStateSelector,
-  productFormSelector,
-} from '@/jotai/atoms/productFormSelector';
-import {
   addDoc,
   collection,
   deleteDoc,
@@ -43,6 +35,14 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { deleteObject, ref, uploadBytesResumable } from '@firebase/storage';
 import { Delete, Publish, RestartAlt } from '@mui/icons-material';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai/index';
+import {
+  productFormImagesForDeletionSelector,
+  productFormImagesSelector,
+  productFormLocalImagesSelector,
+  productFormModeStateSelector,
+  productFormProcessingStateSelector,
+  productFormSelector,
+} from '@/jotai/atoms/productForm';
 import createStyles from './styles';
 import { appAbsoluteRoutes } from '@/Router';
 import SnackbarDialog from '@/components/Dialogs/SnackBar';

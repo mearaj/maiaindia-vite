@@ -1,1 +1,1 @@
-export { productsSelector } from '@/jotai/atoms/products';
+export { productsByCategory } from '@/jotai/atoms/products';

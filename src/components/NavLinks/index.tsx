@@ -1,22 +1,9 @@
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box,
-  Button,
-  Divider,
-  Link,
-  SxProps,
-  Theme,
-  Typography,
-} from '@mui/material';
+import { Box, Button, Divider, Link, SxProps, Theme } from '@mui/material';
 import {
   Add,
   AddTask,
   ContactPhone,
-  ExpandMore,
   Home,
-  LocalMallTwoTone,
   Message,
   ShoppingBag,
 } from '@mui/icons-material';
@@ -57,7 +44,7 @@ export default function NavLinks() {
               size="large"
               startIcon={<AddTask />}
               sx={linkButtonStyle}
-              color="primary"
+              color="secondary"
             >
               Admin Orders
             </Button>
@@ -71,6 +58,7 @@ export default function NavLinks() {
                   : 'text'
               }
               size="large"
+              color="secondary"
               startIcon={<ShoppingBag />}
               sx={{
                 ...linkButtonStyle,
@@ -88,6 +76,7 @@ export default function NavLinks() {
                   ? 'contained'
                   : 'text'
               }
+              color="secondary"
               size="large"
               startIcon={<Add />}
               sx={{
@@ -107,6 +96,7 @@ export default function NavLinks() {
                   : 'text'
               }
               size="large"
+              color="secondary"
               startIcon={<Message />}
               sx={linkButtonStyle}
             >
@@ -124,6 +114,7 @@ export default function NavLinks() {
       )}
       <Link component={NavLink} to={appAbsoluteRoutes.home}>
         <Button
+          color="secondary"
           fullWidth
           variant={
             isActiveByStartsWith(
@@ -140,160 +131,144 @@ export default function NavLinks() {
           Home
         </Button>
       </Link>
-      <Link component={NavLink} to={appAbsoluteRoutes.cart}>
+      <Link component={NavLink} to={appAbsoluteRoutes.profile}>
         <Button
+          color="secondary"
           fullWidth
           variant={
-            isActiveByEqual([appAbsoluteRoutes.cart], location)
+            isActiveByEqual([appAbsoluteRoutes.profile], location)
               ? 'contained'
               : 'text'
           }
           size="large"
-          startIcon={<LocalMallTwoTone />}
+          startIcon={<ProfileIcon />}
           sx={linkButtonStyle}
         >
-          Cart
+          <Box
+            component="span"
+            sx={{
+              whiteSpace: 'nowrap',
+              overflowX: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            Profile
+          </Box>
         </Button>
       </Link>
-      <Accordion>
-        <AccordionSummary expandIcon={<ExpandMore color="primary" />}>
-          <Typography color="primary">More</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Link component={NavLink} to={appAbsoluteRoutes.profile}>
-            <Button
-              fullWidth
-              variant={
-                isActiveByEqual([appAbsoluteRoutes.profile], location)
-                  ? 'contained'
-                  : 'text'
-              }
-              size="large"
-              startIcon={<ProfileIcon />}
-              sx={linkButtonStyle}
-            >
-              <Box
-                component="span"
-                sx={{
-                  whiteSpace: 'nowrap',
-                  overflowX: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}
-              >
-                Profile
-              </Box>
-            </Button>
-          </Link>
-          <Link component={NavLink} to={appAbsoluteRoutes.contactUs}>
-            <Button
-              fullWidth
-              variant={
-                isActiveByEqual([appAbsoluteRoutes.contactUs], location)
-                  ? 'contained'
-                  : 'text'
-              }
-              size="large"
-              startIcon={<ContactPhone />}
-              sx={linkButtonStyle}
-            >
-              Contact Us
-            </Button>
-          </Link>
-          <Link component={NavLink} to={appAbsoluteRoutes.aboutUs}>
-            <Button
-              fullWidth
-              variant={
-                isActiveByEqual([appAbsoluteRoutes.aboutUs], location)
-                  ? 'contained'
-                  : 'text'
-              }
-              size="large"
-              startIcon={<InfoIcon />}
-              sx={linkButtonStyle}
-            >
-              About Us
-            </Button>
-          </Link>
-          <Link
-            component={NavLink}
-            to={appAbsoluteRoutes.cancellationRefundPolicies}
+      <Link component={NavLink} to={appAbsoluteRoutes.contactUs}>
+        <Button
+          color="secondary"
+          fullWidth
+          variant={
+            isActiveByEqual([appAbsoluteRoutes.contactUs], location)
+              ? 'contained'
+              : 'text'
+          }
+          size="large"
+          startIcon={<ContactPhone />}
+          sx={linkButtonStyle}
+        >
+          Contact Us
+        </Button>
+      </Link>
+      <Link component={NavLink} to={appAbsoluteRoutes.aboutUs}>
+        <Button
+          color="secondary"
+          fullWidth
+          variant={
+            isActiveByEqual([appAbsoluteRoutes.aboutUs], location)
+              ? 'contained'
+              : 'text'
+          }
+          size="large"
+          startIcon={<InfoIcon />}
+          sx={linkButtonStyle}
+        >
+          About Us
+        </Button>
+      </Link>
+      <Link
+        component={NavLink}
+        to={appAbsoluteRoutes.cancellationRefundPolicies}
+      >
+        <Button
+          color="secondary"
+          fullWidth
+          variant={
+            isActiveByEqual(
+              [appAbsoluteRoutes.cancellationRefundPolicies],
+              location
+            )
+              ? 'contained'
+              : 'text'
+          }
+          size="large"
+          startIcon={<PolicyIcon />}
+          sx={linkButtonStyle}
+        >
+          <Box
+            component="span"
+            sx={{
+              whiteSpace: 'nowrap',
+              overflowX: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
           >
-            <Button
-              fullWidth
-              variant={
-                isActiveByEqual(
-                  [appAbsoluteRoutes.cancellationRefundPolicies],
-                  location
-                )
-                  ? 'contained'
-                  : 'text'
-              }
-              size="large"
-              startIcon={<PolicyIcon />}
-              sx={linkButtonStyle}
-            >
-              <Box
-                component="span"
-                sx={{
-                  whiteSpace: 'nowrap',
-                  overflowX: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}
-              >
-                Cancel/Refund Policy
-              </Box>
-            </Button>
-          </Link>
-          <Link component={NavLink} to={appAbsoluteRoutes.termsConditions}>
-            <Button
-              fullWidth
-              variant={
-                isActiveByEqual([appAbsoluteRoutes.termsConditions], location)
-                  ? 'contained'
-                  : 'text'
-              }
-              size="large"
-              startIcon={<TermsConditions />}
-              sx={linkButtonStyle}
-            >
-              <Box
-                component="span"
-                sx={{
-                  whiteSpace: 'nowrap',
-                  overflowX: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}
-              >
-                Terms And Conditions
-              </Box>
-            </Button>
-          </Link>
-          <Link component={NavLink} to={appAbsoluteRoutes.privacyPolicy}>
-            <Button
-              fullWidth
-              variant={
-                isActiveByEqual([appAbsoluteRoutes.privacyPolicy], location)
-                  ? 'contained'
-                  : 'text'
-              }
-              size="large"
-              startIcon={<PolicyIcon />}
-              sx={{ ...linkButtonStyle, marginBottom: '0px' }}
-            >
-              <Box
-                component="span"
-                sx={{
-                  whiteSpace: 'nowrap',
-                  overflowX: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}
-              >
-                Privacy Policy
-              </Box>
-            </Button>
-          </Link>
-        </AccordionDetails>
-      </Accordion>
+            Cancel/Refund Policy
+          </Box>
+        </Button>
+      </Link>
+      <Link component={NavLink} to={appAbsoluteRoutes.termsConditions}>
+        <Button
+          color="secondary"
+          fullWidth
+          variant={
+            isActiveByEqual([appAbsoluteRoutes.termsConditions], location)
+              ? 'contained'
+              : 'text'
+          }
+          size="large"
+          startIcon={<TermsConditions />}
+          sx={linkButtonStyle}
+        >
+          <Box
+            component="span"
+            sx={{
+              whiteSpace: 'nowrap',
+              overflowX: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            Terms And Conditions
+          </Box>
+        </Button>
+      </Link>
+      <Link component={NavLink} to={appAbsoluteRoutes.privacyPolicy}>
+        <Button
+          color="secondary"
+          fullWidth
+          variant={
+            isActiveByEqual([appAbsoluteRoutes.privacyPolicy], location)
+              ? 'contained'
+              : 'text'
+          }
+          size="large"
+          startIcon={<PolicyIcon />}
+          sx={{ ...linkButtonStyle, marginBottom: '0px' }}
+        >
+          <Box
+            component="span"
+            sx={{
+              whiteSpace: 'nowrap',
+              overflowX: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            Privacy Policy
+          </Box>
+        </Button>
+      </Link>
     </>
   );
 }

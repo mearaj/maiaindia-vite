@@ -45,7 +45,7 @@ export default function CategoriesRadio({
             margin: '0 0 8px 4px',
             fontSize: '18px',
           }}
-          color="primary"
+          color="secondary"
         >
           Filter By Category
         </Typography>
@@ -76,7 +76,7 @@ export default function CategoriesRadio({
               value={eachCategory.id}
               control={
                 <Radio
-                  color={radioColor || 'primary'}
+                  color={radioColor || 'secondary'}
                   size="small"
                   sx={{
                     '&.MuiRadio-colorSecondary': {
@@ -89,7 +89,7 @@ export default function CategoriesRadio({
                 />
               }
               label={
-                <Typography fontSize="medium" color={labelColor || 'primary'}>
+                <Typography fontSize="medium" color={labelColor || 'secondary'}>
                   {eachCategory.name}
                 </Typography>
               }

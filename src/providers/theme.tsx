@@ -1,4 +1,11 @@
-import { alpha, createTheme, CssBaseline, ThemeProvider } from '@mui/material';
+import {
+  alpha,
+  createTheme,
+  CssBaseline,
+  darken,
+  lighten,
+  ThemeProvider,
+} from '@mui/material';
 import { PropsWithChildren } from 'react';
 
 declare module '@mui/material/styles' {
@@ -19,14 +26,14 @@ declare module '@mui/material/styles' {
 
 export default function AppThemeProvider({ children }: PropsWithChildren) {
   const primary = {
-    light: '#437D53',
+    light: '#197149',
     main: '#155D28',
-    dark: '#001900',
+    dark: '#0b3e27',
   };
   const secondary = {
-    light: '#D6D23D',
-    main: '#CCC70D',
-    dark: '#8E8B09',
+    light: lighten('#ffffff', 0.1),
+    main: '#ffffff',
+    dark: darken('#ffffff', 0.1),
   };
   const AppTheme = createTheme({
     palette: {
@@ -53,7 +60,7 @@ export default function AppThemeProvider({ children }: PropsWithChildren) {
       },
     },
     dimensions: {
-      appBarHeight: 60,
+      appBarHeight: 80,
       chatButtonHeight: 56,
     },
   });

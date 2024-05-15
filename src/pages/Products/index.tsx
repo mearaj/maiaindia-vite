@@ -1,4 +1,4 @@
-import { productsSelector } from '@/jotai';
+import { productsByCategory } from '@/jotai';
 import { useAtomValue } from 'jotai/index';
 import styles from './index.module.css';
 import Videos from '@/components/Videos';
@@ -7,7 +7,7 @@ import CommonPageLayout from '@/components/Layouts/CommonPage';
 import FooterComponent from '@/components/Footer';
 
 export default function ProductsPage() {
-  const products = useAtomValue(productsSelector);
+  const products = useAtomValue(productsByCategory);
 
   return (
     <CommonPageLayout>

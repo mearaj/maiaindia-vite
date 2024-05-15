@@ -12,7 +12,6 @@ import App from '@/App';
 import ProductsPage from '@/pages/Products';
 import ProductDetailsPage from '@/pages/ProductDetails';
 import ContactUsPage from '@/pages/ContactUs';
-import CartPage from '@/pages/Cart';
 import { AdminHomePage } from '@/pages/Admin';
 import AdminOrdersPage from '@/pages/Admin/Orders';
 import AdminAddProductPage from '@/pages/Admin/AddProduct';
@@ -56,7 +55,6 @@ export const appRelativeRoutes = {
   home: homeRelative,
   products: 'products',
   productDetails: 'products/:id',
-  cart: 'cart',
   admin: 'admin',
   contactUs: 'contactUs',
   aboutUs: 'aboutUs',
@@ -173,10 +171,6 @@ export const router = createBrowserRouter([
         path: '',
         element: <AuthRoutes />,
         children: [
-          {
-            path: appRelativeRoutes.cart,
-            element: <CartPage />,
-          },
           {
             path: appRelativeRoutes.profile,
             element: <ProfilePage />,

@@ -4,17 +4,15 @@ import { productIdSelector } from '@/jotai/atoms/productId';
 import { categories } from '@/jotai/data/category';
 import {
   defaultProductFormState,
+  productFormLocalImagesSelector,
+  productFormModeStateSelector,
+  productFormProcessingStateSelector,
+  productFormSelector,
   productFormStateAtom,
 } from '@/jotai/atoms/productForm';
 import * as React from 'react';
 import { SyntheticEvent, useCallback, useEffect } from 'react';
 import { ProductForm } from '@/jotai/data/product';
-import {
-  productFormLocalImagesSelector,
-  productFormModeStateSelector,
-  productFormProcessingStateSelector,
-  productFormSelector,
-} from '@/jotai/atoms/productFormSelector';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { loadable } from 'jotai/utils';
 import LoadablePageLayout from '@/components/Layouts/JotailLoadablePage';

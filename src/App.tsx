@@ -4,7 +4,8 @@ import { menuAtom } from '@/jotai/atoms/menu';
 import { selectedDialogAtom } from '@/jotai/atoms/dialog';
 import { useAtom, useAtomValue } from 'jotai';
 import { userAtomEffect } from '@/jotai/atoms/user';
-import { allProductsAtomEffect } from '@/jotai/atoms/allProducts';
+import { allProductsAtomEffect } from '@/jotai/atoms/products';
+import { adminUsersAtomEffect, isAdminAtomEffect } from '@/jotai/atoms/admin';
 import LiveChatButton from '@/components/LiveChat';
 import NavDrawer from '@/components/NavDrawer';
 
@@ -15,6 +16,8 @@ function App() {
 
   useAtom(userAtomEffect);
   useAtom(allProductsAtomEffect);
+  useAtom(isAdminAtomEffect);
+  useAtom(adminUsersAtomEffect);
 
   const closeDrawer = useCallback(() => {
     setShowMenu(false);

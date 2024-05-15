@@ -34,6 +34,7 @@ export default function SignInButton({
 
   return (
     <Button
+      color="secondary"
       sx={{ ...buttonStyle }}
       onClick={signIn}
       {...otherProps}

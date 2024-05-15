@@ -61,6 +61,6 @@ export const isAdminAtomEffect = atomEffect((_, set) => {
       set(isAdminAtom, false);
       return;
     }
-    set(isAdminAtom, false);
+    set(isAdminAtom, true);
   });
 });

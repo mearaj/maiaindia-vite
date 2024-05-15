@@ -27,6 +27,7 @@ const iconStyles = (theme: Theme) => ({
   width: 'auto',
   maxHeight: 'none',
   color: theme.palette.secondary.main,
+  animation: 'spin 350ms',
 });
 
 const logoIconButtonStyles = (_: Theme) => ({
@@ -49,6 +50,41 @@ const linkStyles = (_: Theme) => ({
   height: '100%',
 });
 
+const mainStyles = (theme: Theme) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'stretch',
+  position: 'fixed',
+  top: `${theme.dimensions.appBarHeight}px`,
+  height: '0px',
+  zIndex: theme.zIndex.appBar,
+  width: '100%',
+  overflow: 'hidden',
+  background: `linear-gradient(90deg, ${theme.palette.primary.dark},${theme.palette.primary.light})`,
+  transition: 'height 350ms',
+});
+
+const menuVisibleStyle = (theme: Theme) => ({
+  height: `calc(100vh - ${theme.dimensions.appBarHeight}px)`,
+  transition: 'height 350ms',
+});
+
+const menuWrapperStyle = (_: Theme) => ({
+  padding: '16px',
+  overflowY: 'auto',
+});
+
+const animationStyle = (_: Theme) => ({
+  '@keyframes spin': {
+    '0%': {
+      transform: 'scale(0,0)',
+    },
+    '100%': {
+      transform: 'scale(1,1)',
+    },
+  },
+});
+
 export default function createStyles(theme: Theme) {
   const toolbar = toolbarStyles(theme);
   const sectionLeft = sectionLeftStyles(theme);
@@ -58,6 +94,10 @@ export default function createStyles(theme: Theme) {
   const iconButton = iconButtonStyles(theme);
   const icon = iconStyles(theme);
   const link = linkStyles(theme);
+  const main = mainStyles(theme);
+  const menuVisible = menuVisibleStyle(theme);
+  const menuWrapper = menuWrapperStyle(theme);
+  const animation = animationStyle(theme);
 
   return {
     toolbar,
@@ -68,5 +108,9 @@ export default function createStyles(theme: Theme) {
     iconButton,
     icon,
     link,
+    main,
+    menuVisible,
+    menuWrapper,
+    animation,
   };
 }

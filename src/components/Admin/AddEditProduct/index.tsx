@@ -10,13 +10,13 @@ import {
 import { Cancel, Edit } from '@mui/icons-material';
 
 import { ProductFormModeState } from '@/jotai/data/product';
+import { Category } from '@/jotai/data/category';
+import { useAtom, useAtomValue } from 'jotai';
 import {
   productFormModeStateSelector,
   productFormProcessingStateSelector,
   productFormSelector,
-} from '@/jotai/atoms/productFormSelector';
-import { Category } from '@/jotai/data/category';
-import { useAtom, useAtomValue } from 'jotai';
+} from '@/jotai/atoms/productForm';
 import CategoriesDropdown from '@/components/Dropdowns/Categories';
 import createStyles from './styles';
 

@@ -5,9 +5,9 @@ import ArrowBack from '@mui/icons-material/ArrowBackIos';
 import Close from '@mui/icons-material/Close';
 import { WidgetsTwoTone } from '@mui/icons-material';
 import { useAtom, useSetAtom } from 'jotai';
+import LogoButton from '@/components/Buttons/Logo';
 import HeaderLayout from '@/components/Layouts/Header';
 import { useChatSessionEffects } from '@/hooks/useChatSession';
-import FullLogoButton from '@/components/Buttons/FullLogo';
 
 export default function AdminLiveChatPageHeader() {
   const [activeLiveChatSession, setActiveLiveChatSession] = useAtom(
@@ -46,7 +46,7 @@ export default function AdminLiveChatPageHeader() {
             />
           </IconButton>
         ) : (
-          <FullLogoButton />
+          <LogoButton />
         )
       }
       centerComponent={

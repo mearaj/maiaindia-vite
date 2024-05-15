@@ -3,6 +3,7 @@ import {
   AppBar,
   Box,
   Button,
+  Divider,
   Link,
   SxProps,
   Theme,
@@ -16,9 +17,14 @@ import { menuAtom } from '@/jotai/atoms/menu';
 import { userAtom } from '@/jotai/atoms';
 import { LocalMallTwoTone, WidgetsTwoTone } from '@mui/icons-material';
 import { useAtom, useAtomValue } from 'jotai';
+import { cartAtom } from '@/jotai/atoms/cart';
+import Close from '@mui/icons-material/Close';
+import LogoButton from '@/components/Buttons/Logo';
 import createStyles from './styles';
 import { appAbsoluteRoutes } from '@/Router';
-import FullLogoButton from '@/components/Buttons/FullLogo';
+import UserComponent from '@/components/User';
+import CategoriesRadio from '@/components/Categories';
+import NavLinks from '@/components/NavLinks';
 
 export interface HeaderProps {
   showBackIcon?: boolean;
@@ -32,7 +38,8 @@ export default function Header({
   sx,
 }: HeaderProps) {
   // const dimensions = useDimensions();
-  const [, setShowMenu] = useAtom(menuAtom);
+  const [showMenu, setShowMenu] = useAtom(menuAtom);
+  const [showCart, setShowCart] = useAtom(cartAtom);
   const navigate = useNavigate();
   const theme = useTheme();
   const styles = createStyles(theme);
@@ -47,63 +54,63 @@ export default function Header({
   };
 
   const handleInteractionItemClick = () => {
-    setShowMenu(true);
+    setShowMenu(!showMenu);
   };
 
-  // let logoImgSrc = '/images/logo-circle-yellow.png';
-  // if (dimensions.width >= 360) {
-  //   logoImgSrc = '/images/logo-yellow.png';
-  // }
+  let menuStyles = styles.main;
+  if (showMenu) {
+    menuStyles = { ...menuStyles, ...styles.menuVisible };
+  }
 
   return (
-    <AppBar
-      position="sticky"
-      sx={{
-        display: 'flex',
-        height: `${theme.dimensions.appBarHeight}px`,
-        width: '100%',
-        ...sx,
-      }}
-    >
-      <Toolbar sx={styles.toolbar}>
-        <Box sx={styles.sectionLeft}>
-          {showBackIcon && (
-            <Button sx={styles.backIconButton} onClick={handleBackIconClick}>
-              <ArrowBack style={styles.icon} />
-            </Button>
-          )}
-          {!showBackIcon && (
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Link
-                variant="button"
-                component={NavLink}
-                to={appAbsoluteRoutes.products}
-                sx={styles.link}
-              >
-                <Button sx={{ padding: '8px' }}>
-                  <Typography color="secondary">Custom</Typography>
-                </Button>
-              </Link>
-            </Box>
-          )}
-        </Box>
-        <Box
-          sx={{
-            flexGrow: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <FullLogoButton />
-        </Box>
-        <Box sx={styles.sectionRight}>
-          <Link
-            sx={{ ...styles.link, position: 'relative' }}
-            component={NavLink}
-            to="/cart"
+    <>
+      <AppBar
+        position="sticky"
+        sx={{
+          display: 'flex',
+          height: `${theme.dimensions.appBarHeight}px`,
+          width: '100%',
+          background: `linear-gradient(90deg, ${theme.palette.primary.dark},${theme.palette.primary.light})`,
+          ...sx,
+        }}
+      >
+        <Toolbar sx={styles.toolbar}>
+          <Box sx={styles.sectionLeft}>
+            {showBackIcon && (
+              <Button sx={styles.backIconButton} onClick={handleBackIconClick}>
+                <ArrowBack style={styles.icon} />
+              </Button>
+            )}
+            {!showBackIcon && (
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Link
+                  variant="button"
+                  component={NavLink}
+                  to={appAbsoluteRoutes.products}
+                  sx={styles.link}
+                >
+                  <Button sx={{ padding: '8px' }}>
+                    <Typography color="secondary">Custom</Typography>
+                  </Button>
+                </Link>
+              </Box>
+            )}
+          </Box>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
           >
-            <Button sx={styles.iconButton}>
+            <LogoButton />
+          </Box>
+          <Box sx={styles.sectionRight}>
+            <Button
+              onClick={() => setShowCart(!showCart)}
+              sx={styles.iconButton}
+            >
               <LocalMallTwoTone sx={styles.icon} />
             </Button>
             {user &&
@@ -133,15 +140,41 @@ export default function Header({
                   </small>
                 </Box>
               )}
-          </Link>
-          <Button
-            sx={styles.iconButton}
-            onClick={() => handleInteractionItemClick()}
-          >
-            <WidgetsTwoTone sx={styles.icon} />
-          </Button>
+            <Button
+              sx={styles.iconButton}
+              onClick={() => handleInteractionItemClick()}
+            >
+              {showMenu ? (
+                <Close sx={{ ...styles.icon, ...styles.animation }} />
+              ) : (
+                <WidgetsTwoTone sx={{ ...styles.icon, ...styles.animation }} />
+              )}
+            </Button>
+          </Box>
+        </Toolbar>
+      </AppBar>
+      <Box sx={menuStyles}>
+        <Box sx={styles.menuWrapper}>
+          <UserComponent />
+          <Divider
+            sx={{
+              margin: '16px 0',
+            }}
+          />
+          <CategoriesRadio />
+          <Divider
+            sx={{
+              margin: '16px 0px',
+            }}
+          />
+          <NavLinks />
+          <Divider
+            sx={{
+              margin: '16px 0px',
+            }}
+          />
         </Box>
-      </Toolbar>
-    </AppBar>
+      </Box>
+    </>
   );
 }

@@ -7,7 +7,8 @@ import { selectedDialogAtom } from '@/jotai/atoms/dialog';
 import { Add, Remove } from '@mui/icons-material';
 import { setCartQuantity } from '@/misc';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useAtomValue, useSetAtom } from 'jotai/index';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai/index';
+import { cartAtom } from '@/jotai/atoms/cart';
 import SignInRequiredDialog from '@/components/Dialogs/SignInRequired';
 
 interface AddUpdateButtonProps {
@@ -21,6 +22,7 @@ export default function AddUpdateButton({ product }: AddUpdateButtonProps) {
     user.userState?.cart.items[product.id!]?.quantity ?? 0
   );
   const [loading, setIsLoading] = useState(true);
+  const [_, setShowCart] = useAtom(cartAtom);
 
   const handleCartIncrement = async (
     _e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -35,6 +37,7 @@ export default function AddUpdateButton({ product }: AddUpdateButtonProps) {
       ? cartItems[product.id!].quantity + 1
       : 1;
     setCartQuantity(user, product.id!, quantityAlt);
+    setShowCart(true);
   };
 
   const onDecrementClicked = async (
@@ -49,6 +52,7 @@ export default function AddUpdateButton({ product }: AddUpdateButtonProps) {
       ? cartItems[product.id!].quantity - 1
       : 0;
     setCartQuantity(user, product.id!, quantityAlt);
+    setShowCart(true);
   };
 
   useEffect(() => {
