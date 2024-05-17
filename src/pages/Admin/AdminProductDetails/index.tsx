@@ -57,10 +57,9 @@ export default function AdminProductDetailsPage() {
       if (shouldReset && product) {
         const newProductForm: ProductForm = {
           details: product.details ?? '',
-          mrp: product.mrp,
-          sp: product.sp,
           name: product.name,
           id: product.id,
+          variants: product.variants,
           category:
             categories.find(
               (eachCategory) =>
@@ -91,10 +90,9 @@ export default function AdminProductDetailsPage() {
       const newProduct = productValueLoadable.data;
       const newProductForm: ProductForm = {
         details: newProduct.details ?? '',
-        mrp: newProduct.mrp,
-        sp: newProduct.sp,
         name: newProduct.name,
         id: newProduct.id,
+        variants: newProduct.variants,
         category:
           categories.find(
             (eachCategory) =>

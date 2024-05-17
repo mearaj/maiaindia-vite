@@ -8,13 +8,18 @@ import {
 } from '@/jotai/data/product';
 import { categories } from '@/jotai/data/category';
 
-export const defaultProductForm = {
+export const defaultProductForm: ProductForm = {
   id: null,
-  mrp: '',
-  sp: '',
   details: '',
   category: categories[categories.length - 1],
   name: '',
+  variants: [
+    {
+      mrp: '',
+      sp: '',
+      id: '',
+    },
+  ],
 };
 export const defaultProductFormProcessingState = false;
 

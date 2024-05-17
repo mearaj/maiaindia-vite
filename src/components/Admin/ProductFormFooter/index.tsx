@@ -24,7 +24,6 @@ import {
   collection,
   deleteDoc,
   doc,
-  serverTimestamp,
   setDoc,
 } from '@firebase/firestore';
 import { appFirebaseStorage, appFirestore } from '@/firebase';
@@ -128,14 +127,17 @@ export default function AdminProductFormFooterComponent({
     return !!(
       productForm &&
       productForm.name &&
-      ((typeof productForm.mrp === 'number' && productForm.mrp >= 0) ||
-        (typeof productForm.mrp === 'string' &&
-          !Number.isNaN(parseFloat(productForm.mrp)) &&
-          parseFloat(productForm.mrp) >= 0)) &&
-      ((typeof productForm.sp === 'number' && productForm.sp >= 0) ||
-        (typeof productForm.sp === 'string' &&
+      ((typeof productForm.variants[0].mrp === 'number' &&
+        productForm.variants[0].mrp >= 0) ||
+        (typeof productForm.variants[0].mrp === 'string' &&
+          !Number.isNaN(parseFloat(productForm.variants[0].mrp)) &&
+          parseFloat(productForm.variants[0].mrp) >= 0)) &&
+      ((typeof productForm.variants[0].sp === 'number' &&
+        productForm.variants[0].sp >= 0) ||
+        (typeof productForm.variants[0].sp === 'string' &&
           !Number.isNaN(
-            parseFloat(productForm.sp) && parseFloat(productForm.sp) >= 0
+            parseFloat(productForm.variants[0].sp) &&
+              parseFloat(productForm.variants[0].sp) >= 0
           ))) &&
       categories.find(
         (eachCategory) => eachCategory.id === productForm.category.id
@@ -355,13 +357,12 @@ export default function AdminProductFormFooterComponent({
       }
 
       const newProduct: Product = {
+        id: '',
         name: productForm.name,
         categoryID: productForm.category.id,
-        updatedAt: serverTimestamp(),
-        createdAt: serverTimestamp(),
-        currency: 'INR',
-        mrp: productForm.mrp as number,
-        sp: productForm.sp as number,
+        // Todo
+        // variants: productForm.variants,
+        variants: [],
         details: productForm.details ?? '',
       };
       let modalContentPrompt:
@@ -460,9 +461,9 @@ export default function AdminProductFormFooterComponent({
       productForm.category.id,
       productForm.details,
       productForm.id,
-      productForm.mrp,
+      productForm.variants[0].mrp,
       productForm.name,
-      productForm.sp,
+      productForm.variants[0].sp,
       setDialogComponent,
       setIsProcessing,
     ]

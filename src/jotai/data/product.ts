@@ -1,4 +1,3 @@
-import { FieldValue, Timestamp } from '@firebase/firestore';
 import { Category } from '@/jotai/data/category';
 
 export interface ProductImage {
@@ -16,8 +15,21 @@ export interface Product {
   categoryID: string;
   name: string;
   details: string;
-  updatedAt: FieldValue | Timestamp;
-  createdAt: FieldValue | Timestamp;
+  currency?: string;
+  variants: Variant[];
+}
+
+export interface VariantForm {
+  productID?: string;
+  id?: string;
+  mrp?: number | string;
+  sp?: number | string;
+  currency?: string;
+}
+
+export interface Variant {
+  productID: string;
+  id: string;
   currency: string;
   mrp: number;
   sp: number;
@@ -30,10 +42,9 @@ export interface ProductWithImages extends Product {
 export interface ProductForm {
   name: string;
   details: string;
-  mrp: number | string;
-  sp: number | string;
   category: Category;
   id?: string | null;
+  variants: VariantForm[];
 }
 
 export enum ProductFormModeState {

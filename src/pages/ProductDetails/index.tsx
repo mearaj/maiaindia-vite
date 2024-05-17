@@ -18,7 +18,6 @@ import Button from '@mui/material/Button';
 import { loadable } from 'jotai/utils';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ProductWithImages } from '@/jotai/data/product';
-import { Timestamp } from '@firebase/firestore';
 import LoadableComponent from '@/components/Layouts/JotailLoadableComponent';
 import ProductPrice from '@/components/Product/Price';
 import styles from './index.module.css';
@@ -36,15 +35,20 @@ export default function ProductDetailsPage() {
   const setDialog = useSetAtom(selectedDialogAtom);
 
   let data: ProductWithImages = {
+    id: '',
     categoryID: '',
-    createdAt: Timestamp.now(),
-    currency: '',
-    mrp: 0,
-    sp: 0,
-    updatedAt: Timestamp.now(),
     name: '',
     images: [],
     details: '',
+    variants: [
+      {
+        id: '',
+        productID: '',
+        currency: 'INR',
+        mrp: 0,
+        sp: 0,
+      },
+    ],
   };
   if (productLoadable.state === 'hasData') {
     data = productLoadable.data;

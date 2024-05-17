@@ -51,10 +51,11 @@ export default function AddEditProductComponent() {
             setProductForm({ ...productForm, details: val });
             break;
           case 'mrp':
-            setProductForm({ ...productForm, mrp: numVal });
+            // Todo
+            // setProductForm({ ...productForm, mrp: numVal });
             break;
           case 'sp':
-            setProductForm({ ...productForm, sp: numVal });
+            // setProductForm({ ...productForm, sp: numVal });
             break;
           default:
             break;
@@ -155,7 +156,7 @@ export default function AddEditProductComponent() {
             fullWidth
             placeholder="Enter max retail price..."
             size="small"
-            value={productForm.mrp}
+            value={productForm.variants[0]?.mrp}
             onChange={handleFieldChange('mrp')}
             disabled={disableForm}
           />
@@ -170,7 +171,7 @@ export default function AddEditProductComponent() {
             placeholder="Enter selling price..."
             fullWidth
             size="small"
-            value={productForm.sp}
+            value={productForm.variants[0]?.sp}
             onChange={handleFieldChange('sp')}
             disabled={disableForm}
           />

@@ -11,9 +11,13 @@ export default function ProductPrice({
   product: Product;
 }) {
   let discountComponent: ReactNode;
-  const discount = product.mrp - product.sp;
-  if (discount > 0 && product.mrp !== 0) {
-    const discountPercentage = ((discount / product.mrp) * 100).toFixed(0);
+  const discount =
+    (product.variants[0]?.mrp || 0) - (product.variants[0]?.sp || 0);
+  if (discount > 0 && product.variants && product.variants[0].mrp !== 0) {
+    const discountPercentage = (
+      (discount / product.variants[0].mrp) *
+      100
+    ).toFixed(0);
     discountComponent = (
       <Typography
         sx={{
@@ -50,12 +54,12 @@ export default function ProductPrice({
           opacity: 0.75,
         }}
       >
-        ₹{product.mrp}
+        ₹{product.variants[0]?.mrp}
       </Typography>
       <Typography
         sx={{ fontWeight: '600', fontSize: 'inherit', marginRight: '6px' }}
       >
-        ₹{product.sp}
+        ₹{product.variants[0]?.sp}
       </Typography>
     </Box>
   );
