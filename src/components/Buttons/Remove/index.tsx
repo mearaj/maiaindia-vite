@@ -1,6 +1,5 @@
 import { Box, Button, ButtonProps, SxProps, Theme } from '@mui/material';
 import { userAtom } from '@/jotai/atoms';
-import { Delete } from '@mui/icons-material';
 import { Product } from '@/jotai/data/product';
 import { setCartQuantity } from '@/misc';
 import { useAtomValue } from 'jotai/index';
@@ -17,9 +16,6 @@ export default function RemoveButton({
 }: RemoveButtonProps) {
   const user = useAtomValue(userAtom);
 
-  const updateQuantity = async (quantityAlt: number) => {
-    await setCartQuantity(user, product.id!, quantityAlt);
-  };
   if (!user.userState) {
     return null;
   }
@@ -30,23 +26,22 @@ export default function RemoveButton({
   return (
     <Button
       sx={sx}
-      variant="outlined"
+      variant="contained"
       color="error"
       fullWidth
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        updateQuantity(0);
+        setCartQuantity(user, product.id!, 0);
       }}
       {...otherProps}
     >
-      <Delete
-        sx={{
-          height: '32px',
-          width: 'auto',
-          marginRight: '2px',
-        }}
-      />
+      {/* <Delete */}
+      {/*  sx={{ */}
+      {/*    width: 'auto', */}
+      {/*    marginRight: '2px', */}
+      {/*  }} */}
+      {/* /> */}
       <Box sx={{ fontSize: '14px' }}>Remove</Box>
     </Button>
   );

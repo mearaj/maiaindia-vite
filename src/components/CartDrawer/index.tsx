@@ -11,10 +11,11 @@ export interface DrawerProps {
   className?: string;
 }
 
-export default function NavDrawer(_: DrawerProps) {
+export default function CartDrawer(_: DrawerProps) {
   const drawerRef = useRef<HTMLDivElement>(null);
-  const [showMenu, setShowMenu] = useAtom(cartAtom);
-  const minTransDuration = 250; // milliseconds
+  const mainRef = useRef<HTMLDivElement>(null);
+  const [showCart, setShowCart] = useAtom(cartAtom);
+  const minTransDuration = 350; // milliseconds
   const dimensions = useDimensions();
   const [touchStartPos, setTouchStartPos] = useState({
     clientX: 0,
@@ -33,13 +34,13 @@ export default function NavDrawer(_: DrawerProps) {
       !mousePressOrTouchStart
     ) {
       drawerRef.current.style.transition = `right ${minTransDuration}ms`;
-      if (showMenu) {
+      if (showCart) {
         drawerRef.current.style.right = '0px';
       } else {
         drawerRef.current.style.right = `-${drawerRef.current.offsetWidth}px`;
       }
     }
-  }, [mousePressOrTouchStart, showMenu]);
+  }, [mousePressOrTouchStart, showCart]);
   const onTouchStartOrOnMouseDown = (
     e: React.TouchEvent<HTMLElement> | React.MouseEvent<HTMLElement>
   ) => {
@@ -102,11 +103,11 @@ export default function NavDrawer(_: DrawerProps) {
       if (timeDiff > 0 && distance > 40) {
         if (timeDiff < minTransDuration) {
           drawerRef.current.style.transition = `right ${timeDiff}ms`;
-          setShowMenu(false);
+          setShowCart(false);
         } else {
           drawerRef.current.style.transition = `right ${minTransDuration}ms`;
           if (distance >= width / 2) {
-            setShowMenu(false);
+            setShowCart(false);
           }
         }
       }
@@ -121,17 +122,45 @@ export default function NavDrawer(_: DrawerProps) {
 
   return (
     <Box
-      ref={drawerRef}
-      sx={styles.root}
-      onTouchStart={onTouchStartOrOnMouseDown}
-      onTouchMove={onTouchMoveOrOnMouseMouse}
-      onTouchEnd={onTouchEndOrOnMouseUp}
-      onMouseDown={onTouchStartOrOnMouseDown}
-      onMouseMove={onTouchMoveOrOnMouseMouse}
-      onMouseUp={onTouchEndOrOnMouseUp}
-      role="presentation"
+      sx={{
+        position: 'fixed',
+        top: '0',
+        left: '0',
+        height: showCart ? '100%' : '0%',
+        width: showCart ? '100%' : '0%',
+        boxSizing: 'border-box',
+        zIndex: theme.zIndex.drawer,
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: showCart ? 'rgba(0,0,0,0.65)' : 'transparent',
+      }}
     >
-      <CartPage />
+      <Box
+        ref={drawerRef}
+        sx={styles.root}
+        onTouchStart={onTouchStartOrOnMouseDown}
+        onTouchMove={onTouchMoveOrOnMouseMouse}
+        onTouchEnd={onTouchEndOrOnMouseUp}
+        onMouseDown={onTouchStartOrOnMouseDown}
+        onMouseMove={onTouchMoveOrOnMouseMouse}
+        onMouseUp={onTouchEndOrOnMouseUp}
+        onClick={(event) => {
+          const shouldClose =
+            mainRef.current &&
+            event.nativeEvent &&
+            event.nativeEvent.target &&
+            !mainRef.current.contains(event.nativeEvent.target as Node);
+          if (shouldClose) {
+            setShowCart(false);
+          }
+        }}
+        role="presentation"
+      >
+        <Box sx={styles.main} ref={mainRef}>
+          <CartPage />
+        </Box>
+      </Box>
     </Box>
   );
 }

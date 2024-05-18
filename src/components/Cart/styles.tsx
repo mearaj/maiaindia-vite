@@ -7,17 +7,18 @@ const rootStyles = (theme: Theme): SxProps => {
     height: '100%',
     width: '100%',
     overflowY: 'auto',
-    background: `linear-gradient(90deg, ${theme.palette.primary.dark},${theme.palette.primary.light})`,
+    // background: `linear-gradient(90deg, ${theme.palette.primary.dark},${theme.palette.primary.light})`,
+    background: theme.palette.secondary.main,
   };
 };
-const cartItemsBodyStyles = (theme: Theme): SxProps => {
+const cartItemsBodyStyles = (_theme: Theme): SxProps => {
   return {
     display: 'flex',
     flexDirection: 'column',
     flexShrink: 0,
     flexGrow: 1,
     padding: '16px',
-    background: `linear-gradient(90deg, ${theme.palette.primary.dark},${theme.palette.primary.light})`,
+    // background: `linear-gradient(90deg, ${theme.palette.primary.dark},${theme.palette.primary.light})`,
   };
 };
 export default function createStyles(theme: Theme) {

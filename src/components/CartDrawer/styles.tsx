@@ -1,6 +1,6 @@
 import { Theme } from '@mui/material';
 
-const rootStyles = (theme: Theme) => ({
+const rootStyle = (theme: Theme) => ({
   position: 'fixed',
   top: '0px',
   bottom: '0px',
@@ -8,14 +8,12 @@ const rootStyles = (theme: Theme) => ({
   width: '100vw',
   boxSizing: 'border-box',
   zIndex: theme.zIndex.drawer,
-  backgroundColor: 'white',
   overflowX: 'hidden',
   display: 'flex',
   flexDirection: 'column',
-  boxShadow: theme.shadows[10],
 });
 
-const mainStyles = (_: Theme) => ({
+const mainStyle = (theme: Theme) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'stretch',
@@ -23,12 +21,14 @@ const mainStyles = (_: Theme) => ({
   flexShrink: '1',
   overflowY: 'auto',
   overflowX: 'hidden',
-  padding: '16px',
+  width: '85%',
+  marginLeft: 'auto',
+  backgroundColor: theme.palette.secondary.main,
 });
 
 export default function createStyles(theme: Theme) {
-  const root = rootStyles(theme);
-  const main = mainStyles(theme);
+  const root = rootStyle(theme);
+  const main = mainStyle(theme);
 
   return {
     root,

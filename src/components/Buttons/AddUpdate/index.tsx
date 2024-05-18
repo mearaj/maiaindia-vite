@@ -1,64 +1,17 @@
 import { Box, Button } from '@mui/material';
 import AddToCartIcon from '@mui/icons-material/AddShoppingCart';
-import React, { useEffect, useState } from 'react';
-import { userAtom } from '@/jotai/atoms';
 import { Product } from '@/jotai/data/product';
-import { selectedDialogAtom } from '@/jotai/atoms/dialog';
 import { Add, Remove } from '@mui/icons-material';
-import { setCartQuantity } from '@/misc';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai/index';
-import { cartAtom } from '@/jotai/atoms/cart';
-import SignInRequiredDialog from '@/components/Dialogs/SignInRequired';
+import { useAddUpdateCartEffect } from '@/hooks/useAddUpdateCartEffect';
 
 interface AddUpdateButtonProps {
   product: Product;
 }
 
 export default function AddUpdateButton({ product }: AddUpdateButtonProps) {
-  const user = useAtomValue(userAtom);
-  const setActiveDialog = useSetAtom(selectedDialogAtom);
-  const [quantity, setQuantity] = useState(
-    user.userState?.cart.items[product.id!]?.quantity ?? 0
-  );
-  const [loading, setIsLoading] = useState(true);
-  const [_, setShowCart] = useAtom(cartAtom);
-
-  const handleCartIncrement = async (
-    _e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    if (!user.userState) {
-      setActiveDialog(<SignInRequiredDialog />);
-      return;
-    }
-    setIsLoading(true);
-    const cartItems = user.userState.cart.items;
-    const quantityAlt = cartItems[product.id!]
-      ? cartItems[product.id!].quantity + 1
-      : 1;
-    setCartQuantity(user, product.id!, quantityAlt);
-    setShowCart(true);
-  };
-
-  const onDecrementClicked = async (
-    _e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    if (!user.userState) {
-      return;
-    }
-    setIsLoading(true);
-    const cartItems = user.userState.cart.items;
-    const quantityAlt = cartItems[product.id!]
-      ? cartItems[product.id!].quantity - 1
-      : 0;
-    setCartQuantity(user, product.id!, quantityAlt);
-    setShowCart(true);
-  };
-
-  useEffect(() => {
-    setQuantity(user.userState?.cart.items[product.id!]?.quantity ?? 0);
-    setIsLoading(false);
-  }, [product.id, user.userState?.cart.items]);
+  const { handleCartIncrement, onDecrementClicked, quantity, loading } =
+    useAddUpdateCartEffect({ product });
 
   return (
     <Box

@@ -6,8 +6,8 @@ import { useAtom, useAtomValue } from 'jotai';
 import { userAtomEffect } from '@/jotai/atoms/user';
 import { allProductsAtomEffect } from '@/jotai/atoms/products';
 import { adminUsersAtomEffect, isAdminAtomEffect } from '@/jotai/atoms/admin';
+import CartDrawer from '@/components/CartDrawer';
 import LiveChatButton from '@/components/LiveChat';
-import NavDrawer from '@/components/NavDrawer';
 
 function App() {
   const location = useLocation();
@@ -30,7 +30,7 @@ function App() {
   return (
     <>
       <Outlet />
-      <NavDrawer />
+      <CartDrawer />
       <LiveChatButton />
       {selectedDialog}
     </>
