@@ -11,60 +11,65 @@ import { Cancel, Edit } from '@mui/icons-material';
 
 import { ProductFormModeState } from '@/jotai/data/product';
 import { Category } from '@/jotai/data/category';
-import { useAtom, useAtomValue } from 'jotai';
-import {
-  productFormModeStateSelector,
-  productFormProcessingStateSelector,
-  productFormSelector,
-} from '@/jotai/atoms/productForm';
+import { useAtom } from 'jotai';
+import { productFormStateAtom } from '@/jotai/atoms/productForm';
 import CategoriesDropdown from '@/components/Dropdowns/Categories';
 import createStyles from './styles';
 
 export default function AddEditProductComponent() {
-  const [productForm, setProductForm] = useAtom(productFormSelector);
-  const [formMode, setFormMode] = useAtom(productFormModeStateSelector);
-  const isProcessing = useAtomValue(productFormProcessingStateSelector);
+  const [productState, setProductState] = useAtom(productFormStateAtom);
+  const { productForm, isProcessing, mode: formMode } = productState;
 
   const theme = useTheme();
   const styles = createStyles(theme);
   const formLabelSx = styles.formLabel;
   const formControlStyle = styles.formControl;
 
-  const handleFieldChange = useCallback(
-    (property: 'name' | 'details' | 'mrp' | 'sp') =>
-      (e: ChangeEvent<HTMLInputElement>) => {
-        const val = e.target.value;
-        let numVal: number | string = parseFloat(val);
-        if (Number.isNaN(numVal)) {
-          numVal = '';
+  const handleProductFieldChange = useCallback(
+    (property: 'name' | 'details') => (e: ChangeEvent<HTMLInputElement>) => {
+      const val = e.target.value;
+      let numVal: number | string = parseFloat(val);
+      if (Number.isNaN(numVal)) {
+        numVal = '';
+      }
+      if (typeof numVal === 'number') {
+        if (numVal < 0) {
+          numVal = 0;
         }
-        if (typeof numVal === 'number') {
-          if (numVal < 0) {
-            numVal = 0;
-          }
-        }
-        switch (property) {
-          case 'name':
-            setProductForm({ ...productForm, name: val });
-            break;
-          case 'details':
-            setProductForm({ ...productForm, details: val });
-            break;
-          case 'mrp':
-            // Todo
-            // setProductForm({ ...productForm, mrp: numVal });
-            break;
-          case 'sp':
-            // setProductForm({ ...productForm, sp: numVal });
-            break;
-          default:
-            break;
-        }
-      },
-    [productForm, setProductForm]
+      }
+      switch (property) {
+        case 'name':
+          setProductState({
+            ...productState,
+            productForm: {
+              ...productForm,
+              name: val,
+            },
+          });
+          break;
+        case 'details':
+          setProductState({
+            ...productState,
+            productForm: {
+              ...productForm,
+              details: val,
+            },
+          });
+          break;
+        default:
+          break;
+      }
+    },
+    [productForm, productState, setProductState]
   );
   const handleCategoryChange = (category: Category) => {
-    setProductForm({ ...productForm, category });
+    setProductState({
+      ...productState,
+      productForm: {
+        ...productState.productForm,
+        category,
+      },
+    });
   };
 
   const disableForm = isProcessing || formMode === ProductFormModeState.read;
@@ -82,7 +87,10 @@ export default function AddEditProductComponent() {
             <Box sx={{ fontSize: '16px' }}>{productForm.id}</Box>
             <IconButton
               onClick={() => {
-                setFormMode(ProductFormModeState.edit);
+                setProductState({
+                  ...productState,
+                  mode: ProductFormModeState.edit,
+                });
               }}
             >
               <Edit />
@@ -96,7 +104,10 @@ export default function AddEditProductComponent() {
             <Box sx={{ fontSize: '16px' }}>{productForm.id}</Box>
             <IconButton
               onClick={() => {
-                setFormMode(ProductFormModeState.read);
+                setProductState({
+                  ...productState,
+                  mode: ProductFormModeState.read,
+                });
               }}
             >
               <Cancel />
@@ -141,41 +152,41 @@ export default function AddEditProductComponent() {
             fullWidth
             size="small"
             value={productForm.name}
-            onChange={handleFieldChange('name')}
+            onChange={handleProductFieldChange('name')}
             placeholder="Enter product name..."
             disabled={disableForm}
           />
         </FormControl>
-        <FormControl fullWidth sx={formControlStyle}>
-          <FormLabel sx={formLabelSx} htmlFor="product-mrp">
-            Max Retail Price&nbsp;*
-          </FormLabel>
-          <OutlinedInput
-            type="number"
-            id="product-mrp"
-            fullWidth
-            placeholder="Enter max retail price..."
-            size="small"
-            value={productForm.variants[0]?.mrp}
-            onChange={handleFieldChange('mrp')}
-            disabled={disableForm}
-          />
-        </FormControl>
-        <FormControl fullWidth sx={formControlStyle}>
-          <FormLabel sx={formLabelSx} htmlFor="product-sp">
-            Selling Price&nbsp;*
-          </FormLabel>
-          <OutlinedInput
-            type="number"
-            id="product-sp"
-            placeholder="Enter selling price..."
-            fullWidth
-            size="small"
-            value={productForm.variants[0]?.sp}
-            onChange={handleFieldChange('sp')}
-            disabled={disableForm}
-          />
-        </FormControl>
+        {/* <FormControl fullWidth sx={formControlStyle}> */}
+        {/*  <FormLabel sx={formLabelSx} htmlFor="product-mrp"> */}
+        {/*    Max Retail Price&nbsp;* */}
+        {/*  </FormLabel> */}
+        {/*  <OutlinedInput */}
+        {/*    type="number" */}
+        {/*    id="product-mrp" */}
+        {/*    fullWidth */}
+        {/*    placeholder="Enter max retail price..." */}
+        {/*    size="small" */}
+        {/*    value={productForm.variants[0]?.mrp} */}
+        {/*    onChange={handleFieldChange('mrp')} */}
+        {/*    disabled={disableForm} */}
+        {/*  /> */}
+        {/* </FormControl> */}
+        {/* <FormControl fullWidth sx={formControlStyle}> */}
+        {/*  <FormLabel sx={formLabelSx} htmlFor="product-sp"> */}
+        {/*    Selling Price&nbsp;* */}
+        {/*  </FormLabel> */}
+        {/*  <OutlinedInput */}
+        {/*    type="number" */}
+        {/*    id="product-sp" */}
+        {/*    placeholder="Enter selling price..." */}
+        {/*    fullWidth */}
+        {/*    size="small" */}
+        {/*    value={productForm.variants[0]?.sp} */}
+        {/*    onChange={handleFieldChange('sp')} */}
+        {/*    disabled={disableForm} */}
+        {/*  /> */}
+        {/* </FormControl> */}
         <CategoriesDropdown
           selectedCategory={productForm.category}
           onCategoriesChange={handleCategoryChange}
@@ -191,7 +202,7 @@ export default function AddEditProductComponent() {
             fullWidth
             size="small"
             value={productForm.details ?? ''}
-            onChange={handleFieldChange('details')}
+            onChange={handleProductFieldChange('details')}
             placeholder="Enter product description..."
             disabled={disableForm}
             minRows={3}

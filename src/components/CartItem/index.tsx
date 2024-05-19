@@ -8,7 +8,7 @@ import { loadable } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
 import { Add, Remove } from '@mui/icons-material';
 import CircularProgress from '@mui/material/CircularProgress';
-import { compoundProductFromCompoundIDSelector } from '@/jotai/atoms/products';
+import { compoundProductWithImagesSelector } from '@/jotai/atoms/products';
 import RemoveButton from '@/components/Buttons/Remove';
 import { useAddUpdateCartEffect } from '@/hooks/useAddUpdateCartEffect';
 
@@ -179,7 +179,7 @@ export default function CartItemComponent({
   compoundID,
 }: CartItemComponentProps) {
   const productWithImagesLoadable = loadable(
-    compoundProductFromCompoundIDSelector(compoundID)
+    compoundProductWithImagesSelector(compoundID)
   );
   const productIDLoadable = useAtomValue(productWithImagesLoadable);
   const product =

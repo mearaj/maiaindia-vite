@@ -1,9 +1,13 @@
 import { Box, Paper } from '@mui/material';
 import { defaultPlaceholderProductImage, Product } from '@/jotai/data/product';
 import { useNavigate } from 'react-router-dom';
+import { useAtomValue } from 'jotai/index';
+import { loadable } from 'jotai/utils';
+import { compoundProductWithImagesSelector } from '@/jotai/atoms/products';
 import ProductPrice from '@/components/Product/Price';
 import AddUpdateButton from '@/components/Buttons/AddUpdate';
 import { appAbsoluteRoutes } from '@/Router';
+import LoadableComponent from '@/components/Layouts/JotailLoadableComponent';
 
 export default function ProductComponent({
   product,
@@ -13,12 +17,16 @@ export default function ProductComponent({
   isAdminProduct: boolean;
 }) {
   const navigate = useNavigate();
-  const activeImage =
-    product &&
-    product.activeVariant &&
-    product.activeVariant.images &&
-    product.activeVariant.images.length > 0
-      ? product.activeVariant.images[0]
+  const compoundID = `${product.id}-${product.activeVariant!.id}`;
+  const productWithImages = useAtomValue(
+    loadable(compoundProductWithImagesSelector(compoundID))
+  );
+  const preferredImgSrc =
+    productWithImages.state === 'hasData' &&
+    productWithImages.data &&
+    productWithImages.data.variant.images &&
+    productWithImages.data.variant.images.length > 0
+      ? productWithImages.data.variant.images[0]
       : defaultPlaceholderProductImage;
   const imageStyle = {
     height: 'auto',
@@ -77,12 +85,18 @@ export default function ProductComponent({
               padding: '16px',
             }}
           >
-            <Box
-              component="img"
-              src={activeImage.url}
-              alt={product.activeVariant!.id}
-              sx={imageStyle}
-            />
+            <LoadableComponent
+              errorContainerStyle={imageStyle}
+              loaderContainerStyle={imageStyle}
+              jotaiLoadable={productWithImages}
+            >
+              <Box
+                component="img"
+                src={preferredImgSrc.url}
+                alt={product.activeVariant!.id}
+                sx={imageStyle}
+              />
+            </LoadableComponent>
           </Box>
           <Box sx={{ padding: '4px 8px 4px' }}>
             <Box

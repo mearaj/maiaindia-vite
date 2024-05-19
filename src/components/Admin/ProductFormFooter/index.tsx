@@ -33,15 +33,8 @@ import { categories } from '@/jotai/data/category';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { deleteObject, ref, uploadBytesResumable } from '@firebase/storage';
 import { Delete, Publish, RestartAlt } from '@mui/icons-material';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai/index';
-import {
-  productFormImagesForDeletionSelector,
-  productFormImagesSelector,
-  productFormLocalImagesSelector,
-  productFormModeStateSelector,
-  productFormProcessingStateSelector,
-  productFormSelector,
-} from '@/jotai/atoms/productForm';
+import { useAtom, useSetAtom } from 'jotai/index';
+import { productFormStateAtom } from '@/jotai/atoms/productForm';
 import createStyles from './styles';
 import { appAbsoluteRoutes } from '@/Router';
 import SnackbarDialog from '@/components/Dialogs/SnackBar';
@@ -57,18 +50,12 @@ interface AdminProductFormFooterComponentProps {
 export default function AdminProductFormFooterComponent({
   handleReset,
 }: AdminProductFormFooterComponentProps) {
-  const formMode = useAtomValue(productFormModeStateSelector);
-  const [isProcessing, setIsProcessing] = useAtom(
-    productFormProcessingStateSelector
-  );
-  const productForm = useAtomValue(productFormSelector);
+  const [productFormState, setProductFormState] = useAtom(productFormStateAtom);
+  const { isProcessing, mode: formMode, productForm } = productFormState;
   const navigate = useNavigate();
   const setDialogComponent = useSetAtom(selectedDialogAtom);
   const theme = useTheme();
   const styles = createStyles(theme);
-  const [localImages, setLocalImages] = useAtom(productFormLocalImagesSelector);
-  const productImages = useAtomValue(productFormImagesSelector) ?? [];
-  const imagesForDeletion = useAtomValue(productFormImagesForDeletionSelector);
   const [localDialog, setLocalDialog] = useState<{
     props: DialogProps;
     children: ReactNode;
@@ -127,18 +114,16 @@ export default function AdminProductFormFooterComponent({
     return !!(
       productForm &&
       productForm.name &&
-      ((typeof productForm.variants[0].mrp === 'number' &&
-        productForm.variants[0].mrp >= 0) ||
-        (typeof productForm.variants[0].mrp === 'string' &&
-          !Number.isNaN(parseFloat(productForm.variants[0].mrp)) &&
-          parseFloat(productForm.variants[0].mrp) >= 0)) &&
-      ((typeof productForm.variants[0].sp === 'number' &&
-        productForm.variants[0].sp >= 0) ||
-        (typeof productForm.variants[0].sp === 'string' &&
-          !Number.isNaN(
-            parseFloat(productForm.variants[0].sp) &&
-              parseFloat(productForm.variants[0].sp) >= 0
-          ))) &&
+      productForm.variants &&
+      productForm.variants.length &&
+      productForm.variants.every((variant) => {
+        return (
+          !Number.isNaN(parseFloat(`${variant.mrp}`)) &&
+          parseFloat(`${variant.mrp}`) >= 0 &&
+          !Number.isNaN(parseFloat(`${variant.sp}`)) &&
+          parseFloat(`${variant.sp}`) >= 0
+        );
+      }) &&
       categories.find(
         (eachCategory) => eachCategory.id === productForm.category.id
       )
@@ -377,16 +362,16 @@ export default function AdminProductFormFooterComponent({
         modalContentPrompt = (
           <Box>
             <Box sx={{ marginBottom: '8px' }}>
-              {localImages.length > 0 && (
-                <Box sx={{ lineHeight: 1 }}>
-                  <small>Images To Add: {localImages.length}</small>
-                </Box>
-              )}
-              {imagesForDeletion.length > 0 && (
-                <Box sx={{ lineHeight: 1 }}>
-                  <small>Images For Deletion: {imagesForDeletion.length}</small>
-                </Box>
-              )}
+              {/* {localImages.length > 0 && ( */}
+              {/*  <Box sx={{ lineHeight: 1 }}> */}
+              {/*    <small>Images To Add: {localImages.length}</small> */}
+              {/*  </Box> */}
+              {/* )} */}
+              {/* {imagesForDeletion.length > 0 && ( */}
+              {/*  <Box sx={{ lineHeight: 1 }}> */}
+              {/*    <small>Images For Deletion: {imagesForDeletion.length}</small> */}
+              {/*  </Box> */}
+              {/* )} */}
             </Box>
             <Box>
               {`Do you want to continue updating product ${productForm.name} with
@@ -402,7 +387,7 @@ export default function AdminProductFormFooterComponent({
       );
       if (shouldContinue) {
         try {
-          setIsProcessing(true);
+          // setIsProcessing(true);
           setLocalDialog({
             props: { open: true },
             children: (
@@ -424,8 +409,8 @@ export default function AdminProductFormFooterComponent({
               ...newProduct,
               id: productForm.id!,
             };
-            await commonImagesDeletionHandler(imagesForDeletion);
-            await commonImagesUploadHandler(localImages);
+            // await commonImagesDeletionHandler(imagesForDeletion);
+            // await commonImagesUploadHandler(localImages);
             const productRef = doc(appFirestore, 'products', productForm.id!);
             await setDoc(productRef, updateProduct);
             snackbarMsg = `Successfully updated ${newProduct.name} with ID ${productForm.id}`;
@@ -441,7 +426,7 @@ export default function AdminProductFormFooterComponent({
           severity = 'error';
         } finally {
           setLocalDialog(null);
-          setIsProcessing(false);
+          // setIsProcessing(false);
           setDialogComponent(
             <SnackbarDialog severity={severity} message={snackbarMsg} />
           );
@@ -454,18 +439,10 @@ export default function AdminProductFormFooterComponent({
       commonImagesUploadHandler,
       commonPromptDialogHandler,
       formMode,
-      imagesForDeletion,
       isProductFormValid,
-      localImages,
       navigate,
-      productForm.category.id,
-      productForm.details,
-      productForm.id,
-      productForm.variants[0].mrp,
-      productForm.name,
-      productForm.variants[0].sp,
+      productForm,
       setDialogComponent,
-      setIsProcessing,
     ]
   );
 
@@ -477,11 +454,11 @@ export default function AdminProductFormFooterComponent({
         'Yes'
       );
       if (shouldDelete) {
-        let localDialogMessage = `Deleting Product ${productForm.name} with ID ${productForm.id}`;
-        if (productImages.length > 0) {
-          localDialogMessage = `Deleting Product ${productForm.name} Images with ID ${productForm.id}`;
-        }
-        setIsProcessing(true);
+        const localDialogMessage = `Deleting Product ${productForm.name} with ID ${productForm.id}`;
+        // if (productImages.length > 0) {
+        //   localDialogMessage = `Deleting Product ${productForm.name} Images with ID ${productForm.id}`;
+        // }
+        // setIsProcessing(true);
         setLocalDialog({
           props: { open: true },
           children: (
@@ -492,7 +469,7 @@ export default function AdminProductFormFooterComponent({
           ),
         });
         try {
-          await commonImagesDeletionHandler(productImages);
+          // await commonImagesDeletionHandler(productImages);
           await deleteDoc(doc(appFirestore, 'products', productForm.id!));
           setDialogComponent(
             <SnackbarDialog
@@ -513,7 +490,7 @@ export default function AdminProductFormFooterComponent({
             />
           );
         } finally {
-          setIsProcessing(false);
+          // setIsProcessing(false);
           setLocalDialog(null);
         }
       }
@@ -523,8 +500,6 @@ export default function AdminProductFormFooterComponent({
     productForm.name,
     isProcessing,
     commonPromptDialogHandler,
-    productImages,
-    setIsProcessing,
     commonImagesDeletionHandler,
     setDialogComponent,
     navigate,
@@ -537,7 +512,7 @@ export default function AdminProductFormFooterComponent({
     event.stopPropagation();
     const { files } = event.target;
     if (files && files.length > 0) {
-      setIsProcessing(true);
+      // setIsProcessing(true);
       let localDialogMessage = 'Uploading Images Locally';
       try {
         setLocalDialog({
@@ -564,8 +539,11 @@ export default function AdminProductFormFooterComponent({
             }Kb exceeds limit of 200kb`;
           }
           if (
-            !errorFound &&
-            productImages.find((eachImage) => eachImage.name === file.name)
+            !errorFound
+            // &&
+            // productImages.find(
+            //   (eachImage: VariantImage) => eachImage.name === file.name
+            // )
           ) {
             errorFound = true;
             localDialogMessage = `Image ${file.name} with the same name already exists.`;
@@ -645,21 +623,21 @@ export default function AdminProductFormFooterComponent({
             />
           );
         }
-        const imagesToUpload = [...localImages, ...supportedImages].filter(
-          (eachImage, index, arr) => {
-            return (
-              index ===
-              arr.findIndex(
-                (imgToFind) => eachImage.file.name === imgToFind.file.name
-              )
-            );
-          }
-        );
-        setLocalImages(imagesToUpload);
-        setIsProcessing(false);
+        // const imagesToUpload = [...localImages, ...supportedImages].filter(
+        //   (eachImage, index, arr) => {
+        //     return (
+        //       index ===
+        //       arr.findIndex(
+        //         (imgToFind) => eachImage.file.name === imgToFind.file.name
+        //       )
+        //     );
+        //   }
+        // );
+        // setLocalImages(imagesToUpload);
+        // setIsProcessing(false);
         setLocalDialog(null);
       } catch (_e) {
-        setIsProcessing(false);
+        setProductFormState({ ...productFormState, isProcessing: false });
         setLocalDialog(null);
       }
     }
@@ -713,7 +691,7 @@ export default function AdminProductFormFooterComponent({
         variant="contained"
         onClick={(e) => {
           setLocalDialog(null);
-          setIsProcessing(false);
+          setProductFormState({ ...productFormState, isProcessing: false });
           handleReset(e);
         }}
         disabled={disableForm}

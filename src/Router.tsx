@@ -14,7 +14,6 @@ import ProductDetailsPage from '@/pages/ProductDetails';
 import ContactUsPage from '@/pages/ContactUs';
 import { AdminHomePage } from '@/pages/Admin';
 import AdminOrdersPage from '@/pages/Admin/Orders';
-import AdminAddProductPage from '@/pages/Admin/AddProduct';
 import AboutUsPage from '@/pages/AboutUs';
 import TermsConditionsPage from '@/pages/TermsConditions';
 import PrivacyPolicyPage from '@/pages/PrivacyPolicy';
@@ -67,7 +66,7 @@ export const appRelativeRoutes = {
   profile: 'profile',
   adminHome: 'home', // relative to admin
   adminOrders: 'orders', // relative to admin
-  adminProductsAdd: 'products/add', // relative to admin,
+  adminProductsAdd: 'products/:id', // relative to admin,
   adminProductDetails: 'products/:id', // relative to admin,
 };
 
@@ -193,7 +192,7 @@ export const router = createBrowserRouter([
               },
               {
                 path: appRelativeRoutes.adminProductsAdd,
-                element: <AdminAddProductPage />,
+                element: <AdminProductDetailsPage />,
               },
               {
                 path: appRelativeRoutes.adminProducts,

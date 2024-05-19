@@ -25,13 +25,9 @@ export interface Variant {
   currency: string;
   mrp: number;
   sp: number;
-  images?: VariantImage[];
-}
-
-// Frontend only
-export interface CompoundID {
-  productID: string;
-  variantID: string;
+  images?: VariantImage[]; // frontend only
+  imagesForDeletion?: VariantImage[]; // frontend only
+  localImages?: LocallyUploadedImage[]; // frontend only
 }
 
 // Frontend only
@@ -40,20 +36,12 @@ export interface CompoundProduct {
   variant: Variant;
 }
 
-export interface VariantForm {
-  productID?: string;
-  id?: string;
-  mrp?: number | string;
-  sp?: number | string;
-  currency?: string;
-}
-
 export interface ProductForm {
   name: string;
   details: string;
   category: Category;
   id?: string | null;
-  variants: VariantForm[];
+  variants: Variant[];
 }
 
 export enum ProductFormModeState {
@@ -70,7 +58,4 @@ export interface ProductFormState {
   productForm: ProductForm;
   isProcessing: boolean;
   mode: ProductFormModeState;
-  images?: VariantImage[];
-  imagesForDeletion: VariantImage[];
-  localImages: LocallyUploadedImage[];
 }

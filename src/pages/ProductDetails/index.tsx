@@ -17,7 +17,7 @@ import Button from '@mui/material/Button';
 import { loadable } from 'jotai/utils';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { CompoundProduct } from '@/jotai/data/product';
-import { compoundProductFromCompoundIDSelector } from '@/jotai/atoms/products';
+import { compoundProductWithImagesSelector } from '@/jotai/atoms/products';
 import LoadableComponent from '@/components/Layouts/JotailLoadableComponent';
 import ProductPrice from '@/components/Product/Price';
 import styles from './index.module.css';
@@ -27,7 +27,7 @@ import BuyButton from '@/components/Buttons/Buy';
 export default function ProductDetailsPage() {
   const params = useParams();
   const productWithImagesLoadable = loadable(
-    compoundProductFromCompoundIDSelector(params.id as string)
+    compoundProductWithImagesSelector(params.id as string)
   );
   const productLoadable = useAtomValue(productWithImagesLoadable);
 
