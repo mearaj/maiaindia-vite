@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Box, useTheme } from '@mui/material';
 import { useAtom } from 'jotai';
-import { cartAtom } from '@/jotai/atoms/cart';
+import { showCartAtom } from '@/jotai/atoms/cart';
 import CartPage from '@/components/Cart';
 import useDimensions from '@/hooks/useDimensions';
 import createStyles from './styles';
@@ -14,7 +14,7 @@ export interface DrawerProps {
 export default function CartDrawer(_: DrawerProps) {
   const drawerRef = useRef<HTMLDivElement>(null);
   const mainRef = useRef<HTMLDivElement>(null);
-  const [showCart, setShowCart] = useAtom(cartAtom);
+  const [showCart, setShowCart] = useAtom(showCartAtom);
   const minTransDuration = 350; // milliseconds
   const dimensions = useDimensions();
   const [touchStartPos, setTouchStartPos] = useState({

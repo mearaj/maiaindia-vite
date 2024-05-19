@@ -4,7 +4,7 @@ import {
   ProductForm,
   ProductFormModeState,
   ProductFormState,
-  ProductImage,
+  VariantImage,
 } from '@/jotai/data/product';
 import { categories } from '@/jotai/data/category';
 
@@ -110,7 +110,7 @@ export const productFormImagesForDeletionSelector = atom(
     const { imagesForDeletion } = get(productFormStateAtom);
     return imagesForDeletion;
   },
-  (_, set, newVal: ProductImage[]) => {
+  (_, set, newVal: VariantImage[]) => {
     set(productFormStateAtom, (prev) => {
       return {
         ...prev,

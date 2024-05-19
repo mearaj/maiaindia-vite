@@ -4,7 +4,6 @@ import { Swiper, SwiperClass, SwiperRef, SwiperSlide } from 'swiper/react';
 import { FreeMode, Navigation, Pagination, Thumbs } from 'swiper/modules';
 import { useParams } from 'react-router-dom';
 import { useRef } from 'react';
-import { productIdSelector } from '@/jotai/atoms/productId';
 import { selectedDialogAtom } from '@/jotai/atoms/dialog';
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 import {
@@ -17,7 +16,8 @@ import {
 import Button from '@mui/material/Button';
 import { loadable } from 'jotai/utils';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { ProductWithImages } from '@/jotai/data/product';
+import { CompoundProduct } from '@/jotai/data/product';
+import { compoundProductFromCompoundIDSelector } from '@/jotai/atoms/products';
 import LoadableComponent from '@/components/Layouts/JotailLoadableComponent';
 import ProductPrice from '@/components/Product/Price';
 import styles from './index.module.css';
@@ -27,28 +27,38 @@ import BuyButton from '@/components/Buttons/Buy';
 export default function ProductDetailsPage() {
   const params = useParams();
   const productWithImagesLoadable = loadable(
-    productIdSelector(params.id as string)
+    compoundProductFromCompoundIDSelector(params.id as string)
   );
   const productLoadable = useAtomValue(productWithImagesLoadable);
 
   const mainSwiperRef = useRef<SwiperRef | null>(null);
   const setDialog = useSetAtom(selectedDialogAtom);
 
-  let data: ProductWithImages = {
-    id: '',
-    categoryID: '',
-    name: '',
-    images: [],
-    details: '',
-    variants: [
-      {
-        id: '',
-        productID: '',
-        currency: 'INR',
-        mrp: 0,
-        sp: 0,
-      },
-    ],
+  let data: CompoundProduct = {
+    product: {
+      id: '',
+      categoryID: '',
+      name: '',
+      details: '',
+      variants: [
+        {
+          id: '',
+          productID: '',
+          currency: 'INR',
+          mrp: 0,
+          sp: 0,
+          images: [],
+        },
+      ],
+    },
+    variant: {
+      id: '',
+      productID: '',
+      currency: 'INR',
+      mrp: 0,
+      sp: 0,
+      images: [],
+    },
   };
   if (productLoadable.state === 'hasData') {
     data = productLoadable.data;
@@ -64,8 +74,8 @@ export default function ProductDetailsPage() {
   ) => {
     if (
       product &&
-      product.images &&
-      swiper.activeIndex < product.images.length
+      product.variant.images &&
+      swiper.activeIndex < product.variant.images.length
     ) {
       const open = true;
       setDialog(
@@ -138,7 +148,7 @@ export default function ProductDetailsPage() {
                   <CloseFullscreen />
                 </Button>
               </Box>
-              {product.images.map((item) => {
+              {product.variant.images.map((item) => {
                 return (
                   <SwiperSlide key={item.url} className={styles.slideDialog}>
                     <TransformWrapper
@@ -194,7 +204,7 @@ export default function ProductDetailsPage() {
                           <TransformComponent>
                             <img
                               src={item.url}
-                              alt={data.name}
+                              alt={data.product.name}
                               className={styles.imageDialog}
                               placeholder="blur"
                             />
@@ -221,65 +231,67 @@ export default function ProductDetailsPage() {
           errorContainerStyle={{ height: '80vh', width: '100%' }}
           jotaiLoadable={productLoadable}
         >
-          {product && product.images && product.images.length > 0 && (
-            <Swiper
-              className={styles.swiper}
-              modules={[Pagination]}
-              slidesPerView={1}
-              onClick={onImageClick}
-              ref={mainSwiperRef}
-              pagination
-            >
-              <Button
-                variant="outlined"
-                sx={{
-                  position: 'absolute',
-                  top: '0',
-                  right: '0',
-                  minWidth: 0,
-                }}
-                size="small"
+          {product &&
+            product.variant.images &&
+            product.variant.images.length > 0 && (
+              <Swiper
+                className={styles.swiper}
+                modules={[Pagination]}
+                slidesPerView={1}
+                onClick={onImageClick}
+                ref={mainSwiperRef}
+                pagination
               >
-                <SearchTwoTone />
-              </Button>
-              <Button
-                variant="outlined"
-                sx={{
-                  position: 'absolute',
-                  top: '0',
-                  left: '0',
-                  minWidth: 0,
-                }}
-                size="small"
-              >
-                <SearchTwoTone />
-              </Button>
-              {product.images.map((item) => {
-                return (
-                  <SwiperSlide key={item.url} className={styles.slide}>
-                    <img
-                      src={item.url}
-                      alt={data.name}
-                      className={styles.image}
-                      placeholder="blur"
-                    />
-                  </SwiperSlide>
-                );
-              })}
-            </Swiper>
-          )}
+                <Button
+                  variant="outlined"
+                  sx={{
+                    position: 'absolute',
+                    top: '0',
+                    right: '0',
+                    minWidth: 0,
+                  }}
+                  size="small"
+                >
+                  <SearchTwoTone />
+                </Button>
+                <Button
+                  variant="outlined"
+                  sx={{
+                    position: 'absolute',
+                    top: '0',
+                    left: '0',
+                    minWidth: 0,
+                  }}
+                  size="small"
+                >
+                  <SearchTwoTone />
+                </Button>
+                {product.variant.images.map((item) => {
+                  return (
+                    <SwiperSlide key={item.url} className={styles.slide}>
+                      <img
+                        src={item.url}
+                        alt={data.product.name}
+                        className={styles.image}
+                        placeholder="blur"
+                      />
+                    </SwiperSlide>
+                  );
+                })}
+              </Swiper>
+            )}
         </LoadableComponent>
         {product && (
           <>
             <div className={styles.productDetails}>
-              <div className={styles.productName}>{data.name}</div>
-              <ProductPrice product={data} />
+              <div className={styles.productName}>{data.product.name}</div>
+              <ProductPrice product={data.product} />
             </div>
             <Box sx={{ padding: '16px' }}>
               <Box sx={{ marginBottom: '8px' }}>
-                <AddUpdateButton product={data} />
+                <AddUpdateButton compoundProduct={data} />
               </Box>
-              <BuyButton product={data} />
+              <BuyButton product={data.product} />
             </Box>
           </>
         )}

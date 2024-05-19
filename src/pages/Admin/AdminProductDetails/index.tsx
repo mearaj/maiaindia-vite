@@ -1,6 +1,5 @@
 import { Box } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-import { productIdSelector } from '@/jotai/atoms/productId';
 import { categories } from '@/jotai/data/category';
 import {
   defaultProductFormState,
@@ -15,6 +14,7 @@ import { SyntheticEvent, useCallback, useEffect } from 'react';
 import { ProductForm } from '@/jotai/data/product';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { loadable } from 'jotai/utils';
+import { compoundProductFromCompoundIDSelector } from '@/jotai/atoms/products';
 import LoadablePageLayout from '@/components/Layouts/JotailLoadablePage';
 import styles from './index.module.css';
 import { appAbsoluteRoutes } from '@/Router';
@@ -25,7 +25,7 @@ import AdminProductFormFooterComponent from '@/components/Admin/ProductFormFoote
 export default function AdminProductDetailsPage() {
   const params = useParams();
   const productWithImagesLoadable = loadable(
-    productIdSelector(params.id as string)
+    compoundProductFromCompoundIDSelector(params.id as string)
   );
   const productValueLoadable = useAtomValue(productWithImagesLoadable);
 
@@ -36,7 +36,7 @@ export default function AdminProductDetailsPage() {
   const isProcessing = useAtomValue(productFormProcessingStateSelector);
   const formMode = useAtomValue(productFormModeStateSelector);
 
-  const product =
+  const compoundProduct =
     productValueLoadable.state === 'hasData' && productValueLoadable.data
       ? productValueLoadable.data
       : undefined;
@@ -54,7 +54,8 @@ export default function AdminProductDetailsPage() {
       const shouldReset =
         productValueLoadable.state === 'hasData' && !isProcessing;
 
-      if (shouldReset && product) {
+      if (shouldReset && compoundProduct) {
+        const { product, variant } = compoundProduct;
         const newProductForm: ProductForm = {
           details: product.details ?? '',
           name: product.name,
@@ -72,14 +73,14 @@ export default function AdminProductDetailsPage() {
         setProductFormState({
           ...defaultProductFormState,
           productForm: newProductForm,
-          images: product.images,
+          images: variant.images,
         });
       }
     },
     [
       locallyUploadedImages,
       isProcessing,
-      product,
+      compoundProduct,
       productValueLoadable.state,
       setProductFormState,
     ]
@@ -87,7 +88,8 @@ export default function AdminProductDetailsPage() {
 
   useEffect(() => {
     if (productValueLoadable.state === 'hasData') {
-      const newProduct = productValueLoadable.data;
+      const newCompoundProduct = productValueLoadable.data;
+      const newProduct = newCompoundProduct.product;
       const newProductForm: ProductForm = {
         details: newProduct.details ?? '',
         name: newProduct.name,
@@ -103,15 +105,15 @@ export default function AdminProductDetailsPage() {
       setProductFormState({
         ...defaultProductFormState,
         productForm: newProductForm,
-        images: product?.images,
+        images: newCompoundProduct?.variant?.images,
         mode: formMode,
       });
     }
   }, [
     formMode,
-    product?.images,
+    compoundProduct,
     productForm.id,
-    productValueLoadable.state,
+    productValueLoadable,
     setProductFormState,
   ]);
 
@@ -126,12 +128,13 @@ export default function AdminProductDetailsPage() {
       }}
     >
       <Box className={styles.body}>
-        {product && (
+        {compoundProduct && (
           <>
             {productForm.id !== null && <AddEditProductComponent />}
-            {product.images && product.images.length > 0 && (
-              <AddEditProductImagesComponent />
-            )}
+            {compoundProduct.variant.images &&
+              compoundProduct.variant.images.length > 0 && (
+                <AddEditProductImagesComponent />
+              )}
             <AdminProductFormFooterComponent handleReset={handleReset} />
           </>
         )}

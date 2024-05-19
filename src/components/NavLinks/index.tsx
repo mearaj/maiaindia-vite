@@ -12,7 +12,7 @@ import PolicyIcon from '@mui/icons-material/Policy';
 import ProfileIcon from '@mui/icons-material/AccountCircle';
 import TermsConditions from '@mui/icons-material/Article';
 import { NavLink, useLocation } from 'react-router-dom';
-import { isActiveByEqual, isActiveByStartsWith } from '@/misc';
+import { isActiveByEqual, isActiveByStartsWith } from '@/misc/path';
 
 import { isAdminAtom } from '@/jotai/atoms/admin';
 import { useAtomValue } from 'jotai/index';

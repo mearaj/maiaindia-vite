@@ -2,7 +2,7 @@ import { Box, IconButton, Typography, useTheme } from '@mui/material';
 import { userAtom } from '@/jotai/atoms';
 import { useAtom, useAtomValue } from 'jotai';
 import Close from '@mui/icons-material/Close';
-import { cartAtom } from '@/jotai/atoms/cart';
+import { showCartAtom } from '@/jotai/atoms/cart';
 import createStyles from '@/components/Cart/styles';
 import CartItemComponent from '@/components/CartItem';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
@@ -11,7 +11,7 @@ export default function CartPage() {
   const theme = useTheme();
   const styles = createStyles(theme);
   const user = useAtomValue(userAtom);
-  const [, setShowCart] = useAtom(cartAtom);
+  const [, setShowCart] = useAtom(showCartAtom);
 
   const isEmpty =
     !user.userState ||
@@ -45,8 +45,10 @@ export default function CartPage() {
           </IconButton>
         </Box>
         {!isEmpty &&
-          Object.keys(user.userState!.cart.items).map((productID) => {
-            return <CartItemComponent key={productID} productId={productID} />;
+          Object.keys(user.userState!.cart.items).map((compoundID) => {
+            return (
+              <CartItemComponent key={compoundID} compoundID={compoundID} />
+            );
           })}
       </Box>
     </CommonPageLayout>

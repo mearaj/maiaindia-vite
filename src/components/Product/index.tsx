@@ -1,10 +1,6 @@
 import { Box, Paper } from '@mui/material';
 import { defaultPlaceholderProductImage, Product } from '@/jotai/data/product';
 import { useNavigate } from 'react-router-dom';
-import { productIdSelector } from '@/jotai/atoms/productId';
-import { loadable } from 'jotai/utils';
-import { useAtomValue } from 'jotai';
-import LoadableComponent from '@/components/Layouts/JotailLoadableComponent';
 import ProductPrice from '@/components/Product/Price';
 import AddUpdateButton from '@/components/Buttons/AddUpdate';
 import { appAbsoluteRoutes } from '@/Router';
@@ -17,15 +13,12 @@ export default function ProductComponent({
   isAdminProduct: boolean;
 }) {
   const navigate = useNavigate();
-  const productWithImagesLoadable = loadable(productIdSelector(product.id!));
-  const productWithImages = useAtomValue(productWithImagesLoadable);
-
-  const preferredImgSrc =
-    productWithImages.state === 'hasData' &&
-    productWithImages.data &&
-    productWithImages.data.images &&
-    productWithImages.data.images.length > 0
-      ? productWithImages.data.images[0]
+  const activeImage =
+    product &&
+    product.activeVariant &&
+    product.activeVariant.images &&
+    product.activeVariant.images.length > 0
+      ? product.activeVariant.images[0]
       : defaultPlaceholderProductImage;
   const imageStyle = {
     height: 'auto',
@@ -66,9 +59,13 @@ export default function ProductComponent({
         <Box
           onClick={() => {
             if (isAdminProduct) {
-              navigate(`${appAbsoluteRoutes.adminProducts}/${product.id}`);
+              navigate(
+                `${appAbsoluteRoutes.adminProducts}/${product.id}-${
+                  product.activeVariant!.id
+                }`
+              );
             } else {
-              navigate(`/products/${product.id}`);
+              navigate(`/products/${product.id}-${product.activeVariant!.id}`);
             }
           }}
         >
@@ -80,18 +77,12 @@ export default function ProductComponent({
               padding: '16px',
             }}
           >
-            <LoadableComponent
-              errorContainerStyle={imageStyle}
-              loaderContainerStyle={imageStyle}
-              jotaiLoadable={productWithImages}
-            >
-              <Box
-                component="img"
-                src={preferredImgSrc.url}
-                alt={product.name}
-                sx={imageStyle}
-              />
-            </LoadableComponent>
+            <Box
+              component="img"
+              src={activeImage.url}
+              alt={product.activeVariant!.id}
+              sx={imageStyle}
+            />
           </Box>
           <Box sx={{ padding: '4px 8px 4px' }}>
             <Box
@@ -113,7 +104,9 @@ export default function ProductComponent({
         </Box>
         {!isAdminProduct && (
           <Box sx={{ padding: '0px 8px' }}>
-            <AddUpdateButton product={product} />
+            <AddUpdateButton
+              compoundProduct={{ product, variant: product.activeVariant! }}
+            />
           </Box>
         )}
       </Box>

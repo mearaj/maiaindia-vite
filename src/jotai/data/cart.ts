@@ -1,7 +1,8 @@
 import { FieldValue, Timestamp } from '@firebase/firestore';
 
 export interface CartItems {
-  [productID: string]: {
+  // compoundID is productID + '-' + variantID
+  [compoundID: string]: {
     quantity: number;
   };
 }

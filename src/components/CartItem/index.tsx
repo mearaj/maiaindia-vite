@@ -1,28 +1,28 @@
 import { Box, Typography, useTheme } from '@mui/material';
-import { productIdSelector } from '@/jotai/atoms/productId';
 import {
+  CompoundProduct,
   defaultPlaceholderProductImage,
-  Product,
-  ProductImage,
+  VariantImage,
 } from '@/jotai/data/product';
 import { loadable } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
 import { Add, Remove } from '@mui/icons-material';
 import CircularProgress from '@mui/material/CircularProgress';
-import LoadableComponent from '@/components/Layouts/JotailLoadableComponent';
+import { compoundProductFromCompoundIDSelector } from '@/jotai/atoms/products';
 import RemoveButton from '@/components/Buttons/Remove';
 import { useAddUpdateCartEffect } from '@/hooks/useAddUpdateCartEffect';
 
 function CartItemInnerComponent({
-  product,
+  compoundProduct,
   image,
 }: {
-  product: Product;
-  image: ProductImage;
+  compoundProduct: CompoundProduct;
+  image: VariantImage;
 }) {
   const theme = useTheme();
   const { handleCartIncrement, onDecrementClicked, quantity, loading } =
-    useAddUpdateCartEffect({ product });
+    useAddUpdateCartEffect({ compoundProduct });
+  const { product } = compoundProduct;
 
   return (
     <>
@@ -47,7 +47,7 @@ function CartItemInnerComponent({
           }}
         />
         <RemoveButton
-          product={product}
+          compoundProduct={compoundProduct}
           variant="contained"
           sx={{ marginBottom: '0px', padding: '6px' }}
         />
@@ -172,13 +172,15 @@ function CartItemInnerComponent({
 }
 
 interface CartItemComponentProps {
-  productId: string;
+  compoundID: string;
 }
 
 export default function CartItemComponent({
-  productId,
+  compoundID,
 }: CartItemComponentProps) {
-  const productWithImagesLoadable = loadable(productIdSelector(productId));
+  const productWithImagesLoadable = loadable(
+    compoundProductFromCompoundIDSelector(compoundID)
+  );
   const productIDLoadable = useAtomValue(productWithImagesLoadable);
   const product =
     productIDLoadable.state === 'hasData' && productIDLoadable.data
@@ -186,18 +188,14 @@ export default function CartItemComponent({
       : null;
   const preferredImgSrc =
     product &&
-    product.images &&
-    product.images.length > 0 &&
+    product.variant.images &&
+    product.variant.images.length > 0 &&
     productIDLoadable.state !== 'loading' &&
-    productIDLoadable.state === 'hasData'
-      ? productIDLoadable.data.images[0]
+    productIDLoadable.state === 'hasData' &&
+    productIDLoadable.data.variant &&
+    productIDLoadable.data.variant.images
+      ? productIDLoadable.data?.variant?.images[0]!
       : defaultPlaceholderProductImage;
-
-  const defaultLoaderStyle = {
-    minHeight: '198px',
-    alignItems: 'center',
-    justifyContent: 'center',
-  };
 
   return (
     <Box
@@ -208,15 +206,12 @@ export default function CartItemComponent({
         marginBottom: '48px',
       }}
     >
-      <LoadableComponent
-        loaderContainerStyle={defaultLoaderStyle}
-        errorContainerStyle={defaultLoaderStyle}
-        jotaiLoadable={productIDLoadable}
-      >
-        {product && preferredImgSrc && (
-          <CartItemInnerComponent product={product} image={preferredImgSrc} />
-        )}
-      </LoadableComponent>
+      {product && preferredImgSrc && (
+        <CartItemInnerComponent
+          compoundProduct={product}
+          image={preferredImgSrc}
+        />
+      )}
     </Box>
   );
 }

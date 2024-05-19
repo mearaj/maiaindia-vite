@@ -17,7 +17,7 @@ import { menuAtom } from '@/jotai/atoms/menu';
 import { userAtom } from '@/jotai/atoms';
 import { LocalMallTwoTone, WidgetsTwoTone } from '@mui/icons-material';
 import { useAtom, useAtomValue } from 'jotai';
-import { cartAtom } from '@/jotai/atoms/cart';
+import { showCartAtom } from '@/jotai/atoms/cart';
 import Close from '@mui/icons-material/Close';
 import LogoButton from '@/components/Buttons/Logo';
 import createStyles from './styles';
@@ -39,7 +39,7 @@ export default function Header({
 }: HeaderProps) {
   // const dimensions = useDimensions();
   const [showMenu, setShowMenu] = useAtom(menuAtom);
-  const [showCart, setShowCart] = useAtom(cartAtom);
+  const [showCart, setShowCart] = useAtom(showCartAtom);
   const navigate = useNavigate();
   const theme = useTheme();
   const styles = createStyles(theme);

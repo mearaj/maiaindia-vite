@@ -1,10 +1,12 @@
 import { categoryAtom } from '@/jotai/atoms/index';
 import { defaultSelectedCategory } from '@/jotai/data/category';
 import { atom } from 'jotai';
-import { Product } from '@/jotai/data/product';
+import { CompoundProduct, Product } from '@/jotai/data/product';
 import { atomEffect } from 'jotai-effect';
 import { collection, onSnapshot, query } from '@firebase/firestore';
 import { appFirestore } from '@/firebase';
+import { staticProductImages } from '@/jotai/data/staticImages';
+import { atomFamily } from 'jotai/utils';
 
 export const allProductsAtom = atom<Product[]>([]);
 export const allProductsAtomEffect = atomEffect((get, set) => {
@@ -32,6 +34,20 @@ export const allProductsAtomEffect = atomEffect((get, set) => {
           break;
       }
       if (updateRequired) {
+        productToAddModify.variants.forEach((variant) => {
+          variant.productID = productToAddModify.id;
+          const compoundID = `${productToAddModify.id}-${variant.id}`;
+          if (staticProductImages[compoundID]) {
+            variant.images = staticProductImages[compoundID];
+          } else {
+            variant.images = [];
+          }
+        });
+        if (!productToAddModify.activeVariant) {
+          productToAddModify.activeVariant = {
+            ...productToAddModify.variants[0],
+          };
+        }
         if (foundIndex >= 0) {
           products[foundIndex] = productToAddModify;
         } else {
@@ -42,6 +58,7 @@ export const allProductsAtomEffect = atomEffect((get, set) => {
     set(allProductsAtom, products);
   });
 });
+
 export const productsByCategory = atom((get) => {
   const selectedCategory = get(categoryAtom);
   if (selectedCategory.id === defaultSelectedCategory.id) {
@@ -51,3 +68,25 @@ export const productsByCategory = atom((get) => {
     (eachProduct) => eachProduct.categoryID === selectedCategory.id
   );
 });
+
+export const compoundProductFromCompoundIDSelector = atomFamily(
+  (productIDVariantID: string) => {
+    const asyncAtom = atom(async (get) => {
+      const allProducts = get(allProductsAtom);
+      let foundProductWithVariant: CompoundProduct | undefined;
+      allProducts.forEach((product) => {
+        product.variants.forEach((variant) => {
+          const compoundID = `${product.id}-${variant.id}`;
+          if (productIDVariantID === compoundID) {
+            foundProductWithVariant = { product, variant };
+          }
+        });
+      });
+      if (!foundProductWithVariant) {
+        throw Error('Product not found');
+      }
+      return foundProductWithVariant;
+    });
+    return asyncAtom;
+  }
+);

@@ -16,7 +16,7 @@ import {
   LocallyUploadedImage,
   Product,
   ProductFormModeState,
-  ProductImage,
+  VariantImage,
 } from '@/jotai/data/product';
 
 import {
@@ -146,7 +146,7 @@ export default function AdminProductFormFooterComponent({
   }, [productForm]);
 
   const commonImagesDeletionHandler = useCallback(
-    async (imagesArr: ProductImage[]) => {
+    async (imagesArr: VariantImage[]) => {
       if (imagesArr.length > 0) {
         try {
           let localDialogMessage = `Deleting Product ${productForm.name} Images with ID ${productForm.id}`;

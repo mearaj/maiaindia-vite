@@ -1,6 +1,6 @@
 import { Category } from '@/jotai/data/category';
 
-export interface ProductImage {
+export interface VariantImage {
   name: string;
   url: string;
 }
@@ -11,12 +11,33 @@ export const defaultPlaceholderProductImage = {
 };
 
 export interface Product {
-  id?: string;
+  id?: string; // frontend only
   categoryID: string;
   name: string;
   details: string;
-  currency?: string;
-  variants: Variant[];
+  variants: Variant[]; // At least one variant is required
+  activeVariant?: Variant; // frontend only
+}
+
+export interface Variant {
+  productID?: string; // frontend only
+  id: string;
+  currency: string;
+  mrp: number;
+  sp: number;
+  images?: VariantImage[];
+}
+
+// Frontend only
+export interface CompoundID {
+  productID: string;
+  variantID: string;
+}
+
+// Frontend only
+export interface CompoundProduct {
+  product: Product;
+  variant: Variant;
 }
 
 export interface VariantForm {
@@ -25,18 +46,6 @@ export interface VariantForm {
   mrp?: number | string;
   sp?: number | string;
   currency?: string;
-}
-
-export interface Variant {
-  productID: string;
-  id: string;
-  currency: string;
-  mrp: number;
-  sp: number;
-}
-
-export interface ProductWithImages extends Product {
-  images: ProductImage[];
 }
 
 export interface ProductForm {
@@ -61,7 +70,7 @@ export interface ProductFormState {
   productForm: ProductForm;
   isProcessing: boolean;
   mode: ProductFormModeState;
-  images?: ProductImage[];
-  imagesForDeletion: ProductImage[];
+  images?: VariantImage[];
+  imagesForDeletion: VariantImage[];
   localImages: LocallyUploadedImage[];
 }
