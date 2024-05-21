@@ -30,8 +30,9 @@ import {
 } from '@/jotai/data/supportChat';
 import { selectedDialogAtom } from '@/jotai/atoms/dialog';
 import CircularProgress from '@mui/material/CircularProgress';
-import { FirebaseError, uuidv4 } from '@firebase/util';
+import { FirebaseError } from '@firebase/util';
 import { useAtomValue, useSetAtom } from 'jotai/index';
+import { firestoreAutoId } from '@/misc/id';
 import ChatRoomGreetingsComponent from '@/components/LiveChat/ChatTabs/ChatRoomGreetings';
 import SnackbarDialog from '@/components/Dialogs/SnackBar';
 
@@ -127,7 +128,7 @@ export default function CommonChatRoomComponent({
       updatedAt: Timestamp.now(),
       createdAt: Timestamp.now(),
       text: textValueCurr,
-      id: uuidv4(),
+      id: firestoreAutoId(),
     };
     if (isAdminUI) {
       newMessage.to = currentChatSession.customerID;

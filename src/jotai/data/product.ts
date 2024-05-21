@@ -36,6 +36,12 @@ export interface CompoundProduct {
   variant: Variant;
 }
 
+// Frontend only
+export interface CompoundID {
+  productID: string;
+  variantID: string;
+}
+
 export interface ProductForm {
   name: string;
   details: string;
@@ -58,4 +64,5 @@ export interface ProductFormState {
   productForm: ProductForm;
   isProcessing: boolean;
   mode: ProductFormModeState;
+  isNew: boolean;
 }

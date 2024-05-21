@@ -45,9 +45,14 @@ export default function CartPage() {
           </IconButton>
         </Box>
         {!isEmpty &&
-          Object.keys(user.userState!.cart.items).map((compoundID) => {
+          Object.keys(user.userState!.cart.items).map((compoundIDStr) => {
+            const compoundIDArr = (compoundIDStr ?? ' - ').split('-');
+            const compoundID = {
+              productID: compoundIDArr[0],
+              variantID: compoundIDArr[1],
+            };
             return (
-              <CartItemComponent key={compoundID} compoundID={compoundID} />
+              <CartItemComponent key={compoundIDStr} compoundID={compoundID} />
             );
           })}
       </Box>

@@ -20,6 +20,7 @@ export const defaultProductFormState: ProductFormState = {
   productForm: defaultProductForm,
   isProcessing: defaultProductFormProcessingState,
   mode: defaultProductFormMode,
+  isNew: false,
 };
 export const productFormStateAtom = atom<ProductFormState>(
   defaultProductFormState

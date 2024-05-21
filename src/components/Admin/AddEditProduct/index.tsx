@@ -28,15 +28,6 @@ export default function AddEditProductComponent() {
   const handleProductFieldChange = useCallback(
     (property: 'name' | 'details') => (e: ChangeEvent<HTMLInputElement>) => {
       const val = e.target.value;
-      let numVal: number | string = parseFloat(val);
-      if (Number.isNaN(numVal)) {
-        numVal = '';
-      }
-      if (typeof numVal === 'number') {
-        if (numVal < 0) {
-          numVal = 0;
-        }
-      }
       switch (property) {
         case 'name':
           setProductState({

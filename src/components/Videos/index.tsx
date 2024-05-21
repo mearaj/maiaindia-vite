@@ -32,7 +32,7 @@ export default function Videos({ className }: { className?: string }) {
         }
       }
     };
-    playVideo();
+    playVideo().catch(console.log);
   }, [swiper]);
 
   const onActiveIndexChange = async (swiperAlt: SwiperClass) => {

@@ -9,6 +9,7 @@ export interface LoadableComponentProps<T> extends PropsWithChildren {
   errorContainerStyle?: SxProps<Theme>;
   showLoader?: boolean;
   showError?: boolean;
+  loaderText?: string | null;
 }
 
 export default function LoadableComponent<T>({
@@ -18,19 +19,22 @@ export default function LoadableComponent<T>({
   errorContainerStyle = {},
   showError = true,
   showLoader = true,
+  loaderText = 'Loading...',
 }: LoadableComponentProps<T>) {
   if (jotaiLoadable.state === 'loading') {
     if (!showLoader) {
       return null;
     }
-    const containerStyle = {
+    const containerStyle: SxProps<Theme> = {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
+      flexDirection: 'column',
       ...loaderContainerStyle,
     };
     return (
       <Box sx={containerStyle}>
+        {loaderText && <Box>{loaderText}</Box>}
         <Loader />
       </Box>
     );

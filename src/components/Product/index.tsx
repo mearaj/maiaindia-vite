@@ -17,13 +17,18 @@ export default function ProductComponent({
   isAdminProduct: boolean;
 }) {
   const navigate = useNavigate();
-  const compoundID = `${product.id}-${product.activeVariant!.id}`;
   const productWithImages = useAtomValue(
-    loadable(compoundProductWithImagesSelector(compoundID))
+    loadable(
+      compoundProductWithImagesSelector({
+        productID: product.id!,
+        variantID: product.activeVariant!.id,
+      })
+    )
   );
   const preferredImgSrc =
     productWithImages.state === 'hasData' &&
     productWithImages.data &&
+    productWithImages.data.variant &&
     productWithImages.data.variant.images &&
     productWithImages.data.variant.images.length > 0
       ? productWithImages.data.variant.images[0]
@@ -67,11 +72,7 @@ export default function ProductComponent({
         <Box
           onClick={() => {
             if (isAdminProduct) {
-              navigate(
-                `${appAbsoluteRoutes.adminProducts}/${product.id}-${
-                  product.activeVariant!.id
-                }`
-              );
+              navigate(`${appAbsoluteRoutes.adminProducts}/${product.id}`);
             } else {
               navigate(`/products/${product.id}-${product.activeVariant!.id}`);
             }
@@ -81,7 +82,7 @@ export default function ProductComponent({
             sx={{
               display: 'flex',
               flexDirection: 'column',
-              justifyContent: 'flex-start',
+              justifyContent: 'space-between',
               padding: '16px',
             }}
           >
@@ -98,31 +99,31 @@ export default function ProductComponent({
               />
             </LoadableComponent>
           </Box>
-          <Box sx={{ padding: '4px 8px 4px' }}>
-            <Box
-              sx={{
-                fontSize: '14px',
-                lineHeight: 1,
-                marginBottom: '4px',
-                fontWeight: 500,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                textAlign: 'center',
-              }}
-            >
-              {product.name}
-            </Box>
-            <ProductPrice product={product} />
-          </Box>
         </Box>
-        {!isAdminProduct && (
-          <Box sx={{ padding: '0px 8px' }}>
-            <AddUpdateButton
-              compoundProduct={{ product, variant: product.activeVariant! }}
-            />
+        <Box sx={{ padding: '4px 8px 4px' }}>
+          <Box
+            sx={{
+              fontSize: '14px',
+              lineHeight: 1,
+              marginBottom: '4px',
+              fontWeight: 500,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              textAlign: 'center',
+            }}
+          >
+            {product.name}
           </Box>
-        )}
+          <ProductPrice product={product} />
+          {!isAdminProduct && (
+            <Box sx={{ padding: '0px 8px' }}>
+              <AddUpdateButton
+                compoundProduct={{ product, variant: product.activeVariant! }}
+              />
+            </Box>
+          )}
+        </Box>
       </Box>
     </Paper>
   );

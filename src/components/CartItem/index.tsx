@@ -1,5 +1,6 @@
 import { Box, Typography, useTheme } from '@mui/material';
 import {
+  CompoundID,
   CompoundProduct,
   defaultPlaceholderProductImage,
   VariantImage,
@@ -172,7 +173,7 @@ function CartItemInnerComponent({
 }
 
 interface CartItemComponentProps {
-  compoundID: string;
+  compoundID: CompoundID;
 }
 
 export default function CartItemComponent({

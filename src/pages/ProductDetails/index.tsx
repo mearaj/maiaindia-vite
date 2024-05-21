@@ -26,8 +26,13 @@ import BuyButton from '@/components/Buttons/Buy';
 
 export default function ProductDetailsPage() {
   const params = useParams();
+  const compoundIDArr = ((params.id as string) ?? ' - ').split('-');
+  const compoundID = {
+    productID: compoundIDArr[0],
+    variantID: compoundIDArr[1],
+  };
   const productWithImagesLoadable = loadable(
-    compoundProductWithImagesSelector(params.id as string)
+    compoundProductWithImagesSelector(compoundID)
   );
   const productLoadable = useAtomValue(productWithImagesLoadable);
 

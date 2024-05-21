@@ -5,6 +5,7 @@ import { Box } from '@mui/material';
 import { Loader } from '@/components';
 import { AuthState } from '@/jotai/data/auth';
 import { isAdminAtom } from '@/jotai/atoms/admin';
+import AdminProductDetailsPage from '@/pages/Admin/ProductDetails';
 import AdminLiveChatPage from '@/pages/Admin/LiveChat';
 import ProfilePage from '@/pages/Profile';
 import CancellationRefundPolicy from '@/pages/CancellationRefundPolicy';
@@ -18,7 +19,6 @@ import AboutUsPage from '@/pages/AboutUs';
 import TermsConditionsPage from '@/pages/TermsConditions';
 import PrivacyPolicyPage from '@/pages/PrivacyPolicy';
 import AdminProductsPage from '@/pages/Admin/Products';
-import AdminProductDetailsPage from '@/pages/Admin/AdminProductDetails';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
 import SignInButton from '@/components/Buttons/SignIn';
 // Abs implies absolute
@@ -92,7 +92,12 @@ function AuthRoutes() {
     }
     return (
       <CommonPageLayout
-        sxBodyProps={{ justifyContent: 'center', alignItems: 'center' }}
+        sxBodyProps={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
       >
         <Box>{text}</Box>
         <Loader />
