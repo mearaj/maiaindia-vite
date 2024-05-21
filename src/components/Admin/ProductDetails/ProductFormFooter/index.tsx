@@ -29,7 +29,7 @@ import { deleteObject, ref, uploadBytesResumable } from '@firebase/storage';
 import { Delete, Publish, RestartAlt } from '@mui/icons-material';
 import { useAtom, useSetAtom } from 'jotai/index';
 import { productFormStateAtom } from '@/jotai/atoms/productForm';
-import createStyles from './styles';
+import createStyles from '@/components/Admin/ProductDetails/ProductFormFooter/styles';
 import { appAbsoluteRoutes } from '@/Router';
 import SnackbarDialog from '@/components/Dialogs/SnackBar';
 

@@ -21,7 +21,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { Delete } from '@mui/icons-material';
 import { useAtom, useSetAtom } from 'jotai/index';
 import { productFormStateAtom } from '@/jotai/atoms/productForm';
-import createStyles from './styles';
+import createStyles from '@/components/Admin/ProductDetails/VariantFormFooter/styles';
 import SnackbarDialog from '@/components/Dialogs/SnackBar';
 
 interface AdminVariantFormFooterProps {

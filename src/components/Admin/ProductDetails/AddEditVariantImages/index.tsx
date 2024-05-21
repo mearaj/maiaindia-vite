@@ -11,7 +11,7 @@ import {
 } from '@/jotai/data/product';
 import { useAtom } from 'jotai/index';
 import { productFormStateAtom } from '@/jotai/atoms/productForm';
-import styles from './index.module.css';
+import styles from '@/components/Admin/ProductDetails/AddEditVariantImages/index.module.css';
 import addEditProductImagesPlaceholder from '@/images/placeholder.svg';
 
 export default function AddEditVariantImagesComponent({

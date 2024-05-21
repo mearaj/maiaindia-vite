@@ -13,8 +13,8 @@ import { ProductFormModeState } from '@/jotai/data/product';
 import { Category } from '@/jotai/data/category';
 import { useAtom } from 'jotai';
 import { productFormStateAtom } from '@/jotai/atoms/productForm';
+import createStyles from '@/components/Admin/ProductDetails/AddEditProduct/styles';
 import CategoriesDropdown from '@/components/Dropdowns/Categories';
-import createStyles from './styles';
 
 export default function AddEditProductComponent() {
   const [productState, setProductState] = useAtom(productFormStateAtom);

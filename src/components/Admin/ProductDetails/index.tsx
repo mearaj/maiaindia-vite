@@ -7,11 +7,11 @@ import { Add } from '@mui/icons-material';
 import { Currency } from '@/jotai/data/currency';
 import { firestoreAutoId } from '@/misc/id';
 import { Variant } from '@/jotai/data/product';
-import AddEditVariantImagesComponent from '@/components/Admin/AddEditVariantImages';
+import AddEditVariantImagesComponent from '@/components/Admin/ProductDetails/AddEditVariantImages';
+import AddEditProductComponent from '@/components/Admin/ProductDetails/AddEditProduct';
+import AdminVariantFormFooter from '@/components/Admin/ProductDetails/VariantFormFooter';
+import AdminProductFormFooterComponent from '@/components/Admin/ProductDetails/ProductFormFooter';
 import createStyles from './styles';
-import AddEditProductComponent from '@/components/Admin/AddEditProduct';
-import AdminVariantFormFooter from '@/components/Admin/VariantFormFooter';
-import AdminProductFormFooterComponent from '@/components/Admin/ProductFormFooter';
 
 export interface AdminProductDetailsComponentProps {
   handleReset: (
