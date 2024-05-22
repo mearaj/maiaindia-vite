@@ -1,20 +1,21 @@
 import { Box, useTheme } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  defaultProductFormState,
-  productFormStateAtom,
-} from '@/jotai/atoms/productForm';
+import { productFormStateAtom } from '@/jotai/atoms/productForm';
 import * as React from 'react';
 import { SyntheticEvent, useCallback, useEffect } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { ProductFormModeState } from '@/jotai/data/product';
-import { productWithImagesSelector } from '@/jotai/atoms/products';
+import {
+  defaultProductFormState,
+  ProductFormModeState,
+} from '@/jotai/data/product';
 import { categories } from '@/jotai/data/category';
 import { loadable } from 'jotai/utils';
 import { firestoreAutoId } from '@/misc/id';
+import { productWithImagesSelector } from '@/jotai/families/products';
 import createStyles from './styles';
 import { appAbsoluteRoutes } from '@/Router';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
+
 import Loader from '@/components/Loader';
 import AdminProductDetailsComponent from '@/components/Admin/ProductDetails';
 

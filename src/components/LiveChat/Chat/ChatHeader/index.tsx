@@ -2,7 +2,7 @@ import { Box, IconButton, SxProps, Theme, useTheme } from '@mui/material';
 import { MouseEventHandler, ReactNode } from 'react';
 import Close from '@mui/icons-material/Close';
 import { Minimize } from '@mui/icons-material';
-import createStyles from '@/components/LiveChat/ChatHeader/styles';
+import createStyles from '@/components/LiveChat/Chat/ChatHeader/styles';
 
 export interface CommonHeaderProps {
   onCloseClick?: MouseEventHandler;

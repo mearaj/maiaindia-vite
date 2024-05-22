@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import { Timestamp } from '@firebase/firestore';
 import { useAtom, useAtomValue } from 'jotai';
 import ChatCustomerCardComponent from '@/components/Admin/ChatCustomerCard';
-import CommonChatRoomComponent from '@/components/LiveChat/ChatTabs/CommonChatRoom';
+import CommonChatRoomComponent from '@/components/LiveChat/Chat/CommonChatRoom';
 import AdminLiveChatPageHeader from '@/pages/Admin/LiveChat/header';
 
 export default function AdminLiveChatPage() {

@@ -4,8 +4,18 @@ import { menuAtom } from '@/jotai/atoms/menu';
 import { selectedDialogAtom } from '@/jotai/atoms/dialog';
 import { useAtom, useAtomValue } from 'jotai';
 import { userAtomEffect } from '@/jotai/atoms/user';
-import { allProductsAtomEffect } from '@/jotai/atoms/products';
-import { adminUsersAtomEffect, isAdminAtomEffect } from '@/jotai/atoms/admin';
+import {
+  adminOnlineStatusesAtomEffect,
+  adminUsersAtomEffect,
+  isAdminAtomEffect,
+} from '@/jotai/effects/admin';
+
+import { appOnlineStatusAtomEffect } from '@/jotai/effects/app';
+import { allProductsAtomEffect } from '@/jotai/effects/products';
+import {
+  adminSupportChatSessionsEffect,
+  currentUserLastActiveChatSessionAtomEffect,
+} from '@/jotai/effects/supportChat';
 import CartDrawer from '@/components/CartDrawer';
 import LiveChatButton from '@/components/LiveChat';
 
@@ -18,6 +28,10 @@ function App() {
   useAtom(allProductsAtomEffect);
   useAtom(isAdminAtomEffect);
   useAtom(adminUsersAtomEffect);
+  useAtom(adminOnlineStatusesAtomEffect);
+  useAtom(appOnlineStatusAtomEffect);
+  useAtom(currentUserLastActiveChatSessionAtomEffect);
+  useAtom(adminSupportChatSessionsEffect);
 
   const closeDrawer = useCallback(() => {
     setShowMenu(false);

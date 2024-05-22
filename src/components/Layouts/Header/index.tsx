@@ -1,6 +1,6 @@
 import { Box, SxProps, Theme, useTheme } from '@mui/material';
 import { ReactNode } from 'react';
-import createStyles from '@/components/LiveChat/ChatHeader/styles';
+import createStyles from '@/components/LiveChat/Chat/ChatHeader/styles';
 
 export interface HeaderLayoutProps {
   sx?: SxProps<Theme>;

@@ -3,7 +3,7 @@ import { defaultPlaceholderProductImage, Product } from '@/jotai/data/product';
 import { useNavigate } from 'react-router-dom';
 import { useAtomValue } from 'jotai/index';
 import { loadable } from 'jotai/utils';
-import { compoundProductWithImagesSelector } from '@/jotai/atoms/products';
+import { compoundProductWithImagesSelector } from '@/jotai/families/products';
 import ProductPrice from '@/components/Product/Price';
 import AddUpdateButton from '@/components/Buttons/AddUpdate';
 import { appAbsoluteRoutes } from '@/Router';

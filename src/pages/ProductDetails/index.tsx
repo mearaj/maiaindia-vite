@@ -17,7 +17,7 @@ import Button from '@mui/material/Button';
 import { loadable } from 'jotai/utils';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { CompoundProduct } from '@/jotai/data/product';
-import { compoundProductWithImagesSelector } from '@/jotai/atoms/products';
+import { compoundProductWithImagesSelector } from '@/jotai/families/products';
 import LoadableComponent from '@/components/Layouts/JotailLoadableComponent';
 import ProductPrice from '@/components/Product/Price';
 import styles from './index.module.css';

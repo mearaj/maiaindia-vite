@@ -6,7 +6,7 @@ import { ReactNode } from 'react';
 import { currentUserLiveChatMaximizedAtom } from '@/jotai/atoms/supportChat';
 import { useLocation } from 'react-router-dom';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import ChatTabsComponent from '@/components/LiveChat/ChatTabs';
+import ChatComponent from '@/components/LiveChat/Chat';
 import SignInRequiredDialog from '@/components/Dialogs/SignInRequired';
 import SignInButton from '@/components/Buttons/SignIn';
 import useDimensions from '@/hooks/useDimensions';
@@ -47,7 +47,7 @@ export default function LiveChatButton() {
       </Box>
     );
   } else {
-    mainComponent = <ChatTabsComponent />;
+    mainComponent = <ChatComponent />;
   }
 
   return (

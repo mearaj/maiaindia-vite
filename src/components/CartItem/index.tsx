@@ -9,7 +9,7 @@ import { loadable } from 'jotai/utils';
 import { useAtomValue } from 'jotai';
 import { Add, Remove } from '@mui/icons-material';
 import CircularProgress from '@mui/material/CircularProgress';
-import { compoundProductWithImagesSelector } from '@/jotai/atoms/products';
+import { compoundProductWithImagesSelector } from '@/jotai/families/products';
 import RemoveButton from '@/components/Buttons/Remove';
 import { useAddUpdateCartEffect } from '@/hooks/useAddUpdateCartEffect';
 

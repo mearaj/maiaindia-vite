@@ -5,10 +5,10 @@ import { Box } from '@mui/material';
 import { Loader } from '@/components';
 import { AuthState } from '@/jotai/data/auth';
 import { isAdminAtom } from '@/jotai/atoms/admin';
+import CancelRefundPolicy from '@/pages/CancelRefundPolicy';
 import AdminProductDetailsPage from '@/pages/Admin/ProductDetails';
 import AdminLiveChatPage from '@/pages/Admin/LiveChat';
 import ProfilePage from '@/pages/Profile';
-import CancellationRefundPolicy from '@/pages/CancellationRefundPolicy';
 import App from '@/App';
 import ProductsPage from '@/pages/Products';
 import ProductDetailsPage from '@/pages/ProductDetails';
@@ -72,6 +72,7 @@ export const appRelativeRoutes = {
 
 function AuthRoutes() {
   const { authState, userState } = useAtomValue(userAtom);
+
   let text: string | null;
   if (authState !== AuthState.idle) {
     switch (authState) {
@@ -87,6 +88,7 @@ function AuthRoutes() {
       case AuthState.updatingProfile:
         text = 'Updating Profile...';
         break;
+
       default:
         text = null;
     }
@@ -157,7 +159,7 @@ export const router = createBrowserRouter([
       },
       {
         path: appRelativeRoutes.cancellationRefundPolicy,
-        element: <CancellationRefundPolicy />,
+        element: <CancelRefundPolicy />,
       },
       {
         path: appRelativeRoutes.aboutUs,

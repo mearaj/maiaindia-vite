@@ -2,7 +2,8 @@ import { Box, Card } from '@mui/material';
 import { userPlaceholderSvgUrl } from '@/jotai/data/user';
 import { SupportChatSession } from '@/jotai/data/supportChat';
 import { adminActiveChatSessionAtom } from '@/jotai/atoms/supportChat';
-import { useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { adminOnlineStatusesAtom } from '@/jotai/atoms/admin';
 
 export default function ChatCustomerCardComponent({
   chatSession,
@@ -13,6 +14,7 @@ export default function ChatCustomerCardComponent({
   const handleCardClick = () => {
     setActiveChatSession(chatSession);
   };
+  const adminOnlineStatuses = useAtomValue(adminOnlineStatusesAtom);
 
   return (
     <Card
@@ -51,6 +53,16 @@ export default function ChatCustomerCardComponent({
                 chatSession.messages.length > 0 &&
                 chatSession.messages[chatSession.messages.length - 1].text}
             </Box>
+            {adminOnlineStatuses &&
+              adminOnlineStatuses[`${chatSession.customerID}`] &&
+              adminOnlineStatuses[`${chatSession.customerID}`].updatedAt && (
+                <Box>
+                  Last seen at&nbsp;
+                  {adminOnlineStatuses[
+                    `${chatSession!.customerID}`
+                  ]!.updatedAt!.toDate().toLocaleTimeString()}
+                </Box>
+              )}
           </Box>
         </Box>
       </Box>

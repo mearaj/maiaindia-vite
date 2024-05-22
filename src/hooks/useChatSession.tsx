@@ -36,13 +36,12 @@ export const useChatSessionEffects = ({
     if (isEmpty) {
       action = 'delete';
     }
-    const open = true;
     let text = 'Closing current chat session';
     if (action === 'delete') {
       text = 'Deleting current chat session';
     }
     setDialog(
-      <Dialog open={open}>
+      <Dialog open>
         <DialogContent>
           <Box>{text}</Box>
           <CircularProgress />

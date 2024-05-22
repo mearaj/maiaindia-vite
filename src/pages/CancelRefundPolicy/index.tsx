@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
 
-export default function CancellationRefundPolicy() {
+export default function CancelRefundPolicy() {
   const paragraphs = [
     {
       title: '',

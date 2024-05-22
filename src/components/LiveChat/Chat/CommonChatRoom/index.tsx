@@ -33,7 +33,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { FirebaseError } from '@firebase/util';
 import { useAtomValue, useSetAtom } from 'jotai/index';
 import { firestoreAutoId } from '@/misc/id';
-import ChatRoomGreetingsComponent from '@/components/LiveChat/ChatTabs/ChatRoomGreetings';
+import ChatRoomGreetingsComponent from '@/components/LiveChat/Chat/ChatRoomGreetings';
 import SnackbarDialog from '@/components/Dialogs/SnackBar';
 
 export default function CommonChatRoomComponent({
