@@ -294,7 +294,9 @@ export default function ProductDetailsPage() {
             </div>
             <Box sx={{ padding: '16px' }}>
               <Box sx={{ marginBottom: '8px' }}>
-                <AddUpdateButton compoundProduct={data} />
+                <AddUpdateButton
+                  compoundID={`${data.product.id}-${product.variant.id}`}
+                />
               </Box>
               <BuyButton product={data.product} />
             </Box>

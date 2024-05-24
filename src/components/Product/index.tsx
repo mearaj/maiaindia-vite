@@ -119,7 +119,7 @@ export default function ProductComponent({
           {!isAdminProduct && (
             <Box sx={{ padding: '0px 8px' }}>
               <AddUpdateButton
-                compoundProduct={{ product, variant: product.activeVariant! }}
+                compoundID={`${product.id}-${product.activeVariant?.id}`}
               />
             </Box>
           )}

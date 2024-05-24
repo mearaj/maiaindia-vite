@@ -1,8 +1,8 @@
 import { Box, Button, ButtonProps, SxProps, Theme } from '@mui/material';
 import { userAtom } from '@/jotai/atoms';
 import { CompoundProduct } from '@/jotai/data/product';
-import { setCartQuantity } from '@/misc/cart';
-import { useAtomValue } from 'jotai/index';
+import { useAtomValue, useSetAtom } from 'jotai/index';
+import { cartQuantityAtomFamily } from '@/jotai/families/cart';
 
 interface RemoveButtonProps extends ButtonProps {
   sx?: SxProps<Theme>;
@@ -16,12 +16,12 @@ export default function RemoveButton({
 }: RemoveButtonProps) {
   const user = useAtomValue(userAtom);
   const { product, variant: productVariant } = compoundProduct;
-
+  const compoundID = `${product.id}-${productVariant.id}`;
+  const setCartQuantity = useSetAtom(cartQuantityAtomFamily(compoundID));
   if (!user.userState) {
     return null;
   }
   const cartItems = user.userState?.cart.items;
-  const compoundID = `${product.id}-${productVariant.id}`;
   if (!cartItems[compoundID] || cartItems[compoundID].quantity < 1) {
     return null;
   }
@@ -34,7 +34,7 @@ export default function RemoveButton({
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        setCartQuantity(user, product.id!, productVariant.id!, 0);
+        setCartQuantity(0);
       }}
       {...otherProps}
     >

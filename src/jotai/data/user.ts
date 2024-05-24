@@ -2,6 +2,7 @@ import { User } from '@firebase/auth';
 
 import { AuthState } from '@/jotai/data/auth';
 import { Cart } from '@/jotai/data/cart';
+import { FieldValue, Timestamp } from '@firebase/firestore';
 
 export { default as userPlaceholderSvgUrl } from '@/images/user-placeholder.svg';
 export { default as userPlaceholderPngUrl } from '@/images/user-placeholder.png';
@@ -13,11 +14,17 @@ export interface UserProfile {
   photoURL?: string | null; // only required for frontend
 }
 
-export interface AppUser {
+export interface BackendUser {
+  profile: UserProfile;
+  cart: Cart;
+  updatedAt: FieldValue | Timestamp;
+}
+
+export interface UserState extends BackendUser {
+  user: User;
+}
+
+export interface UserStateWithAuth {
   authState: AuthState;
-  userState: {
-    user: User;
-    profile: UserProfile;
-    cart: Cart;
-  } | null;
+  userState: UserState | null;
 }

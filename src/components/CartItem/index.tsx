@@ -22,7 +22,9 @@ function CartItemInnerComponent({
 }) {
   const theme = useTheme();
   const { handleCartIncrement, onDecrementClicked, quantity, loading } =
-    useAddUpdateCartEffect({ compoundProduct });
+    useAddUpdateCartEffect({
+      compoundID: `${compoundProduct.product.id}-${compoundProduct.variant.id}`,
+    });
   const { product } = compoundProduct;
 
   return (

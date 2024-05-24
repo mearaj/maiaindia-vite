@@ -3,6 +3,7 @@ import { userAtom } from '@/jotai/atoms';
 import { useAtom, useAtomValue } from 'jotai';
 import Close from '@mui/icons-material/Close';
 import { showCartAtom } from '@/jotai/atoms/cart';
+import { serverTimestamp } from '@firebase/firestore';
 import createStyles from '@/components/Cart/styles';
 import CartItemComponent from '@/components/CartItem';
 import CommonPageLayout from '@/components/Layouts/CommonPage';
@@ -45,16 +46,30 @@ export default function CartPage() {
           </IconButton>
         </Box>
         {!isEmpty &&
-          Object.keys(user.userState!.cart.items).map((compoundIDStr) => {
-            const compoundIDArr = (compoundIDStr ?? ' - ').split('-');
-            const compoundID = {
-              productID: compoundIDArr[0],
-              variantID: compoundIDArr[1],
-            };
-            return (
-              <CartItemComponent key={compoundIDStr} compoundID={compoundID} />
-            );
-          })}
+          Object.keys(user.userState!.cart.items)
+            .sort((a, b) => {
+              const isLess =
+                (user.userState?.cart.items[a]?.createdAt ??
+                  serverTimestamp()) <
+                (user.userState?.cart.items[b]?.createdAt ?? serverTimestamp());
+              if (isLess) {
+                return -1;
+              }
+              return 1;
+            })
+            .map((compoundIDStr) => {
+              const compoundIDArr = (compoundIDStr ?? ' - ').split('-');
+              const compoundID = {
+                productID: compoundIDArr[0],
+                variantID: compoundIDArr[1],
+              };
+              return (
+                <CartItemComponent
+                  key={compoundIDStr}
+                  compoundID={compoundID}
+                />
+              );
+            })}
       </Box>
     </CommonPageLayout>
   );

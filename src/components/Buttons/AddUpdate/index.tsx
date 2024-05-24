@@ -1,19 +1,16 @@
 import { Box, Button } from '@mui/material';
 import AddToCartIcon from '@mui/icons-material/AddShoppingCart';
-import { CompoundProduct } from '@/jotai/data/product';
 import { Add, Remove } from '@mui/icons-material';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useAddUpdateCartEffect } from '@/hooks/useAddUpdateCartEffect';
 
 interface AddUpdateButtonProps {
-  compoundProduct: CompoundProduct;
+  compoundID: string;
 }
 
-export default function AddUpdateButton({
-  compoundProduct,
-}: AddUpdateButtonProps) {
+export default function AddUpdateButton({ compoundID }: AddUpdateButtonProps) {
   const { handleCartIncrement, onDecrementClicked, quantity, loading } =
-    useAddUpdateCartEffect({ compoundProduct });
+    useAddUpdateCartEffect({ compoundID });
 
   return (
     <Box
