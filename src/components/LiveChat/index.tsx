@@ -3,7 +3,7 @@ import { alpha, Box, Card, IconButton, useTheme } from '@mui/material';
 import { userAtom } from '@/jotai/atoms';
 import { selectedDialogAtom } from '@/jotai/atoms/dialog';
 import { ReactNode } from 'react';
-import { currentUserLiveChatMaximizedAtom } from '@/jotai/atoms/supportChat';
+import { liveChatMaximizedAtom } from '@/jotai/atoms/supportChat';
 import { useLocation } from 'react-router-dom';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import ChatComponent from '@/components/LiveChat/Chat';
@@ -14,9 +14,7 @@ import { appAbsoluteRoutes } from '@/Router';
 
 export default function LiveChatButton() {
   const theme = useTheme();
-  const [isUIMaximized, setIsUIMaximized] = useAtom(
-    currentUserLiveChatMaximizedAtom
-  );
+  const [isUIMaximized, setIsUIMaximized] = useAtom(liveChatMaximizedAtom);
   const location = useLocation();
   const setActiveDialog = useSetAtom(selectedDialogAtom);
   const user = useAtomValue(userAtom);

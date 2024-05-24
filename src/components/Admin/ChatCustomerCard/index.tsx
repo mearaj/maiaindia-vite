@@ -1,10 +1,10 @@
-import { Box, Card } from '@mui/material';
+import { Box } from '@mui/material';
 import { userPlaceholderSvgUrl } from '@/jotai/data/user';
 import { SupportChatSession } from '@/jotai/data/supportChat';
 import { adminActiveChatSessionAtom } from '@/jotai/atoms/supportChat';
 import { useSetAtom } from 'jotai';
 
-export default function ChatCustomerCardComponent({
+export default function ChatCustomerComponent({
   chatSession,
 }: {
   chatSession: SupportChatSession;
@@ -15,7 +15,7 @@ export default function ChatCustomerCardComponent({
   };
 
   return (
-    <Card
+    <Box
       sx={{
         '&:active,&:hover': {
           boxShadow: 24,
@@ -36,7 +36,7 @@ export default function ChatCustomerCardComponent({
           >
             <img
               src={
-                chatSession.customerProfile?.photoURL ?? userPlaceholderSvgUrl
+                chatSession.customer?.profile?.photoURL ?? userPlaceholderSvgUrl
               }
               height="100%"
               width="100%"
@@ -44,8 +44,8 @@ export default function ChatCustomerCardComponent({
             />
           </Box>
           <Box>
-            <Box>{chatSession.customerProfile?.displayName ?? 'N/A'}</Box>
-            <Box>{chatSession.customerProfile?.email ?? 'N/A'}</Box>
+            <Box>{chatSession.customer?.profile?.displayName ?? 'N/A'}</Box>
+            <Box>{chatSession.customer?.profile?.email ?? 'N/A'}</Box>
             <Box sx={{ marginBottom: '16px' }}>
               {chatSession.messages &&
                 chatSession.messages.length > 0 &&
@@ -55,6 +55,6 @@ export default function ChatCustomerCardComponent({
           </Box>
         </Box>
       </Box>
-    </Card>
+    </Box>
   );
 }

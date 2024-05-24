@@ -1,4 +1,10 @@
-import { collection, doc, getDoc, onSnapshot } from '@firebase/firestore';
+import {
+  collection,
+  doc,
+  getDoc,
+  onSnapshot,
+  query,
+} from '@firebase/firestore';
 import {
   appFirebaseAuth,
   appFirebaseStorage,
@@ -6,10 +12,15 @@ import {
   updateDocsSnapshots,
 } from '@/firebase';
 import { atomEffect } from 'jotai-effect';
-import { adminUsersAtom, isAdminAtom } from '@/jotai/atoms/admin';
-import { UserProfile } from '@/jotai/data/user';
+import {
+  allAdminsForUserAtom,
+  allUsersForAdminAtom,
+  isAdminAtom,
+} from '@/jotai/atoms/admin';
+import { BackendUser, UserProfile } from '@/jotai/data/user';
 import { getDownloadURL, ref } from '@firebase/storage';
 import { onAuthStateChanged, User } from '@firebase/auth';
+import { userAtom } from '@/jotai/atoms';
 
 export const isAdminAtomEffect = atomEffect((_, set) => {
   return onAuthStateChanged(appFirebaseAuth, async (user: User | null) => {
@@ -27,13 +38,18 @@ export const isAdminAtomEffect = atomEffect((_, set) => {
   });
 });
 
-export const adminUsersAtomEffect = atomEffect((get, set) => {
+export const allAdminsForUserAtomEffect = atomEffect((get, set) => {
   const adminUsersQuery = collection(appFirestore, 'admins');
   return onSnapshot(adminUsersQuery, async (adminUsersSnapshot) => {
     if (adminUsersSnapshot.metadata.hasPendingWrites) {
       return;
     }
-    let adminUsers: UserProfile[] = get(adminUsersAtom);
+    const adminUsersMap = get(allAdminsForUserAtom);
+    let adminUsers: UserProfile[] = Object.keys(adminUsersMap).map(
+      (adminID) => {
+        return adminUsersMap[adminID];
+      }
+    );
     adminUsers = updateDocsSnapshots(
       adminUsersSnapshot,
       adminUsers
@@ -58,6 +74,56 @@ export const adminUsersAtomEffect = atomEffect((get, set) => {
         return eachProfile;
       })
     );
-    set(adminUsersAtom, [...adminUsers]);
+    const newAdminUsersMap = adminUsers.reduce(
+      (previousValue, currentValue) => {
+        return {
+          ...previousValue,
+          [currentValue.id!]: currentValue,
+        };
+      },
+      {}
+    );
+    set(allAdminsForUserAtom, newAdminUsersMap);
+  });
+});
+
+export const allUsersForAdminAtomEffect = atomEffect((get, set) => {
+  let user = get(userAtom);
+  let isAdmin = get(isAdminAtom);
+  let isValid = user.userState && isAdmin;
+  if (!isValid) {
+    set(allUsersForAdminAtom, {});
+    return () => {};
+  }
+  const allUsersQuery = query(collection(appFirestore, 'users'));
+  return onSnapshot(allUsersQuery, async (allUsersSnapshot) => {
+    if (allUsersSnapshot.metadata.hasPendingWrites) {
+      return;
+    }
+    user = get(userAtom);
+    isAdmin = get(isAdminAtom);
+    isValid = user.userState && isAdmin && !allUsersSnapshot.empty;
+    if (!isValid) {
+      set(allUsersForAdminAtom, {});
+      return;
+    }
+    const prevUsersMap = get(allUsersForAdminAtom);
+    const prevUsers = Object.keys(prevUsersMap).map((userID) => {
+      return prevUsersMap[userID];
+    });
+    const currentUsers = updateDocsSnapshots(
+      allUsersSnapshot,
+      prevUsers
+    ) as BackendUser[];
+    const newCurrentUsers = currentUsers.reduce(
+      (previousValue, currentValue) => {
+        return {
+          ...previousValue,
+          [currentValue.id!]: currentValue,
+        };
+      },
+      {}
+    );
+    set(allUsersForAdminAtom, newCurrentUsers);
   });
 });

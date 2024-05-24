@@ -20,7 +20,6 @@ export const userAtomEffect = atomEffect((get, set) => {
     if (userQuerySnapshot.metadata.hasPendingWrites) {
       return;
     }
-    console.log('is it ever reached?');
     // const docSnapshot = await getDoc(docRef);
     const firebaseImageRef = ref(
       appFirebaseStorage,

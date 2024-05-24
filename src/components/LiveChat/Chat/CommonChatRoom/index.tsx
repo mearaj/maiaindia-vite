@@ -1,8 +1,6 @@
 import {
   Box,
   Card,
-  Dialog,
-  DialogContent,
   InputAdornment,
   TextField,
   Tooltip,
@@ -14,29 +12,18 @@ import { useEffect, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
 import { userAtom } from '@/jotai/atoms';
 import { userPlaceholderSvgUrl } from '@/jotai/data/user';
-import {
-  addDoc,
-  collection,
-  doc,
-  getDoc,
-  serverTimestamp,
-  setDoc,
-  Timestamp,
-} from '@firebase/firestore';
+import { doc, serverTimestamp, setDoc, Timestamp } from '@firebase/firestore';
 import { appFirestore } from '@/firebase';
 import {
+  MessageState,
   SupportChatMessage,
   SupportChatSession,
 } from '@/jotai/data/supportChat';
-import { selectedDialogAtom } from '@/jotai/atoms/dialog';
-import CircularProgress from '@mui/material/CircularProgress';
-import { FirebaseError } from '@firebase/util';
-import { useAtomValue, useSetAtom } from 'jotai/index';
+import { useAtomValue } from 'jotai/index';
 import { firestoreAutoId } from '@/misc/id';
 import ChatRoomGreetingsComponent from '@/components/LiveChat/Chat/ChatRoomGreetings';
-import SnackbarDialog from '@/components/Dialogs/SnackBar';
 
-export default function CommonChatRoomComponent({
+export default function UserChatRoomComponent({
   isAdminUI = false,
   chatSession,
   setChatSession,
@@ -49,57 +36,7 @@ export default function CommonChatRoomComponent({
   const ref = useRef<HTMLElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const appUser = useAtomValue(userAtom);
-  const setDialog = useSetAtom(selectedDialogAtom);
   const theme = useTheme();
-  const createNewChatSession = async (): Promise<SupportChatSession | null> => {
-    const open = true;
-    let newChatSession: SupportChatSession | null = null;
-    setDialog(
-      <Dialog open={open}>
-        <DialogContent>
-          <Box>Creating new chat session please wait!.</Box>
-          <CircularProgress />
-        </DialogContent>
-      </Dialog>
-    );
-    const collectionRef = collection(appFirestore, 'supportChats');
-    let errStr: string | null = null;
-    try {
-      const chatSessionIDRef = await addDoc(collectionRef, {
-        updatedAt: serverTimestamp(),
-        createdAt: serverTimestamp(),
-        status: 'open',
-        customerID: appUser.userState?.user.uid,
-        messages: [],
-        executiveID: null,
-      } as SupportChatSession);
-      const newChatSessionDoc = await getDoc(
-        doc(collectionRef, chatSessionIDRef.id)
-      );
-      newChatSession = {
-        ...(newChatSessionDoc.data() as SupportChatSession),
-        id: newChatSessionDoc.id,
-      };
-      setChatSession(newChatSession);
-    } catch (e) {
-      if (e instanceof FirebaseError) {
-        errStr = e.message;
-      } else {
-        errStr = (e as any).toString();
-      }
-    }
-    if (errStr != null) {
-      setDialog(<SnackbarDialog severity="error" message={errStr} />);
-    } else {
-      setDialog(
-        <SnackbarDialog
-          severity="success"
-          message="Successfully created new chat session!"
-        />
-      );
-    }
-    return newChatSession;
-  };
   const handleSubmit = async () => {
     const textValueCurr = textValue.trim();
     if (textValueCurr.length === 0) {
@@ -110,43 +47,52 @@ export default function CommonChatRoomComponent({
       inputRef.current.focus();
     }
     let currentChatSession = chatSession;
-    if (currentChatSession == null) {
-      if (isAdminUI) {
-        return;
-      }
-      currentChatSession = await createNewChatSession();
-      if (currentChatSession == null) {
-        return;
-      }
-    }
-
-    const docRef = doc(appFirestore, 'supportChats', currentChatSession.id!);
     const newMessage: SupportChatMessage = {
       from: appUser.userState!.user!.uid,
-      to: currentChatSession!.executiveID ?? null,
+      to: null,
       attachments: [],
       updatedAt: Timestamp.now(),
       createdAt: Timestamp.now(),
       text: textValueCurr,
       id: firestoreAutoId(),
+      state: MessageState.Created,
     };
+    let sessionID = currentChatSession?.id;
+    if (!currentChatSession) {
+      if (isAdminUI) {
+        return;
+      }
+      currentChatSession = {
+        updatedAt: serverTimestamp(),
+        createdAt: serverTimestamp(),
+        status: 'open',
+        customerID: appUser.userState!.user.uid,
+        createdBy: appUser.userState!.user.uid,
+        messages: [],
+      };
+      sessionID = firestoreAutoId();
+    }
     if (isAdminUI) {
       newMessage.to = currentChatSession.customerID;
     }
     const updatedChatSession = {
+      ...currentChatSession,
       messages: [...currentChatSession.messages, newMessage],
       customerID: currentChatSession.customerID,
       status: 'open',
       createdAt: currentChatSession.createdAt,
       updatedAt: serverTimestamp(),
-      executiveID: currentChatSession.executiveID ?? null,
-      id: currentChatSession.id,
     } as SupportChatSession;
     if (isAdminUI) {
-      updatedChatSession.executiveID = appUser.userState!.user.uid;
+      // updatedChatSession.executiveID = appUser.userState!.user.uid;
     }
-    await setDoc(docRef, updatedChatSession);
-    setChatSession(updatedChatSession);
+    const docRef = doc(appFirestore, 'supportChats', sessionID!);
+    try {
+      await setDoc(docRef, updatedChatSession);
+      setChatSession(updatedChatSession);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -245,10 +191,9 @@ export default function CommonChatRoomComponent({
               const isMyMessage = isMe(eachItem);
               const myImage: string | null =
                 appUser.userState?.profile.photoURL ?? null;
-              let yourImage: string | null =
-                chatSession.executiveProfile?.photoURL ?? null;
+              let yourImage: string | null = null;
               if (isAdminUI) {
-                yourImage = chatSession.customerProfile?.photoURL ?? null;
+                yourImage = chatSession.customer?.profile?.photoURL ?? null;
               }
 
               return (

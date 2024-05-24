@@ -1,112 +1,102 @@
-import {
-  appFirebaseAuth,
-  appFirebaseStorage,
-  appFirestore,
-  updateDocsSnapshots,
-} from '@/firebase';
+import { appFirestore, updateDocsSnapshots } from '@/firebase';
 import {
   collection,
   doc,
-  getDoc,
   limit,
   onSnapshot,
   orderBy,
   query,
+  serverTimestamp,
+  setDoc,
   where,
 } from '@firebase/firestore';
-import { SupportChatSession } from '@/jotai/data/supportChat';
+import { MessageState, SupportChatSession } from '@/jotai/data/supportChat';
 import { userAtom } from '@/jotai/atoms/user';
-import { getDownloadURL, ref } from '@firebase/storage';
-import { UserProfile } from '@/jotai/data/user';
 import { atomEffect } from 'jotai-effect';
-import { onAuthStateChanged } from '@firebase/auth';
-import { isAdminAtom } from '@/jotai/atoms/admin';
+import { allUsersForAdminAtom, isAdminAtom } from '@/jotai/atoms/admin';
 import {
-  adminSupportChatSessions,
-  currentUserLastActiveChatSessionAtom,
+  adminSupportChatSessionsAtom,
+  userToAdminChatSessionAtom,
 } from '@/jotai/atoms/supportChat';
 
-export const currentUserLastActiveChatSessionAtomEffect = atomEffect(
-  (get, set) => {
-    let lastActiveChatSubscription = () => {};
-    const unsubscribe = onAuthStateChanged(appFirebaseAuth, async (user) => {
-      if (!user) {
-        set(currentUserLastActiveChatSessionAtom, null);
-        lastActiveChatSubscription();
-        return;
-      }
-      const supportChatsQuery = query(
-        collection(appFirestore, 'supportChats'),
-        orderBy('updatedAt', 'desc'),
-        limit(1),
-        where('customerID', '==', user.uid),
-        where('status', '==', 'open')
-      );
-      lastActiveChatSubscription = onSnapshot(
-        supportChatsQuery,
-        async (supportChatsSnapshot) => {
-          if (supportChatsSnapshot.metadata.hasPendingWrites) {
-            return;
-          }
-          if (supportChatsSnapshot.empty) {
-            set(currentUserLastActiveChatSessionAtom, null);
-            return;
-          }
-          const currentLastChatSession = {
-            ...(supportChatsSnapshot.docs[0].data() as SupportChatSession),
-            id: supportChatsSnapshot.docs[0].id,
-          };
-          currentLastChatSession.customerProfile =
-            get(userAtom).userState?.profile;
-          if (
-            currentLastChatSession.executiveID &&
-            !currentLastChatSession.executiveProfile
-          ) {
-            const executiveProfileRef = doc(
-              appFirestore,
-              'users',
-              currentLastChatSession.executiveID
-            );
-            const executiveDocSnapshot = await getDoc(executiveProfileRef);
-            if (executiveDocSnapshot.exists()) {
-              const photoUrlRef = ref(
-                appFirebaseStorage,
-                `users/${currentLastChatSession.executiveID}/profile`
-              );
-              const photoURL = await getDownloadURL(photoUrlRef);
-              currentLastChatSession.executiveProfile = {
-                ...(executiveDocSnapshot.data().profile as UserProfile),
-                photoURL,
-                id: currentLastChatSession.executiveID,
-              };
-            }
-          }
-          set(currentUserLastActiveChatSessionAtom, currentLastChatSession);
-        }
-      );
-    });
-    return () => {
-      unsubscribe();
-      lastActiveChatSubscription();
-    };
+export const userToAdminChatSessionAtomEffect = atomEffect((get, set) => {
+  let user = get(userAtom);
+  if (!user || !user.userState || !user.userState.user) {
+    set(userToAdminChatSessionAtom, null);
+    return () => {};
   }
-);
+  const supportChatsQuery = query(
+    collection(appFirestore, 'supportChats'),
+    orderBy('updatedAt', 'desc'),
+    limit(1),
+    where('customerID', '==', user.userState.user.uid),
+    where('status', '==', 'open')
+  );
+  return onSnapshot(supportChatsQuery, async (supportChatsSnapshot) => {
+    user = get(userAtom);
+    if (
+      !user ||
+      !user.userState ||
+      !user.userState.user ||
+      supportChatsSnapshot.empty
+    ) {
+      set(userToAdminChatSessionAtom, null);
+      return;
+    }
+    const currentLastChatSession = {
+      ...(supportChatsSnapshot.docs[0].data() as SupportChatSession),
+      id: supportChatsSnapshot.docs[0].id,
+    };
+    const { hasPendingWrites } = supportChatsSnapshot.metadata;
+    if (!hasPendingWrites) {
+      const userID = user.userState.user.uid;
+      let updateRequired = false;
+      const copiedSession = { ...currentLastChatSession };
+      copiedSession.messages = copiedSession.messages.map((eachMessage) => {
+        return {
+          ...eachMessage,
+        };
+      });
+      for (const message of copiedSession.messages) {
+        if (message.from === userID && message.state === MessageState.Created) {
+          message.state = MessageState.ReachedServer;
+          updateRequired = true;
+        }
+      }
+      if (updateRequired) {
+        try {
+          copiedSession.updatedAt = serverTimestamp();
+          const chatSessionRef = doc(
+            appFirestore,
+            'supportChats',
+            copiedSession.id
+          );
+          await setDoc(chatSessionRef, copiedSession, {
+            mergeFields: ['updatedAt', 'messages'],
+          });
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    }
+    set(userToAdminChatSessionAtom, currentLastChatSession);
+  });
+});
 
 export const adminSupportChatSessionsEffect = atomEffect((get, set) => {
+  let user = get(userAtom);
+  let isAdmin = get(isAdminAtom);
+  let isValid = user.userState && isAdmin;
+  if (!isValid) {
+    set(adminSupportChatSessionsAtom, []);
+    return () => {};
+  }
   const supportChatsQuery = query(
     collection(appFirestore, 'supportChats'),
     orderBy('updatedAt', 'desc'),
     where('status', '==', 'open')
   );
-  let user = get(userAtom);
-  let isAdmin = get(isAdminAtom);
-  let isValid = user.userState && isAdmin;
-  let unsubscribe = () => {};
-  if (!isValid) {
-    set(adminSupportChatSessions, []);
-    return unsubscribe;
-  }
-  unsubscribe = onSnapshot(supportChatsQuery, async (supportChatsSnapshot) => {
+  return onSnapshot(supportChatsQuery, async (supportChatsSnapshot) => {
     if (supportChatsSnapshot.metadata.hasPendingWrites) {
       return;
     }
@@ -114,58 +104,23 @@ export const adminSupportChatSessionsEffect = atomEffect((get, set) => {
     isAdmin = get(isAdminAtom);
     isValid = user.userState && isAdmin && !supportChatsSnapshot.empty;
     if (!isValid) {
-      set(adminSupportChatSessions, []);
+      set(adminSupportChatSessionsAtom, []);
       return;
     }
-    const prevSupportChatSessions = get(adminSupportChatSessions);
+    const prevSupportChatSessions = get(adminSupportChatSessionsAtom);
     const newSupportChatSessions = updateDocsSnapshots(
       supportChatsSnapshot,
       prevSupportChatSessions
     ) as SupportChatSession[];
-
-    for await (const eachSupportChat of newSupportChatSessions) {
-      if (!eachSupportChat.customerProfile) {
-        const customerProfileRef = doc(
-          appFirestore,
-          'users',
-          eachSupportChat.customerID
-        );
-        const customerDocSnapshot = await getDoc(customerProfileRef);
-        if (customerDocSnapshot.exists()) {
-          const photoUrlRef = ref(
-            appFirebaseStorage,
-            `users/${customerDocSnapshot.id}/profile`
-          );
-          const photoURL = await getDownloadURL(photoUrlRef);
-          eachSupportChat.customerProfile = {
-            ...(customerDocSnapshot.data().profile as UserProfile),
-            photoURL,
-            id: eachSupportChat.customerID,
-          };
-        }
-      }
-      if (!eachSupportChat.executiveProfile && eachSupportChat.executiveID) {
-        const executiveProfileRef = doc(
-          appFirestore,
-          'users',
-          eachSupportChat.executiveID
-        );
-        const executiveDocSnapshot = await getDoc(executiveProfileRef);
-        if (executiveDocSnapshot.exists()) {
-          const photoUrlRef = ref(
-            appFirebaseStorage,
-            `users/${eachSupportChat.executiveID}/profile`
-          );
-          const photoURL = await getDownloadURL(photoUrlRef);
-          eachSupportChat.executiveProfile = {
-            ...(executiveDocSnapshot.data().profile as UserProfile),
-            photoURL,
-            id: eachSupportChat.executiveID,
-          };
+    const allUsersMap = get(allUsersForAdminAtom);
+    for (const [index, eachSupportChat] of newSupportChatSessions.entries()) {
+      if (!newSupportChatSessions[index].customer) {
+        if (allUsersMap[eachSupportChat.customerID]) {
+          newSupportChatSessions[index].customer =
+            allUsersMap[eachSupportChat.customerID];
         }
       }
     }
-    set(adminSupportChatSessions, newSupportChatSessions);
+    set(adminSupportChatSessionsAtom, [...newSupportChatSessions]);
   });
-  return unsubscribe;
 });

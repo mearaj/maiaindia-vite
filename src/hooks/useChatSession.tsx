@@ -1,7 +1,7 @@
 import { SupportChatSession } from '@/jotai/data/supportChat';
 import { selectedDialogAtom } from '@/jotai/atoms/dialog';
 import { userAtom } from '@/jotai/atoms';
-import { currentUserLiveChatMaximizedAtom } from '@/jotai/atoms/supportChat';
+import { liveChatMaximizedAtom } from '@/jotai/atoms/supportChat';
 import {
   Box,
   Dialog,
@@ -26,7 +26,7 @@ export const useChatSessionEffects = ({
 }) => {
   const setDialog = useSetAtom(selectedDialogAtom);
   const currentUser = useAtomValue(userAtom);
-  const setIsUIMaximized = useSetAtom(currentUserLiveChatMaximizedAtom);
+  const setIsUIMaximized = useSetAtom(liveChatMaximizedAtom);
   const deleteOrCloseCurrentSession = async () => {
     const isEmpty =
       !chatSession ||

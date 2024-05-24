@@ -15,6 +15,7 @@ export interface UserProfile {
 }
 
 export interface BackendUser {
+  id?: string;
   profile: UserProfile;
   cart: Cart;
   updatedAt: FieldValue | Timestamp;

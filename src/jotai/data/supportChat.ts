@@ -1,13 +1,12 @@
 import { FieldValue, Timestamp } from '@firebase/firestore';
-import { UserProfile } from '@/jotai/data/user';
+import { BackendUser } from '@/jotai/data/user';
 
 export interface SupportChatSession {
   id?: string; // required only in frontend
-  customerProfile?: UserProfile; // required only in frontend
-  executiveProfile?: UserProfile; // required only in frontend
+  customer?: BackendUser; // required only in frontend
   customerID: string;
+  createdBy: string;
   status: 'open' | 'closed';
-  executiveID: string | null;
   createdAt: Timestamp | FieldValue;
   updatedAt: Timestamp | FieldValue;
   messages: SupportChatMessage[];
@@ -19,6 +18,13 @@ export interface MessageAttachment {
   id: string;
 }
 
+export enum MessageState {
+  Created,
+  ReachedServer,
+  ReachedRecipient,
+  ReadByRecipient,
+}
+
 export interface SupportChatMessage {
   from: string;
   to: string | null;
@@ -27,4 +33,5 @@ export interface SupportChatMessage {
   createdAt: Timestamp;
   updatedAt: Timestamp;
   id: string;
+  state: MessageState;
 }

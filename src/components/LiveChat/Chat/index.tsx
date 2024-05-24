@@ -1,20 +1,16 @@
 import { alpha, Box, useTheme } from '@mui/material';
 import {
-  currentUserLastActiveChatSessionAtom,
-  currentUserLiveChatMaximizedAtom,
+  liveChatMaximizedAtom,
+  userToAdminChatSessionAtom,
 } from '@/jotai/atoms/supportChat';
 import { useAtom } from 'jotai';
 import LiveChatHeader from '@/components/LiveChat/Chat/ChatHeader';
-import CommonChatRoomComponent from '@/components/LiveChat/Chat/CommonChatRoom';
+import UserChatRoomComponent from '@/components/LiveChat/Chat/CommonChatRoom';
 import { useChatSessionEffects } from '@/hooks/useChatSession';
 
 export default function ChatComponent() {
-  const [chatSession, setChatSession] = useAtom(
-    currentUserLastActiveChatSessionAtom
-  );
-  const [isUIMaximized, setIsUIMaximized] = useAtom(
-    currentUserLiveChatMaximizedAtom
-  );
+  const [chatSession, setChatSession] = useAtom(userToAdminChatSessionAtom);
+  const [isUIMaximized, setIsUIMaximized] = useAtom(liveChatMaximizedAtom);
 
   const chatSessionEffects = useChatSessionEffects({
     chatSession,
@@ -51,19 +47,10 @@ export default function ChatComponent() {
             backgroundColor: '#FFFFFF',
           }}
         >
-          <CommonChatRoomComponent
+          <UserChatRoomComponent
             setChatSession={setChatSession}
             chatSession={chatSession}
           />
-
-          {/* {tabIndex === 0 ? ( */}
-          {/*  <CommonChatRoomComponent */}
-          {/*    setChatSession={setChatSession} */}
-          {/*    chatSession={chatSession} */}
-          {/*  /> */}
-          {/* ) : ( */}
-          {/*  <ChatDetailsComponent /> */}
-          {/* )} */}
         </Box>
       </Box>
     </Box>

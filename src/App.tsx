@@ -3,12 +3,16 @@ import { useCallback, useEffect } from 'react';
 import { menuAtom } from '@/jotai/atoms/menu';
 import { selectedDialogAtom } from '@/jotai/atoms/dialog';
 import { useAtom, useAtomValue } from 'jotai';
-import { adminUsersAtomEffect, isAdminAtomEffect } from '@/jotai/effects/admin';
+import {
+  allAdminsForUserAtomEffect,
+  allUsersForAdminAtomEffect,
+  isAdminAtomEffect,
+} from '@/jotai/effects/admin';
 
 import { allProductsAtomEffect } from '@/jotai/effects/products';
 import {
   adminSupportChatSessionsEffect,
-  currentUserLastActiveChatSessionAtomEffect,
+  userToAdminChatSessionAtomEffect,
 } from '@/jotai/effects/supportChat';
 import { onAuthStateChangedEffect, userAtomEffect } from '@/jotai/effects/user';
 import CartDrawer from '@/components/CartDrawer';
@@ -19,12 +23,13 @@ function App() {
   const [, setShowMenu] = useAtom(menuAtom);
   const selectedDialog = useAtomValue(selectedDialogAtom);
 
+  useAtom(allProductsAtomEffect);
+  useAtom(allAdminsForUserAtomEffect);
   useAtom(onAuthStateChangedEffect);
   useAtom(userAtomEffect);
-  useAtom(allProductsAtomEffect);
+  useAtom(userToAdminChatSessionAtomEffect);
   useAtom(isAdminAtomEffect);
-  useAtom(adminUsersAtomEffect);
-  useAtom(currentUserLastActiveChatSessionAtomEffect);
+  useAtom(allUsersForAdminAtomEffect);
   useAtom(adminSupportChatSessionsEffect);
 
   const closeDrawer = useCallback(() => {
