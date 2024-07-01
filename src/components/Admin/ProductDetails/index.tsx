@@ -7,7 +7,7 @@ import { Add } from '@mui/icons-material';
 import { Currency } from '@/jotai/data/currency';
 import { firestoreAutoId } from '@/misc/id';
 import { Variant } from '@/jotai/data/product';
-import AddEditVariantImagesComponent from '@/components/Admin/ProductDetails/AddEditVariantImages';
+import AddEditVariantComponent from '@/components/Admin/ProductDetails/AddEditVariant';
 import AddEditProductComponent from '@/components/Admin/ProductDetails/AddEditProduct';
 import AdminVariantFormFooter from '@/components/Admin/ProductDetails/VariantFormFooter';
 import AdminProductFormFooterComponent from '@/components/Admin/ProductDetails/ProductFormFooter';
@@ -41,8 +41,10 @@ export default function AdminProductDetailsComponent({
             productID: productForm.id,
             id: firestoreAutoId(),
             currency: Currency.INR,
-            mrp: 0,
-            sp: 0,
+            mrp: null,
+            sp: null,
+            size: '',
+            color: '',
             images: [],
             imagesForDeletion: [],
             localImages: [],
@@ -62,7 +64,7 @@ export default function AdminProductDetailsComponent({
         productForm.variants.length > 0 &&
         productForm?.variants.map((variant) => (
           <Fragment key={variant.id}>
-            <AddEditVariantImagesComponent variant={variant} />
+            <AddEditVariantComponent variant={variant} />
             <AdminVariantFormFooter variant={variant} />
           </Fragment>
         ))}

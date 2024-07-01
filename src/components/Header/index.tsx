@@ -112,34 +112,35 @@ export default function Header({
               sx={styles.iconButton}
             >
               <LocalMallTwoTone sx={styles.icon} />
+              {user &&
+                user.userState &&
+                user.userState.cart.items &&
+                Object.keys(user.userState.cart.items).length > 0 && (
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      top: '0px',
+                      right: '0px',
+                      fontWeight: 'bold',
+                      zIndex: 1,
+                      color: theme.palette.secondary.main,
+                      fontSize: '18px',
+                    }}
+                  >
+                    <Box>
+                      {Object.keys(user.userState.cart.items).reduce(
+                        (prev, curr) => {
+                          return (
+                            prev +
+                            (user.userState!.cart.items[curr].quantity ?? 0)
+                          );
+                        },
+                        0
+                      )}
+                    </Box>
+                  </Box>
+                )}
             </Button>
-            {user &&
-              user.userState &&
-              user.userState.cart.items &&
-              Object.keys(user.userState.cart.items).length > 0 && (
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    top: '-1px',
-                    right: '-1px',
-                    fontWeight: 'bold',
-                    zIndex: 1,
-                    color: theme.palette.secondary.main,
-                  }}
-                >
-                  <small>
-                    {Object.keys(user.userState.cart.items).reduce(
-                      (prev, curr) => {
-                        return (
-                          prev +
-                          (user.userState!.cart.items[curr].quantity ?? 0)
-                        );
-                      },
-                      0
-                    )}
-                  </small>
-                </Box>
-              )}
             <Button
               sx={styles.iconButton}
               onClick={() => handleInteractionItemClick()}

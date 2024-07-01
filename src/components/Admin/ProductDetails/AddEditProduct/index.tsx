@@ -148,36 +148,6 @@ export default function AddEditProductComponent() {
             disabled={disableForm}
           />
         </FormControl>
-        {/* <FormControl fullWidth sx={formControlStyle}> */}
-        {/*  <FormLabel sx={formLabelSx} htmlFor="product-mrp"> */}
-        {/*    Max Retail Price&nbsp;* */}
-        {/*  </FormLabel> */}
-        {/*  <OutlinedInput */}
-        {/*    type="number" */}
-        {/*    id="product-mrp" */}
-        {/*    fullWidth */}
-        {/*    placeholder="Enter max retail price..." */}
-        {/*    size="small" */}
-        {/*    value={productForm.variants[0]?.mrp} */}
-        {/*    onChange={handleFieldChange('mrp')} */}
-        {/*    disabled={disableForm} */}
-        {/*  /> */}
-        {/* </FormControl> */}
-        {/* <FormControl fullWidth sx={formControlStyle}> */}
-        {/*  <FormLabel sx={formLabelSx} htmlFor="product-sp"> */}
-        {/*    Selling Price&nbsp;* */}
-        {/*  </FormLabel> */}
-        {/*  <OutlinedInput */}
-        {/*    type="number" */}
-        {/*    id="product-sp" */}
-        {/*    placeholder="Enter selling price..." */}
-        {/*    fullWidth */}
-        {/*    size="small" */}
-        {/*    value={productForm.variants[0]?.sp} */}
-        {/*    onChange={handleFieldChange('sp')} */}
-        {/*    disabled={disableForm} */}
-        {/*  /> */}
-        {/* </FormControl> */}
         <CategoriesDropdown
           selectedCategory={productForm.category}
           onCategoriesChange={handleCategoryChange}

@@ -26,7 +26,7 @@ import { useNavigate } from 'react-router-dom';
 import { selectedDialogAtom } from '@/jotai/atoms/dialog';
 import { categories } from '@/jotai/data/category';
 import { deleteObject, ref, uploadBytesResumable } from '@firebase/storage';
-import { Delete, Publish, RestartAlt } from '@mui/icons-material';
+import { Delete, Error, Publish, RestartAlt } from '@mui/icons-material';
 import { useAtom, useSetAtom } from 'jotai/index';
 import { productFormStateAtom } from '@/jotai/atoms/productForm';
 import createStyles from '@/components/Admin/ProductDetails/ProductFormFooter/styles';
@@ -168,13 +168,13 @@ export default function AdminProductFormFooterComponent({
               </Box>
             ),
           });
-        } catch (e) {
+        } catch (e: unknown) {
           setDialogComponent(
             <SnackbarDialog
               severity="error"
               message={
                 e instanceof Error
-                  ? e.message
+                  ? (e as Error).message
                   : `Failed to deleted product ${productForm.name} with id ${productForm.id}`
               }
             />
@@ -382,7 +382,7 @@ export default function AdminProductFormFooterComponent({
           });
           const postProduct: Product = {
             name: productForm.name,
-            details: productForm.details,
+            details: productForm.details ?? '',
             categoryID: productForm.category.id,
             variants:
               productForm.variants.map((eacVariant) => ({
@@ -390,6 +390,8 @@ export default function AdminProductFormFooterComponent({
                 mrp: eacVariant.mrp,
                 sp: eacVariant.sp,
                 currency: eacVariant.currency,
+                size: eacVariant.size,
+                color: eacVariant.color,
               })) ?? [],
           };
           await commonImagesDeletionHandler(variant.imagesForDeletion);
@@ -398,8 +400,9 @@ export default function AdminProductFormFooterComponent({
           await setDoc(productRef, postProduct);
           snackbarMsg = `Successfully updated ${productForm.name} with ID ${productForm.id}`;
           navigate(`${appAbsoluteRoutes.adminProducts}/${productForm.id}`);
-        } catch (e) {
+        } catch (e: unknown) {
           severity = 'error';
+          snackbarMsg = (e as Error).message;
         } finally {
           setLocalDialog(null);
           setProductFormState({ ...productFormState, isProcessing: false });
@@ -460,13 +463,13 @@ export default function AdminProductFormFooterComponent({
             />
           );
           navigate(appAbsoluteRoutes.adminProducts);
-        } catch (e) {
+        } catch (e: unknown) {
           setDialogComponent(
             <SnackbarDialog
               severity="error"
               message={
                 e instanceof Error
-                  ? e.message
+                  ? (e as Error).message
                   : `Failed to deleted product ${productForm.name} with id ${productForm.id}`
               }
             />

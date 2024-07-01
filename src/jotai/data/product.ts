@@ -23,8 +23,10 @@ export interface Variant {
   productID?: string; // frontend only
   id: string;
   currency: string;
-  mrp: number;
-  sp: number;
+  mrp: number | null;
+  sp: number | null;
+  size: string | null;
+  color: string | null;
   images?: VariantImage[]; // frontend only
   imagesForDeletion?: VariantImage[]; // frontend only
   localImages?: LocallyUploadedImage[]; // frontend only
