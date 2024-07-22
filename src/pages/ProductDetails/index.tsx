@@ -52,6 +52,8 @@ export default function ProductDetailsPage() {
           currency: 'INR',
           mrp: 0,
           sp: 0,
+          size: '',
+          color: '',
           images: [],
         },
       ],
@@ -62,6 +64,8 @@ export default function ProductDetailsPage() {
       currency: 'INR',
       mrp: 0,
       sp: 0,
+      size: '',
+      color: '',
       images: [],
     },
   };

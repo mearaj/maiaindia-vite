@@ -13,9 +13,14 @@ export default function ProductPrice({
   let discountComponent: ReactNode;
   const discount =
     (product.variants[0]?.mrp || 0) - (product.variants[0]?.sp || 0);
-  if (discount > 0 && product.variants && product.variants[0].mrp !== 0) {
+  if (
+    discount > 0 &&
+    product.variants &&
+    product.variants[0] &&
+    product.variants[0].mrp !== 0
+  ) {
     const discountPercentage = (
-      (discount / product.variants[0].mrp) *
+      (discount / product.variants[0]!.mrp!) *
       100
     ).toFixed(0);
     discountComponent = (

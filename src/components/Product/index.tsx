@@ -1,4 +1,4 @@
-import { Box, Paper } from '@mui/material';
+import { Box, Button, Paper, useTheme } from '@mui/material';
 import { defaultPlaceholderProductImage, Product } from '@/jotai/data/product';
 import { useNavigate } from 'react-router-dom';
 import { useAtomValue } from 'jotai/index';
@@ -17,6 +17,7 @@ export default function ProductComponent({
   isAdminProduct: boolean;
 }) {
   const navigate = useNavigate();
+  const theme = useTheme();
   const productWithImages = useAtomValue(
     loadable(
       compoundProductWithImagesSelector({
@@ -42,6 +43,28 @@ export default function ProductComponent({
     objectPosition: 'center',
     marginBottom: '4px',
   };
+
+  const sizes: string[] = product.variants
+    .filter(
+      (variant, index) =>
+        !!variant.size &&
+        index ===
+          product.variants.findIndex(
+            (variantAlt) => variantAlt.size === variant.size
+          )
+    )
+    .map((variant) => variant.size) as string[];
+
+  const colors: string[] = product.variants
+    .filter(
+      (variant, index) =>
+        !!variant.color &&
+        index ===
+          product.variants.findIndex(
+            (variantAlt) => variantAlt.color === variant.color
+          )
+    )
+    .map((variant) => variant.color) as string[];
 
   return (
     <Paper
@@ -99,8 +122,6 @@ export default function ProductComponent({
               />
             </LoadableComponent>
           </Box>
-        </Box>
-        <Box sx={{ padding: '4px 8px 4px' }}>
           <Box
             sx={{
               fontSize: '14px',
@@ -116,6 +137,94 @@ export default function ProductComponent({
             {product.name}
           </Box>
           <ProductPrice product={product} />
+        </Box>
+        <Box sx={{ padding: '4px 8px 4px' }}>
+          {sizes.length > 0 && (
+            <Box
+              sx={{
+                padding: '4px 8px',
+                display: 'flex',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+              }}
+            >
+              <Box sx={{ width: '50px' }}>Sizes</Box>
+              {sizes.map((size) => {
+                return (
+                  <Button
+                    sx={{
+                      height: '24px',
+                      lineHeight: '24px',
+                      width: '24px',
+                      minWidth: '0px',
+                      padding: '0px',
+                      margin: '2px',
+                      fontWeight: 'bold',
+                      backgroundColor:
+                        size === product.activeVariant?.size
+                          ? theme.palette.primary.dark
+                          : 'transparent',
+                      color:
+                        size === product.activeVariant?.size
+                          ? theme.palette.primary.contrastText
+                          : theme.palette.primary.dark,
+                      '&:active,&:hover,&:focus': {
+                        backgroundColor:
+                          size === product.activeVariant?.size
+                            ? theme.palette.primary.dark
+                            : 'transparent',
+                        color:
+                          size === product.activeVariant?.size
+                            ? theme.palette.primary.contrastText
+                            : theme.palette.primary.dark,
+                      },
+                    }}
+                    key={size}
+                  >
+                    {size}
+                  </Button>
+                );
+              })}
+            </Box>
+          )}
+          {colors.length > 0 && (
+            <Box
+              sx={{
+                padding: '4px 8px',
+                display: 'flex',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+              }}
+            >
+              <Box sx={{ width: '50px' }}>Colors</Box>
+              {colors.map((color) => {
+                return (
+                  <Button
+                    variant="outlined"
+                    sx={{
+                      height: '24px',
+                      width: '24px',
+                      padding: '0px',
+                      minWidth: '0px',
+                      margin: '2px',
+                      backgroundColor: color,
+                      boxSizing: 'border-box',
+                      borderWidth: '3px',
+                      color,
+                      borderColor:
+                        color === product.activeVariant?.color
+                          ? theme.palette.primary.dark
+                          : 'transparent',
+                      '&:active,&:hover,&:focus': {
+                        backgroundColor: color,
+                      },
+                    }}
+                    key={color}
+                  />
+                );
+              })}
+            </Box>
+          )}
           {!isAdminProduct && (
             <Box sx={{ padding: '0px 8px' }}>
               <AddUpdateButton
