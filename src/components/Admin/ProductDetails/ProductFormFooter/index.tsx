@@ -16,7 +16,6 @@ import {
   LocallyUploadedImage,
   Product,
   ProductFormModeState,
-  Variant,
   VariantImage,
 } from '@/jotai/data/product';
 
@@ -39,12 +38,10 @@ interface AdminProductFormFooterComponentProps {
       | React.MouseEvent<HTMLButtonElement, MouseEvent>
       | SyntheticEvent<Element, Event>
   ) => void;
-  variant: Variant;
 }
 
 export default function AdminProductFormFooterComponent({
   handleReset,
-  variant,
 }: AdminProductFormFooterComponentProps) {
   const [productFormState, setProductFormState] = useAtom(productFormStateAtom);
   const { isProcessing, mode: formMode, productForm } = productFormState;
@@ -127,15 +124,15 @@ export default function AdminProductFormFooterComponent({
   }, [productForm]);
 
   const commonImagesDeletionHandler = useCallback(
-    async (imagesArr?: VariantImage[]) => {
-      if (imagesArr && imagesArr.length > 0) {
+    async (imagesArr: VariantImage[], variantID: string) => {
+      if (imagesArr.length > 0) {
         try {
           let localDialogMessage = `Deleting Product ${productForm.name} Images with ID ${productForm.id}`;
           for await (const eachImage of imagesArr) {
             localDialogMessage = `Deleting Image ${eachImage.name}`;
             const imageFileRef = ref(
               appFirebaseStorage,
-              `products/${productForm.id}/${eachImage.name}`
+              `products/${productForm.id}/variants/${variantID}/${eachImage.name}`
             );
             setLocalDialog({
               props: { open: true },
@@ -204,8 +201,8 @@ export default function AdminProductFormFooterComponent({
   );
 
   const commonImagesUploadHandler = useCallback(
-    async (imagesArr?: LocallyUploadedImage[]) => {
-      if (!(imagesArr && imagesArr.length > 0)) {
+    async (imagesArr: LocallyUploadedImage[], variantID: string) => {
+      if (!(imagesArr.length > 0 && variantID)) {
         return;
       }
 
@@ -245,7 +242,7 @@ export default function AdminProductFormFooterComponent({
           // Upload file and metadata to the object 'images/mountains.jpg'
           const storageRef = ref(
             appFirebaseStorage,
-            `products/${productForm.id}/variants/${variant.id}/${eachLocalImage.file.name}`
+            `products/${productForm.id}/variants/${variantID}/${eachLocalImage.file.name}`
           );
           const uploadTask = uploadBytesResumable(
             storageRef,
@@ -326,7 +323,7 @@ export default function AdminProductFormFooterComponent({
       }
       await Promise.all(promisesArr);
     },
-    [productForm.id, variant.id]
+    [productForm.id]
   );
 
   const handleFormSubmit = useCallback(
@@ -339,18 +336,27 @@ export default function AdminProductFormFooterComponent({
         return;
       }
       const localDialogMessage = `Preparing Updating Of Product ${productForm.name} with ID ${productForm.id}`;
+      const totalLocalImages = productForm.variants.reduce((prev, curr) => {
+        return [...prev, ...(curr.localImages ?? [])];
+      }, [] as LocallyUploadedImage[]);
+      const totalImagesForDeletion = productForm.variants.reduce(
+        (prev, curr) => {
+          return [...prev, ...(curr.imagesForDeletion ?? [])];
+        },
+        [] as VariantImage[]
+      );
       const modalContentPrompt = (
         <Box>
           <Box sx={{ marginBottom: '8px' }}>
-            {(variant?.localImages?.length ?? 0) > 0 && (
+            {totalLocalImages.length > 0 && (
               <Box sx={{ lineHeight: 1 }}>
-                <small>Images To Add: {variant!.localImages!.length}</small>
+                <small>Images To Add: {totalLocalImages.length}</small>
               </Box>
             )}
-            {(variant?.imagesForDeletion?.length ?? 0) > 0 && (
+            {(totalImagesForDeletion.length ?? 0) > 0 && (
               <Box sx={{ lineHeight: 1 }}>
                 <small>
-                  Images For Deletion: {variant!.imagesForDeletion!.length}
+                  Images For Deletion: {totalImagesForDeletion.length}
                 </small>
               </Box>
             )}
@@ -394,8 +400,17 @@ export default function AdminProductFormFooterComponent({
                 color: eacVariant.color,
               })) ?? [],
           };
-          await commonImagesDeletionHandler(variant.imagesForDeletion);
-          await commonImagesUploadHandler(variant.localImages);
+          for await (const eachVariant of productFormState.productForm
+            .variants) {
+            await commonImagesDeletionHandler(
+              eachVariant.imagesForDeletion ?? [],
+              eachVariant.id
+            );
+            await commonImagesUploadHandler(
+              eachVariant.localImages ?? [],
+              eachVariant.id
+            );
+          }
           const productRef = doc(appFirestore, 'products', productForm.id!);
           await setDoc(productRef, postProduct);
           snackbarMsg = `Successfully updated ${productForm.name} with ID ${productForm.id}`;
@@ -427,7 +442,6 @@ export default function AdminProductFormFooterComponent({
       productFormState,
       setDialogComponent,
       setProductFormState,
-      variant,
     ]
   );
 
@@ -438,9 +452,12 @@ export default function AdminProductFormFooterComponent({
         'Cancel',
         'Yes'
       );
+      const variantImages = productForm.variants.reduce((prev, curr) => {
+        return [...prev, ...(curr.images ?? [])];
+      }, [] as VariantImage[]);
       if (shouldDelete) {
         let localDialogMessage = `Deleting Product ${productForm.name} with ID ${productForm.id}`;
-        if (variant.images && variant.images.length > 0) {
+        if (variantImages && variantImages.length > 0) {
           localDialogMessage = `Deleting Product ${productForm.name} Images with ID ${productForm.id}`;
         }
         setProductFormState({ ...productFormState, isProcessing: true });
@@ -454,7 +471,13 @@ export default function AdminProductFormFooterComponent({
           ),
         });
         try {
-          await commonImagesDeletionHandler(variant.images);
+          for await (const eachVariant of productFormState.productForm
+            .variants) {
+            await commonImagesDeletionHandler(
+              eachVariant.images ?? [],
+              eachVariant.id
+            );
+          }
           await deleteDoc(doc(appFirestore, 'products', productForm.id!));
           setDialogComponent(
             <SnackbarDialog
@@ -485,7 +508,6 @@ export default function AdminProductFormFooterComponent({
     productForm.name,
     isProcessing,
     commonPromptDialogHandler,
-    variant.images,
     setProductFormState,
     productFormState,
     commonImagesDeletionHandler,

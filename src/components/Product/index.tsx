@@ -1,13 +1,16 @@
 import { Box, Button, Paper, useTheme } from '@mui/material';
 import { defaultPlaceholderProductImage, Product } from '@/jotai/data/product';
 import { useNavigate } from 'react-router-dom';
-import { useAtomValue } from 'jotai/index';
+import { useAtomValue, useSetAtom } from 'jotai/index';
 import { loadable } from 'jotai/utils';
 import { compoundProductWithImagesSelector } from '@/jotai/families/products';
+import { TableChart } from '@mui/icons-material';
+import { selectedDialogAtom } from '@/jotai/atoms/dialog';
 import ProductPrice from '@/components/Product/Price';
 import AddUpdateButton from '@/components/Buttons/AddUpdate';
 import { appAbsoluteRoutes } from '@/Router';
 import LoadableComponent from '@/components/Layouts/JotailLoadableComponent';
+import RingSizesDialog from '@/components/Dialogs/RingSizesDialog';
 
 export default function ProductComponent({
   product,
@@ -17,6 +20,7 @@ export default function ProductComponent({
   isAdminProduct: boolean;
 }) {
   const navigate = useNavigate();
+  const setActiveDialog = useSetAtom(selectedDialogAtom);
   const theme = useTheme();
   const productWithImages = useAtomValue(
     loadable(
@@ -138,24 +142,36 @@ export default function ProductComponent({
           </Box>
           <ProductPrice product={product} />
         </Box>
-        <Box sx={{ padding: '4px 8px 4px' }}>
+        <Box sx={{ padding: '4px 8px' }}>
           {sizes.length > 0 && (
-            <Box
-              sx={{
-                padding: '4px 8px',
-                display: 'flex',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-              }}
-            >
-              <Box sx={{ width: '50px' }}>Sizes</Box>
+            <Box sx={{ padding: '4px 0px' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', marginRight: '4px' }}>Size</Box>
+                <Button
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: '0px',
+                    margin: '2px',
+                    fontSize: '14px',
+                    minWidth: '0',
+                    textTransform: 'none',
+                  }}
+                  onClick={() => {
+                    setActiveDialog(<RingSizesDialog />);
+                  }}
+                >
+                  (<Box sx={{ display: 'flex', marginRight: '4px' }}>Chart</Box>
+                  <TableChart sx={{ fontSize: '14px' }} />)
+                </Button>
+              </Box>
               {sizes.map((size) => {
                 return (
                   <Button
                     sx={{
-                      height: '24px',
-                      lineHeight: '24px',
-                      width: '24px',
+                      height: '20px',
+                      lineHeight: '20px',
+                      width: '20px',
                       minWidth: '0px',
                       padding: '0px',
                       margin: '2px',
@@ -188,22 +204,22 @@ export default function ProductComponent({
             </Box>
           )}
           {colors.length > 0 && (
-            <Box
-              sx={{
-                padding: '4px 8px',
-                display: 'flex',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-              }}
-            >
-              <Box sx={{ width: '50px' }}>Colors</Box>
+            <Box sx={{ marginBottom: '4px' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  textTransform: 'capitalize',
+                }}
+              >
+                Color:&nbsp;{product.activeVariant?.color}
+              </Box>
               {colors.map((color) => {
                 return (
                   <Button
                     variant="outlined"
                     sx={{
-                      height: '24px',
-                      width: '24px',
+                      height: '20px',
+                      width: '20px',
                       padding: '0px',
                       minWidth: '0px',
                       margin: '2px',
@@ -213,7 +229,7 @@ export default function ProductComponent({
                       color,
                       borderColor:
                         color === product.activeVariant?.color
-                          ? theme.palette.primary.dark
+                          ? theme.palette.primary.light
                           : 'transparent',
                       '&:active,&:hover,&:focus': {
                         backgroundColor: color,
@@ -226,7 +242,7 @@ export default function ProductComponent({
             </Box>
           )}
           {!isAdminProduct && (
-            <Box sx={{ padding: '0px 8px' }}>
+            <Box sx={{ padding: '0px' }}>
               <AddUpdateButton
                 compoundID={`${product.id}-${product.activeVariant?.id}`}
               />

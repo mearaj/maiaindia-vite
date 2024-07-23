@@ -19,6 +19,7 @@ import { useAtom } from 'jotai/index';
 import { productFormStateAtom } from '@/jotai/atoms/productForm';
 import cssStyles from '@/components/Admin/ProductDetails/AddEditVariant/index.module.css';
 import { ChangeEvent, useCallback } from 'react';
+import { isValidCSSColor } from '@/misc/color';
 import addEditProductImagesPlaceholder from '@/images/placeholder.svg';
 import createStyles from '@/components/Admin/ProductDetails/AddEditVariant/styles';
 
@@ -104,15 +105,30 @@ export default function AddEditVariantComponent({
         <FormLabel sx={formLabelSx} htmlFor="variant-color">
           Color
         </FormLabel>
-        <OutlinedInput
-          id="variant-color"
-          fullWidth
-          placeholder="Enter variant color..."
-          size="small"
-          value={variant?.color ?? ''}
-          onChange={handleVariantFieldChange('color')}
-          disabled={disableForm}
-        />
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <OutlinedInput
+            id="variant-color"
+            fullWidth
+            placeholder="Enter variant color..."
+            size="small"
+            value={variant?.color ?? ''}
+            onChange={handleVariantFieldChange('color')}
+            disabled={disableForm}
+            sx={{ marginRight: '8px' }}
+          />
+          <Button
+            variant="outlined"
+            type="button"
+            sx={{
+              height: '40px',
+              width: '40px',
+              minWidth: '0px',
+              backgroundColor: isValidCSSColor(variant?.color ?? '')
+                ? variant.color
+                : 'transparent',
+            }}
+          />
+        </Box>
       </FormControl>
       <FormControl fullWidth sx={formControlStyle}>
         <FormLabel sx={formLabelSx} htmlFor="variant-mrp">

@@ -6,7 +6,6 @@ import { useAtom } from 'jotai';
 import { Add } from '@mui/icons-material';
 import { Currency } from '@/jotai/data/currency';
 import { firestoreAutoId } from '@/misc/id';
-import { Variant } from '@/jotai/data/product';
 import AddEditVariantComponent from '@/components/Admin/ProductDetails/AddEditVariant';
 import AddEditProductComponent from '@/components/Admin/ProductDetails/AddEditProduct';
 import AdminVariantFormFooter from '@/components/Admin/ProductDetails/VariantFormFooter';
@@ -68,10 +67,7 @@ export default function AdminProductDetailsComponent({
             <AdminVariantFormFooter variant={variant} />
           </Fragment>
         ))}
-      <AdminProductFormFooterComponent
-        handleReset={handleReset}
-        variant={{} as Variant}
-      />
+      <AdminProductFormFooterComponent handleReset={handleReset} />
     </Box>
   );
 }

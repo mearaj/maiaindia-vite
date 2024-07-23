@@ -302,7 +302,9 @@ export default function ProductDetailsPage() {
                   compoundID={`${data.product.id}-${product.variant.id}`}
                 />
               </Box>
-              <BuyButton product={data.product} />
+              <BuyButton
+                compoundID={`${data.product.id}-${product.variant.id}`}
+              />
             </Box>
           </>
         )}

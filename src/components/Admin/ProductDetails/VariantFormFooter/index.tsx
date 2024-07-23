@@ -169,9 +169,6 @@ export default function AdminVariantFormFooter({
               message={`Failed to upload ${errors.length} file(s) locally!`}
             />
           );
-          await new Promise<void>((r) => {
-            setTimeout(r, 2000);
-          });
         }
         if (supportedImages.length > 0) {
           setDialogComponent(

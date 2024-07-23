@@ -2,17 +2,16 @@ import { Box, Button, SxProps, Theme } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { userAtom } from '@/jotai/atoms';
 import React from 'react';
-import { Product } from '@/jotai/data/product';
 import { selectedDialogAtom } from '@/jotai/atoms/dialog';
 import { useAtomValue, useSetAtom } from 'jotai';
 import SignInRequiredDialog from '@/components/Dialogs/SignInRequired';
 
 interface ProductActionProps {
-  product: Product;
+  compoundID: string;
   sx?: SxProps<Theme>;
 }
 
-export default function BuyButton({ product, sx }: ProductActionProps) {
+export default function BuyButton({ compoundID, sx }: ProductActionProps) {
   const user = useAtomValue(userAtom);
   const navigate = useNavigate();
   const setActiveDialog = useSetAtom(selectedDialogAtom);
@@ -26,7 +25,7 @@ export default function BuyButton({ product, sx }: ProductActionProps) {
       setActiveDialog(<SignInRequiredDialog />);
       return;
     }
-    navigate(`/products/${product.id}`);
+    navigate(`/products/${compoundID}`);
   };
 
   return (

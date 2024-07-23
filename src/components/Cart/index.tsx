@@ -42,7 +42,10 @@ export default function CartPage() {
             sx={{ padding: '0px' }}
             onClick={() => setShowCart(false)}
           >
-            <Close color="primary" sx={{ fontWeight: 'bold', fontSize: 32 }} />
+            <Close
+              color="primary"
+              sx={{ fontWeight: 'bold', fontSize: '32px', lineHeight: '32px' }}
+            />
           </IconButton>
         </Box>
         {!isEmpty &&

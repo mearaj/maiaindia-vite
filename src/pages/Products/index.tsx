@@ -8,6 +8,7 @@ import FooterComponent from '@/components/Footer';
 
 export default function ProductsPage() {
   const products = useAtomValue(productsByCategory);
+  console.log(products);
 
   return (
     <CommonPageLayout>
